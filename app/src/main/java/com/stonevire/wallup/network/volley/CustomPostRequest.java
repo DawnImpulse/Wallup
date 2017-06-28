@@ -4,29 +4,31 @@ import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.Response.ErrorListener;
-import com.android.volley.Response.Listener;
 import com.android.volley.toolbox.HttpHeaderParser;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
-public class CustomRequest extends Request<JSONObject> {
+/**
+ * Created by Saksham on 6/21/2017.
+ */
 
-    private Listener<JSONObject> listener;
+public class CustomPostRequest extends Request<JSONObject>{
+    private Response.Listener<JSONObject> listener;
     private Map<String, String> params;
 
-    public CustomRequest(String url, Map<String, String> params,
-                         Listener<JSONObject> reponseListener, ErrorListener errorListener) {
-        super(Method.GET, url, errorListener);
+    public CustomPostRequest(String url, Map<String, String> params,
+                             Response.Listener<JSONObject> reponseListener, Response.ErrorListener errorListener) {
+        super(Request.Method.GET, url, errorListener);
         this.listener = reponseListener;
         this.params = params;
     }
 
-    public CustomRequest(int method, String url, Map<String, String> params,
-                         ApiCalls reponseListener, ApiCalls errorListener) {
+    public CustomPostRequest(int method, String url, Map<String, String> params,
+                             Response.Listener<JSONObject> reponseListener, Response.ErrorListener errorListener) {
         super(method, url, errorListener);
         this.listener = reponseListener;
         this.params = params;
