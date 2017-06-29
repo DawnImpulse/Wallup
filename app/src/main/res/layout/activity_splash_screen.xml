@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.stonevire.wallup.SplashScreen">
+    tools:context="com.stonevire.wallup.activities.SplashScreen">
 
     <Button
         android:id="@+id/button"

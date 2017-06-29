@@ -1,8 +1,10 @@
-package com.stonevire.wallup;
+package com.stonevire.wallup.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+
+import com.stonevire.wallup.R;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;

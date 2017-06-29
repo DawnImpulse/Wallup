@@ -16,9 +16,11 @@ public class Const {
     public static final String SUCCESS      = "success";
     public static final String DETAILS      = "details";
     public static final String IMAGES       = "images";
+    public static final String ERRORID      = "errorID";
 
     //------------------ Callbacks --------------------------------
 
-    public static final int NEW_IMAGES_CALLBACK     = 1 ;
+    public static final int NEW_IMAGES_CALLBACK         = 1 ;
+    public static final int LOAD_MORE_IMAGES_CALLBACK   = 2;
 
 }

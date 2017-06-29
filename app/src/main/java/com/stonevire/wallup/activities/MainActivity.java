@@ -1,4 +1,4 @@
-package com.stonevire.wallup;
+package com.stonevire.wallup.activities;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.stonevire.wallup.R;
 import com.stonevire.wallup.fragments.NewImagesFragment;
 
 import butterknife.BindView;
