@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -33,16 +34,17 @@ import java.util.Map;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class NewImagesFragment extends Fragment implements RequestResponse {
+public class NewImagesFragment extends Fragment implements RequestResponse,SwipeRefreshLayout.OnRefreshListener {
 
     VolleyWrapper volleyWrapper;
     Map<String, String> params;
-    JSONArray imagesArrayTemp, imagesArray;
+    JSONArray imagesArray;
     NewImagesAdapter mNewImagesAdapter;
     int pageNo = 0;
 
     Context mContext;
     RecyclerView mRecyclerView;
+    SwipeRefreshLayout mSwipeRefreshLayout;
 
     public NewImagesFragment() {
 
@@ -54,18 +56,17 @@ public class NewImagesFragment extends Fragment implements RequestResponse {
 
         volleyWrapper = new VolleyWrapper(getContext());
         params = new HashMap<>();
-        imagesArray = new JSONArray();
-        imagesArrayTemp = new JSONArray();
-
         return inflater.inflate(R.layout.fragment_new_images, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.fragment_new_images_recycler);
+        mRecyclerView       = (RecyclerView) view.findViewById(R.id.fragment_new_images_recycler);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.fragment_new_images_swipe);
 
         //params.put(Const.NEW_IMAGES, String.valueOf(pageNo));
+        mSwipeRefreshLayout.setOnRefreshListener(this);
         volleyWrapper.getCall(Const.TAGGING_IMAGES, Const.NEW_IMAGES_CALLBACK);
         volleyWrapper.setListener(this);
     }
@@ -96,7 +97,6 @@ public class NewImagesFragment extends Fragment implements RequestResponse {
                             imagesArray.put(null);
                             mNewImagesAdapter.notifyItemInserted(imagesArray.length() - 1);
                             volleyWrapper.getCall(Const.TAGGING_IMAGES, Const.LOAD_MORE_IMAGES_CALLBACK);
-                            volleyWrapper.setListener(NewImagesFragment.this);
                         }
                     });
                 } else {
@@ -105,6 +105,8 @@ public class NewImagesFragment extends Fragment implements RequestResponse {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
+            mSwipeRefreshLayout.setRefreshing(false);
         } else if (callback == Const.LOAD_MORE_IMAGES_CALLBACK) {
             try {
                 if (response.getString(Const.SUCCESS).equals("true")) {
@@ -128,5 +130,11 @@ public class NewImagesFragment extends Fragment implements RequestResponse {
             }
         }
 
+    }
+
+    @Override
+    public void onRefresh() {
+        mRecyclerView.clearOnScrollListeners();
+        volleyWrapper.getCall(Const.TAGGING_IMAGES, Const.NEW_IMAGES_CALLBACK);
     }
 }

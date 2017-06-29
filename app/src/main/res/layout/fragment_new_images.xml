@@ -4,9 +4,15 @@
     android:layout_height="match_parent"
     tools:context="com.stonevire.wallup.fragments.NewImagesFragment">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/fragment_new_images_recycler"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/fragment_new_images_swipe"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/fragment_new_images_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </RelativeLayout>
