@@ -40,7 +40,7 @@ public class NewImagesFragment extends Fragment implements RequestResponse,Swipe
     Map<String, String> params;
     JSONArray imagesArray;
     NewImagesAdapter mNewImagesAdapter;
-    int pageNo = 0;
+    int pageNo = 1;
 
     Context mContext;
     RecyclerView mRecyclerView;
@@ -54,8 +54,9 @@ public class NewImagesFragment extends Fragment implements RequestResponse,Swipe
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        volleyWrapper = new VolleyWrapper(getContext());
-        params = new HashMap<>();
+        volleyWrapper   = new VolleyWrapper(getContext());
+        params          = new HashMap<>();
+        imagesArray     = new JSONArray();
         return inflater.inflate(R.layout.fragment_new_images, container, false);
     }
 
@@ -65,11 +66,17 @@ public class NewImagesFragment extends Fragment implements RequestResponse,Swipe
         mRecyclerView       = (RecyclerView) view.findViewById(R.id.fragment_new_images_recycler);
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.fragment_new_images_swipe);
 
-        //params.put(Const.NEW_IMAGES, String.valueOf(pageNo));
         mSwipeRefreshLayout.setOnRefreshListener(this);
-        volleyWrapper.getCall(Const.TAGGING_IMAGES, Const.NEW_IMAGES_CALLBACK);
-        volleyWrapper.setListener(this);
+
+        if (imagesArray.length()==0)
+        {
+            pageNo=1;
+            params.put(Const.PAGE_NO, String.valueOf(pageNo));
+            volleyWrapper.postCall(Const.NEW_IMAGES,params,Const.NEW_IMAGES_CALLBACK);
+            volleyWrapper.setListener(this);
+        }
     }
+
 
     @Override
     public void onErrorResponse(VolleyError volleyError, int callback) {
@@ -84,7 +91,8 @@ public class NewImagesFragment extends Fragment implements RequestResponse,Swipe
             try {
                 if (response.getString(Const.SUCCESS).equals("true")) {
 
-                    imagesArray = response.getJSONArray(Const.IMAGES);
+                    pageNo++;
+                    imagesArray       = response.getJSONArray(Const.IMAGES);
                     mNewImagesAdapter = new NewImagesAdapter(getContext(), imagesArray, mRecyclerView);
                     mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
                     mRecyclerView.setAdapter(mNewImagesAdapter);
@@ -93,10 +101,12 @@ public class NewImagesFragment extends Fragment implements RequestResponse,Swipe
                     mNewImagesAdapter.setOnLoadMoreListener(new LoadMoreListener() {
                         @Override
                         public void onLoadMore() {
-
                             imagesArray.put(null);
                             mNewImagesAdapter.notifyItemInserted(imagesArray.length() - 1);
-                            volleyWrapper.getCall(Const.TAGGING_IMAGES, Const.LOAD_MORE_IMAGES_CALLBACK);
+
+                            params = new HashMap<String, String>();
+                            params.put(Const.PAGE_NO, String.valueOf(pageNo));
+                            volleyWrapper.postCall(Const.NEW_IMAGES,params,Const.LOAD_MORE_IMAGES_CALLBACK);
                         }
                     });
                 } else {
@@ -111,6 +121,7 @@ public class NewImagesFragment extends Fragment implements RequestResponse,Swipe
             try {
                 if (response.getString(Const.SUCCESS).equals("true")) {
 
+                    pageNo++;
                     JSONArray tempArray = response.getJSONArray(Const.IMAGES);
                     imagesArray.remove(imagesArray.length()-1);
                     mNewImagesAdapter.notifyItemRemoved(imagesArray.length());
@@ -135,6 +146,8 @@ public class NewImagesFragment extends Fragment implements RequestResponse,Swipe
     @Override
     public void onRefresh() {
         mRecyclerView.clearOnScrollListeners();
-        volleyWrapper.getCall(Const.TAGGING_IMAGES, Const.NEW_IMAGES_CALLBACK);
+        pageNo=1;
+        params.put(Const.PAGE_NO, String.valueOf(pageNo));
+        volleyWrapper.postCall(Const.NEW_IMAGES,params,Const.NEW_IMAGES_CALLBACK);
     }
 }

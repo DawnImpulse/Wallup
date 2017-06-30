@@ -8,6 +8,12 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <!--No Action Bar-->
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
     <!--Splash Theme-->
     <style name="AppThemeSplash" parent="AppTheme">
         <item name="windowNoTitle">true</item>
@@ -18,17 +24,11 @@
     </style>
 
     <!--Fullscreen Theme-->
-    <style name="AppThemeFullScreen" parent="AppTheme">
+    <style name="AppTheme.FullScreen" parent="AppTheme">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
-    </style>
-
-    <!--No Action Bar-->
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

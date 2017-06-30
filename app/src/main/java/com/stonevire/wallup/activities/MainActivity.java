@@ -19,6 +19,9 @@ import com.facebook.drawee.backends.pipeline.Fresco;
 import com.stonevire.wallup.R;
 import com.stonevire.wallup.fragments.NewImagesFragment;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -40,10 +43,12 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         Fresco.initialize(this);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        viewPager.setAdapter(mSectionsPagerAdapter);
+        setupViewPager(viewPager);
         tabLayout.setupWithViewPager(viewPager);
+        viewPager.setOffscreenPageLimit(2);
 
     }
 
@@ -91,7 +96,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void setupViewPager(ViewPager viewPager) {
+        SectionsPagerAdapter adapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        adapter.addFragment(new NewImagesFragment(), "IMAGES");
+        adapter.addFragment(PlaceholderFragment.newInstance(1), "CURRENT");
+        adapter.addFragment(PlaceholderFragment.newInstance(2), "FUTURE");
+
+        viewPager.setAdapter(adapter);
+    }
+
     private class SectionsPagerAdapter extends FragmentPagerAdapter {
+        private final List<Fragment> mFragmentList = new ArrayList<>();
+        private final List<String> mFragmentTitleList = new ArrayList<>();
 
         SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -99,13 +115,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
-            if(position==0)
-            {
-                return new NewImagesFragment();
-            }else
-            {
-                return PlaceholderFragment.newInstance(position + 1);
-            }
+            return mFragmentList.get(position);
         }
 
         @Override
@@ -116,15 +126,25 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    return "SECTION 1";
-                case 1:
-                    return "SECTION 2";
-                case 2:
-                    return "SECTION 3";
-            }
-            return null;
+            return mFragmentTitleList.get(position);
         }
+
+        void addFragment(android.support.v4.app.Fragment fragment, String title) {
+            mFragmentList.add(fragment);
+            mFragmentTitleList.add(title);
+        }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return super.onSupportNavigateUp();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+
+        // for animation of drawable
     }
 }

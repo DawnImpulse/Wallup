@@ -22,8 +22,8 @@
         </activity>
         <activity
             android:name=".activities.MainActivity"
-            android:label=""
-            android:theme="@style/AppThemeFullScreen"/>
+            android:label="Wallup"
+            android:theme="@style/AppTheme.FullScreen"/>
     </application>
 
 </manifest>

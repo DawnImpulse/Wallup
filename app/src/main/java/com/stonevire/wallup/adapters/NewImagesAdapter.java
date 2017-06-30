@@ -114,9 +114,8 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             return imagesArray.get(position) == null ? VIEW_TYPE_LOADING : VIEW_TYPE_ITEM;
         } catch (JSONException e) {
             e.printStackTrace();
+            return VIEW_TYPE_LOADING;
         }
-
-        return VIEW_TYPE_LOADING;
     }
 
     public void setOnLoadMoreListener(LoadMoreListener mLoadMoreListener) {
