@@ -9,7 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
+import com.facebook.drawee.view.DraweeView;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.NativeExpressAdView;
 import com.stonevire.wallup.R;
 import com.stonevire.wallup.interfaces.LoadMoreListener;
 
@@ -27,6 +31,7 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     private final int VIEW_TYPE_ITEM = 0;
     private final int VIEW_TYPE_LOADING = 1;
+    private final int VIEW_TYPE_AD = 2;
 
     private LoadMoreListener mLoadMoreListener;
 
@@ -36,12 +41,13 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private JSONArray imagesArray;
     private RecyclerView mRecyclerView;
 
+    private DraweeView draweeView;
+
     String append = "?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=720&fit=max";
 
-    public NewImagesAdapter(Context context, JSONArray imagesArray, RecyclerView recyclerView)
-    {
-        this.imagesArray   = imagesArray;
-        this.mContext      = context;
+    public NewImagesAdapter(Context context, JSONArray imagesArray, RecyclerView recyclerView) {
+        this.imagesArray = imagesArray;
+        this.mContext = context;
         this.mRecyclerView = recyclerView;
 
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -66,22 +72,26 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = null;
         if (viewType == VIEW_TYPE_ITEM) {
-            View view = LayoutInflater.from(mContext).inflate(R.layout.inflator_new_image, parent, false);
+            view = LayoutInflater.from(mContext).inflate(R.layout.inflator_new_image, parent, false);
             return new NewImagesHolder(view);
         } else if (viewType == VIEW_TYPE_LOADING) {
-            View view = LayoutInflater.from(mContext).inflate(R.layout.inflator_loading_view, parent, false);
+            view = LayoutInflater.from(mContext).inflate(R.layout.inflator_loading_view, parent, false);
             return new LoadingViewHolder(view);
+        } else if (viewType == VIEW_TYPE_AD) {
+            view = LayoutInflater.from(mContext).inflate(R.layout.inflator_native_ad, parent, false);
+            return new AdViewHolder(view);
         }
         return null;
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-
-        if(holder instanceof NewImagesHolder)
-        {
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+        if (holder instanceof NewImagesHolder) {
             try {
+
+
                 JSONObject jsonObject = imagesArray.getJSONObject(position);
                 String details = jsonObject.getString("details");
                 String new_details = details.replace("\\", "");
@@ -89,6 +99,7 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 JSONObject detailsObject = new JSONObject(new_details);
                 JSONObject urls = detailsObject.getJSONObject("urls");
 
+                draweeView = ((NewImagesHolder) holder).draweeView;
                 ((NewImagesHolder) holder).draweeView.setBackgroundColor(Color.parseColor(detailsObject.getString("color")));
                 ((NewImagesHolder) holder).draweeView.setImageURI(urls.getString("raw") + append);
 
@@ -96,10 +107,20 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 e.printStackTrace();
             }
 
-        }else if(holder instanceof LoadingViewHolder)
-        {
+        } else if (holder instanceof LoadingViewHolder) {
             LoadingViewHolder loadingViewHolder = (LoadingViewHolder) holder;
             loadingViewHolder.progressBar.setIndeterminate(true);
+        } else if (holder instanceof AdViewHolder) {
+            AdRequest mAdRequest = new AdRequest.Builder().build();
+            ((AdViewHolder) holder).mAdView.loadAd(mAdRequest);
+            ((AdViewHolder) holder).mAdView.setAdListener(new AdListener() {
+                @Override
+                public void onAdLoaded() {
+                    super.onAdLoaded();
+                    ((AdViewHolder) holder).mAdView.setVisibility(View.VISIBLE);
+                }
+
+            });
         }
     }
 
@@ -111,6 +132,9 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @Override
     public int getItemViewType(int position) {
         try {
+            if (position!=0 && position % 10 == 0) {
+                return VIEW_TYPE_AD;
+            }
             return imagesArray.get(position) == null ? VIEW_TYPE_LOADING : VIEW_TYPE_ITEM;
         } catch (JSONException e) {
             e.printStackTrace();
@@ -126,6 +150,8 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         isLoading = false;
     }
 
+
+    //New images View Holder
     private static class NewImagesHolder extends RecyclerView.ViewHolder {
         public SimpleDraweeView draweeView;
 
@@ -135,12 +161,23 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
     }
 
+    //Loading View Holder
     private static class LoadingViewHolder extends RecyclerView.ViewHolder {
         public ProgressBar progressBar;
 
         public LoadingViewHolder(View itemView) {
             super(itemView);
             progressBar = (ProgressBar) itemView.findViewById(R.id.inflator_loading_view_progress);
+        }
+    }
+
+    //Ad View Holder
+    private static class AdViewHolder extends RecyclerView.ViewHolder {
+        public NativeExpressAdView mAdView;
+
+        public AdViewHolder(View itemView) {
+            super(itemView);
+            mAdView = (NativeExpressAdView) itemView.findViewById(R.id.inflator_native_ad_view);
         }
     }
 }
