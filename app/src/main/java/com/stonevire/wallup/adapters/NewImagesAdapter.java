@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.facebook.drawee.view.DraweeView;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -16,6 +17,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.NativeExpressAdView;
 import com.stonevire.wallup.R;
 import com.stonevire.wallup.interfaces.LoadMoreListener;
+import com.stonevire.wallup.utils.Const;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,7 +45,7 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     private DraweeView draweeView;
 
-    String append = "?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=720&fit=max";
+    private String append = "?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=720&fit=max";
 
     public NewImagesAdapter(Context context, JSONArray imagesArray, RecyclerView recyclerView) {
         this.imagesArray = imagesArray;
@@ -93,24 +95,37 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
 
                 JSONObject jsonObject = imagesArray.getJSONObject(position);
-                String details = jsonObject.getString("details");
+                String details = jsonObject.getString(Const.DETAILS);
                 String new_details = details.replace("\\", "");
 
                 JSONObject detailsObject = new JSONObject(new_details);
-                JSONObject urls = detailsObject.getJSONObject("urls");
+                JSONObject urls = detailsObject.getJSONObject(Const.IMAGE_URLS);
+                JSONObject author = detailsObject.getJSONObject(Const.IMAGE_USER);
 
-                draweeView = ((NewImagesHolder) holder).draweeView;
-                ((NewImagesHolder) holder).draweeView.setBackgroundColor(Color.parseColor(detailsObject.getString("color")));
-                ((NewImagesHolder) holder).draweeView.setImageURI(urls.getString("raw") + append);
+                if (detailsObject.has(Const.LOCATION_OBJECT)) {
+                    JSONObject locationObject = detailsObject.getJSONObject(Const.LOCATION_OBJECT);
+                    ((NewImagesHolder) holder).location.setText(locationObject.getString(Const.LOCATION_TITLE));
+                }
+                JSONObject author_image = author.getJSONObject(Const.IMAGE_USER_IMAGES);
+
+                ((NewImagesHolder) holder).draweeView.setBackgroundColor
+                        (Color.parseColor(detailsObject.getString(Const.IMAGE_COLOR)));
+                ((NewImagesHolder) holder).draweeView.setImageURI(urls.getString(Const.IMAGE_RAW) + append);
+                ((NewImagesHolder) holder).authorImage.setImageURI(author_image.getString(Const.IMAGE_USER_IMAGE_MEDIUM));
+                ((NewImagesHolder) holder).authorName.setText(author.getString(Const.IMAGE_USER_NAME));
+                ((NewImagesHolder) holder).favourite.setText(detailsObject.getString(Const.IMAGE_LIKES));
 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
         } else if (holder instanceof LoadingViewHolder) {
+
             LoadingViewHolder loadingViewHolder = (LoadingViewHolder) holder;
             loadingViewHolder.progressBar.setIndeterminate(true);
+
         } else if (holder instanceof AdViewHolder) {
+
             AdRequest mAdRequest = new AdRequest.Builder().build();
             ((AdViewHolder) holder).mAdView.loadAd(mAdRequest);
             ((AdViewHolder) holder).mAdView.setAdListener(new AdListener() {
@@ -132,7 +147,7 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @Override
     public int getItemViewType(int position) {
         try {
-            if (position!=0 && position % 10 == 0) {
+            if (position != 0 && position % 10 == 0) {
                 return VIEW_TYPE_AD;
             }
             return imagesArray.get(position) == null ? VIEW_TYPE_LOADING : VIEW_TYPE_ITEM;
@@ -153,11 +168,19 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     //New images View Holder
     private static class NewImagesHolder extends RecyclerView.ViewHolder {
-        public SimpleDraweeView draweeView;
+        SimpleDraweeView draweeView;
+        SimpleDraweeView authorImage;
+        TextView authorName;
+        TextView favourite;
+        TextView location;
 
         public NewImagesHolder(View itemView) {
             super(itemView);
             draweeView = (SimpleDraweeView) itemView.findViewById(R.id.inflator_new_image_drawee);
+            authorImage = (SimpleDraweeView) itemView.findViewById(R.id.inflator_new_image_user_image);
+            authorName = (TextView) itemView.findViewById(R.id.inflator_new_image_user_name);
+            favourite = (TextView) itemView.findViewById(R.id.inflator_new_image_favourite);
+            location = (TextView) itemView.findViewById(R.id.inflator_new_image_location);
         }
     }
 
