@@ -1,12 +1,14 @@
 package com.stonevire.wallup.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -17,6 +19,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.NativeExpressAdView;
 import com.stonevire.wallup.R;
 import com.stonevire.wallup.interfaces.LoadMoreListener;
+import com.stonevire.wallup.activities.UserProfileActivity;
 import com.stonevire.wallup.utils.Const;
 
 import org.json.JSONArray;
@@ -29,7 +32,7 @@ import org.json.JSONObject;
 
 public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private Context mContext;
+    public Context mContext;
 
     private final int VIEW_TYPE_ITEM = 0;
     private final int VIEW_TYPE_LOADING = 1;
@@ -42,7 +45,6 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private int lastVisibleItem, totalItemCount;
     private JSONArray imagesArray;
     private RecyclerView mRecyclerView;
-
     private DraweeView draweeView;
 
     private String append = "?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=720&fit=max";
@@ -92,7 +94,6 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof NewImagesHolder) {
             try {
-
 
                 JSONObject jsonObject = imagesArray.getJSONObject(position);
                 String details = jsonObject.getString(Const.DETAILS);
@@ -167,20 +168,53 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
 
     //New images View Holder
-    private static class NewImagesHolder extends RecyclerView.ViewHolder {
+    private class NewImagesHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         SimpleDraweeView draweeView;
         SimpleDraweeView authorImage;
         TextView authorName;
         TextView favourite;
         TextView location;
+        LinearLayout authorLayout;
 
         public NewImagesHolder(View itemView) {
             super(itemView);
+
             draweeView = (SimpleDraweeView) itemView.findViewById(R.id.inflator_new_image_drawee);
             authorImage = (SimpleDraweeView) itemView.findViewById(R.id.inflator_new_image_user_image);
             authorName = (TextView) itemView.findViewById(R.id.inflator_new_image_user_name);
             favourite = (TextView) itemView.findViewById(R.id.inflator_new_image_favourite);
             location = (TextView) itemView.findViewById(R.id.inflator_new_image_location);
+            authorLayout = (LinearLayout) itemView.findViewById(R.id.inflator_new_image_author_layout);
+
+            authorLayout.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+
+            JSONObject jsonObject = null;
+            try {
+
+                jsonObject = imagesArray.getJSONObject(getAdapterPosition());
+                String details = jsonObject.getString(Const.DETAILS);
+                String new_details = details.replace("\\", "");
+
+                JSONObject detailsObject = new JSONObject(new_details);
+                JSONObject author = detailsObject.getJSONObject(Const.IMAGE_USER);
+
+
+                switch (v.getId()) {
+                    case R.id.inflator_new_image_author_layout:
+                        Intent intent = new Intent(mContext, UserProfileActivity.class);
+
+                        intent.putExtra(Const.IMAGE_USER, String.valueOf(author));
+                        mContext.startActivity(intent);
+                        break;
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 

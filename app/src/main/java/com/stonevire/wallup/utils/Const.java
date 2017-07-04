@@ -11,6 +11,9 @@ public class Const {
     public static final String NEW_IMAGES       = DOMAIN + "v1/listNewImages";
     public static final String TAGGING_IMAGES   = DOMAIN + "v1/taggingList";
 
+    public static final String UNSPLASH_ID          = "?client_id=e1d86d6d0dcb8ce3eea9d16c712c0feed5f1e9a05e5a5f252cf5ea090a3ebc80";
+    public static final String UNSPLASH_USER_RANDOM = "https://source.unsplash.com/user/";
+
     //----------------- Unsplash Image Properties------------------
 
     public static final String IMAGE_URLS               = "urls";
@@ -23,6 +26,17 @@ public class Const {
     public static final String IMAGE_LIKES              = "likes";
     public static final String LOCATION_OBJECT          = "location";
     public static final String LOCATION_TITLE           = "title";
+    public static final String USER_BIO                 = "bio";
+    public static final String USER_TOTAL_LIKES         = "total_likes";
+    public static final String USER_TOTAL_PHOTOS        = "total_photos";
+    public static final String USER_FIRST_NAME          = "first_name";
+    public static final String USER_LAST_NAME           = "last_name";
+    public static final String USER_PHOTOS              = "photos";
+    public static final String USER_LOCATION            = "location";
+    public static final String USERNAME                 = "username";
+    public static final String LINKS                    = "links";
+    public static final String ERRORS                   = "errors";
+
 
     //------------------ API Variables ----------------------------
 
@@ -34,7 +48,8 @@ public class Const {
 
     //------------------ Callbacks --------------------------------
 
-    public static final int NEW_IMAGES_CALLBACK         = 1 ;
+    public static final int NEW_IMAGES_CALLBACK         = 1;
     public static final int LOAD_MORE_IMAGES_CALLBACK   = 2;
+    public static final int USER_IMAGES_CALLBACK        = 3;
 
 }

@@ -23,7 +23,15 @@
         <activity
             android:name=".activities.MainActivity"
             android:label="Wallup"
-            android:theme="@style/AppTheme.FullScreen"/>
+            android:theme="@style/AppTheme.FullScreen" />
+        <activity
+            android:name=".activities.UserProfileActivity"
+            android:label=""
+            android:theme="@style/AppTheme.NoActionBar.TransparentStatusBar" />
+        <activity
+            android:name=".AboutActivity"
+            android:label="@string/title_activity_about"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

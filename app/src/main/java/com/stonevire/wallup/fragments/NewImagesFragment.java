@@ -144,6 +144,15 @@ public class NewImagesFragment extends Fragment implements RequestResponse,Swipe
     }
 
     @Override
+    public void onResponse(JSONArray response, int callback) {
+    }
+
+    @Override
+    public void onRespose(String response, int callback) {
+
+    }
+
+    @Override
     public void onRefresh() {
         mRecyclerView.clearOnScrollListeners();
         pageNo=1;
