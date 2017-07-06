@@ -81,7 +81,6 @@ public class UserProfileActivity extends AppCompatActivity implements RequestRes
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
     }
 
     @Override

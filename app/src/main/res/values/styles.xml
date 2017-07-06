@@ -23,6 +23,12 @@
         <item name="android:background">@color/colorPrimary</item>
     </style>
 
+    <!--Transparent App Theme-->
+    <style name="AppTheme.NoActionBar.TransparentStatusBar" parent="AppTheme">>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
     <!--Fullscreen Theme-->
     <style name="AppTheme.FullScreen" parent="AppTheme">
         <item name="windowNoTitle">true</item>

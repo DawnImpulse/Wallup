@@ -102,4 +102,12 @@
         "when a user tries to pick up one of cards.\n\n"
     </string>
     <string name="title_activity_about">AboutActivity</string>
+    <string name="about">About</string>
+    <string name="whatsapp_support_text">Chat with us on Whatsapp in Realtime to resolve your issues</string>
+    <string name="messenger_support_text">You can even reach us with Facebook Messenger</string>
+    <string name="about_thanks_text">This project is possible by the works of the following community/users/organisation.  Special thanks to them .</string>
+    <string name="unsplash_credits">Unsplash features thousands of beautiful Images featured by talented Photographers.
+        \n\nAll the images in this app are provided by <b>Unsplash API</b> .
+        \n\nThe images have a <b>CC0 licence</b> that is they are free to use , modify &#38; share although giving credits to <b>Unsplash</b> and <b>Photographer</b> is highly appreciable .\n
+        \nWe thank <b>Unsplash</b> for the generous use of their API :) .</string>
 </resources>
