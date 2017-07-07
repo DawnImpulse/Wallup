@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="AppTheme.NoActionBar" parent="AppTheme">>
+    <style name="AppTheme.NoActionBar" parent="AppTheme">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
 
+    <!--Fullscreen Theme-->
+    <style name="AppTheme.FullScreen" parent="AppTheme">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <!--Transparent Status Bar-->
     <style name="AppTheme.NoActionBar.TransparentStatusBar" parent="AppTheme">>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

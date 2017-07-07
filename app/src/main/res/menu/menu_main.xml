@@ -2,9 +2,27 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.stonevire.wallup.activities.MainActivity">
+
+    <!--<item
+        android:id="@+id/action_search"
+        android:icon="@drawable/vector_drawable_search"
+        android:orderInCategory="100"
+        android:title="@string/abc_search_hint"
+        app:showAsAction="always" />-->
+
+
+    <item
+        android:id="@+id/search"
+        android:actionViewClass="android.widget.SearchView"
+        android:icon="@drawable/vector_drawable_search"
+        android:orderInCategory="1"
+        android:title="Search"
+        app:showAsAction="collapseActionView|ifRoom" />
+
+
     <item
         android:id="@+id/action_about"
-        android:orderInCategory="100"
+        android:orderInCategory="2"
         android:title="@string/about"
         app:showAsAction="never" />
 </menu>
