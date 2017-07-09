@@ -1,8 +1,14 @@
 package com.stonevire.wallup.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -18,8 +24,8 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.NativeExpressAdView;
 import com.stonevire.wallup.R;
-import com.stonevire.wallup.interfaces.LoadMoreListener;
 import com.stonevire.wallup.activities.UserProfileActivity;
+import com.stonevire.wallup.interfaces.LoadMoreListener;
 import com.stonevire.wallup.utils.Const;
 
 import org.json.JSONArray;
@@ -49,6 +55,11 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     private String append = "?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=720&fit=max";
 
+    /**
+     * Constructor
+     *
+     * @param context,imagesArray,recyclerView
+     */
     public NewImagesAdapter(Context context, JSONArray imagesArray, RecyclerView recyclerView) {
         this.imagesArray = imagesArray;
         this.mContext = context;
@@ -74,6 +85,12 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         });
     }
 
+    /**
+     * On Create View Holder
+     *
+     * @param parent,viewType
+     * @return
+     */
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = null;
@@ -90,6 +107,11 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         return null;
     }
 
+    /**
+     * On Bind View Holder
+     *
+     * @param holder,position
+     */
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof NewImagesHolder) {
@@ -116,6 +138,12 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 ((NewImagesHolder) holder).authorName.setText(author.getString(Const.IMAGE_USER_NAME));
                 ((NewImagesHolder) holder).favourite.setText(detailsObject.getString(Const.IMAGE_LIKES));
 
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    ViewCompat.setTransitionName(((NewImagesHolder) holder).authorImage, author.getString(Const.USERNAME));
+                    ViewCompat.setTransitionName(((NewImagesHolder) holder).authorName,
+                            author.getString(Const.USERNAME) + Const.USERNAME);
+                }
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -140,11 +168,20 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
     }
 
+    /**
+     * Get Item View Count
+     * @return Count of Items
+     */
     @Override
     public int getItemCount() {
         return imagesArray == null ? 0 : imagesArray.length();
     }
 
+    /**
+     * What type of item does the current view should show
+     * @param position
+     * @return Item Type (int)
+     */
     @Override
     public int getItemViewType(int position) {
         try {
@@ -158,16 +195,25 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
     }
 
+    /**
+     * On Load More Listener (defined)
+     * @param mLoadMoreListener
+     */
     public void setOnLoadMoreListener(LoadMoreListener mLoadMoreListener) {
         this.mLoadMoreListener = mLoadMoreListener;
     }
 
+    /**
+     * Set Loaded to false when view is loaded after On Load More
+     */
     public void setLoaded() {
         isLoading = false;
     }
 
 
-    //New images View Holder
+    /**
+     * New Images View Holder
+     */
     private class NewImagesHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         SimpleDraweeView draweeView;
         SimpleDraweeView authorImage;
@@ -189,6 +235,7 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             authorLayout.setOnClickListener(this);
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
         public void onClick(View v) {
 
@@ -208,7 +255,13 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         Intent intent = new Intent(mContext, UserProfileActivity.class);
 
                         intent.putExtra(Const.IMAGE_USER, String.valueOf(author));
-                        mContext.startActivity(intent);
+                        intent.putExtra("transName", ViewCompat.getTransitionName(authorImage));
+                        intent.putExtra("transName1", ViewCompat.getTransitionName(authorName));
+                        Pair<View, String> pairImage = Pair.create((View) authorImage, ViewCompat.getTransitionName(authorImage));
+                        Pair<View, String> pairName = Pair.create((View) authorName, ViewCompat.getTransitionName(authorName));
+                        ActivityOptionsCompat options = ActivityOptionsCompat.
+                                makeSceneTransitionAnimation((Activity) mContext, pairImage, pairName);
+                        mContext.startActivity(intent, options.toBundle());
                         break;
                 }
 
@@ -218,7 +271,9 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
     }
 
-    //Loading View Holder
+    /**
+     * Loading View Holder
+     */
     private static class LoadingViewHolder extends RecyclerView.ViewHolder {
         public ProgressBar progressBar;
 
@@ -228,7 +283,9 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
     }
 
-    //Ad View Holder
+    /**
+     * Ad View Holder
+     */
     private static class AdViewHolder extends RecyclerView.ViewHolder {
         public NativeExpressAdView mAdView;
 

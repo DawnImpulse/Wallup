@@ -1,6 +1,7 @@
 package com.stonevire.wallup.activities;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.content.ContextCompat;
@@ -13,6 +14,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
+import com.facebook.drawee.drawable.ScalingUtils;
+import com.facebook.drawee.view.DraweeTransition;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.stonevire.wallup.R;
 import com.stonevire.wallup.adapters.UserImagesAdapter;
@@ -63,12 +66,19 @@ public class UserProfileActivity extends AppCompatActivity implements RequestRes
 
     UserImagesAdapter mUserImagesAdapter;
 
+    /**
+     * On Create
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
+        //supportPostponeEnterTransition();
+
+        Intent i = getIntent();
 
         mVolleyWrapper = new VolleyWrapper(this);
         try {
@@ -78,11 +88,22 @@ public class UserProfileActivity extends AppCompatActivity implements RequestRes
 
             mVolleyWrapper.getCallArray(links.getString(Const.USER_PHOTOS) + Const.UNSPLASH_ID, Const.USER_IMAGES_CALLBACK);
             mVolleyWrapper.setListener(this);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                contentUserProfileImage.setTransitionName(i.getStringExtra("transName"));
+                activityUserProfileFirstName.setTransitionName(i.getStringExtra("transName1"));
+                getWindow().setSharedElementEnterTransition(DraweeTransition.createTransitionSet(ScalingUtils.ScaleType.CENTER_CROP, ScalingUtils.ScaleType.FIT_CENTER));
+                getWindow().setSharedElementReturnTransition(DraweeTransition.createTransitionSet(ScalingUtils.ScaleType.FIT_CENTER, ScalingUtils.ScaleType.CENTER_CROP));
+            }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * On Start
+     */
     @Override
     protected void onStart() {
         super.onStart();
@@ -117,19 +138,25 @@ public class UserProfileActivity extends AppCompatActivity implements RequestRes
         }
     }
 
+    /**
+     * On Error Response
+     * @param volleyError,callback
+     */
     @Override
     public void onErrorResponse(VolleyError volleyError, int callback) {
         Toast.makeText(this, volleyError.toString(), Toast.LENGTH_SHORT).show();
-        Log.d("Test",volleyError.toString());
+        Log.d("Test", volleyError.toString());
     }
 
+    /**
+     * On Response - JSON Object
+     * @param response,callback
+     */
     @Override
     public void onResponse(JSONObject response, int callback) {
-        switch (callback)
-        {
+        switch (callback) {
             case Const.USER_IMAGES_CALLBACK:
-                if (response.has(Const.ERRORS))
-                {
+                if (response.has(Const.ERRORS)) {
                     try {
                         Toast.makeText(this, response.getString(Const.ERRORS), Toast.LENGTH_SHORT).show();
                     } catch (JSONException e) {
@@ -139,20 +166,37 @@ public class UserProfileActivity extends AppCompatActivity implements RequestRes
         }
     }
 
+    /**
+     * On Response - JSON Array
+     * @param response,callback
+     */
     @Override
     public void onResponse(JSONArray response, int callback) {
         switch (callback) {
             case Const.USER_IMAGES_CALLBACK:
-                mUserImagesAdapter = new UserImagesAdapter(this,response,mRecyclerView);
-                mRecyclerView.setLayoutManager(new GridLayoutManager(this,3));
+                mUserImagesAdapter = new UserImagesAdapter(this, response, mRecyclerView);
+                mRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
                 mRecyclerView.setAdapter(mUserImagesAdapter);
                 mRecyclerView.setNestedScrollingEnabled(true);
 
         }
     }
 
+    /**
+     * On Response - String
+     * @param response,callback
+     */
     @Override
-    public void onRespose(String response, int callback) {
+    public void onResponse(String response, int callback) {
 
+    }
+
+    /**
+     * On Back Pressed
+     */
+    @Override
+    public void onBackPressed() {
+        supportFinishAfterTransition();
+        super.onBackPressed();
     }
 }

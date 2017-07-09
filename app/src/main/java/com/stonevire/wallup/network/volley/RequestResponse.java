@@ -13,5 +13,5 @@ public interface RequestResponse {
     public void onErrorResponse(VolleyError volleyError, int callback);
     public void onResponse(JSONObject response, int callback);
     public void onResponse(JSONArray response, int callback);
-    public void onRespose(String response, int callback);
+    public void onResponse(String response, int callback);
 }

@@ -43,6 +43,10 @@ public class UserImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     RecyclerView mRecyclerView;
     private String append = "?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=720&fit=max";
 
+    /**
+     * Constructor
+     * @param context,imagesArray,recyclerView
+     */
     public UserImagesAdapter(Context context, JSONArray imagesArray, RecyclerView recyclerView) {
         this.mContext = context;
         this.mRecyclerView = recyclerView;
@@ -68,6 +72,11 @@ public class UserImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         });
     }
 
+    /**
+     * On Create View Holder
+     * @param parent,viewType
+     * @return
+     */
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = null;
@@ -84,6 +93,10 @@ public class UserImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         return null;
     }
 
+    /**
+     * On Bind View Holder
+     * @param holder,position
+     */
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof UserImagesHolder) {
@@ -125,11 +138,20 @@ public class UserImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         }
     }
 
+    /**
+     * Get count of Items
+     * @return Count of Items
+     */
     @Override
     public int getItemCount() {
         return mImagesArray == null ? 0 : mImagesArray.length();
     }
 
+    /**
+     * Return the Type of view to show on Current View
+     * @param position
+     * @return View Type (int)
+     */
     @Override
     public int getItemViewType(int position) {
         try {
@@ -140,16 +162,25 @@ public class UserImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         return 0;
     }
 
+    /**
+     * On Load More Listener (defined)
+     * @param mLoadMoreListener
+     */
     public void setOnLoadMoreListener(LoadMoreListener mLoadMoreListener) {
         this.mLoadMoreListener = mLoadMoreListener;
     }
 
+    /**
+     * Set Loaded false when view is loaded after On Loading
+     */
     public void setLoaded() {
         isLoading = false;
     }
 
 
-    //New images View Holder
+    /**
+     * User Images View Holder
+     */
     private class UserImagesHolder extends RecyclerView.ViewHolder {
         SimpleDraweeView draweeView;
 
@@ -159,7 +190,9 @@ public class UserImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         }
     }
 
-    //Loading View Holder
+    /**
+     * Loading View Holder
+     */
     private static class LoadingViewHolder extends RecyclerView.ViewHolder {
         public ProgressBar progressBar;
 
@@ -169,7 +202,9 @@ public class UserImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         }
     }
 
-    //Ad View Holder
+    /**
+     * Ad View Holder
+     */
     private static class AdViewHolder extends RecyclerView.ViewHolder {
         public NativeExpressAdView mAdView;
 

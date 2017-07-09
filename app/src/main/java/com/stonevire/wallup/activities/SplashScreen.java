@@ -11,6 +11,10 @@ import butterknife.OnClick;
 
 public class SplashScreen extends AppCompatActivity {
 
+    /**
+     * On Create
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -18,6 +22,9 @@ public class SplashScreen extends AppCompatActivity {
         ButterKnife.bind(this);
     }
 
+    /**
+     * On Click
+     */
     @OnClick(R.id.button)
     public void onViewClicked() {
 

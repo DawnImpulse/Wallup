@@ -25,6 +25,10 @@ public class AboutActivity extends AppCompatActivity {
     @BindView(R.id.toolbar_layout)
     CollapsingToolbarLayout collapsingToolbar;
 
+    /**
+     * On Create
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,7 +43,9 @@ public class AboutActivity extends AppCompatActivity {
 
     }
 
-    // Setting the width of linear layouts in Card 1
+    /**
+     * Setting the width of linear layouts in Card 1
+     */
     private void settingWidth() {
         WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         DisplayMetrics displaymetrics = new DisplayMetrics();       //-------------------- Getting width of screen

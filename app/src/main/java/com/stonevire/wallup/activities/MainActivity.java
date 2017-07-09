@@ -19,6 +19,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
@@ -42,7 +43,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity implements View.OnTouchListener{
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.container)
@@ -92,6 +93,8 @@ public class MainActivity extends AppCompatActivity{
         tabLayout.setupWithViewPager(viewPager);
         viewPager.setOffscreenPageLimit(2);
 
+        toolbar.setOnTouchListener(this);
+        activityMainSearchOverflow.setOnTouchListener(this);
         /*searchView.setOnQueryTextListener(this);
         searchView.setOnSearchViewListener(this);*/
 
@@ -128,8 +131,8 @@ public class MainActivity extends AppCompatActivity{
 
             int cx = activityMainSearchOverflow.getWidth();
             int cy = activityMainSearchOverflow.getHeight() / 2;
-            float initialRadius = (float) Math.hypot(cx, cy);
-            Animator anim = ViewAnimationUtils.createCircularReveal(activityMainSearchOverflow, cx, cy, 0, initialRadius);
+            float radius = (float) Math.hypot(cx, cy);
+            Animator anim = ViewAnimationUtils.createCircularReveal(activityMainSearchOverflow, cx, cy, 0, radius);
 
             activityMainSearchOverflow.setVisibility(View.VISIBLE);
             toolbar.setVisibility(View.GONE);
@@ -197,6 +200,36 @@ public class MainActivity extends AppCompatActivity{
             activityMainVoiceSearch.setColorFilter(ContextCompat.getColor(this, R.color.white));
         }
     }
+
+    /**
+     * On Touch Listener
+     * @param v,event
+     * @return true/false
+     */
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        switch (v.getId())
+        {
+            case R.id.activity_main_search_overflow :
+                if (activityMainSearchOverflow.getVisibility()== View.VISIBLE)
+                {
+                    return false;
+                }else
+                {
+                    return true;
+                }
+            case R.id.toolbar :
+                if (toolbar.getVisibility()==View.VISIBLE)
+                {
+                    return false;
+                }else
+                {
+                    return true;
+                }
+        }
+        return false;
+    }
+
     // Dummy PlaceHolder
     public static class PlaceholderFragment extends Fragment {
 
