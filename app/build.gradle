@@ -48,6 +48,7 @@ dependencies {
     compile 'com.theartofdev.edmodo:android-image-cropper:2.4.6'
     compile 'com.afollestad.material-dialogs:core:0.9.4.4'
     compile 'com.jakewharton:butterknife:8.5.1'
+    compile 'com.gjiazhe:PanoramaImageView:1.0'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
 }

@@ -27,7 +27,7 @@ public class Const {
     public static final String IMAGE_LIKES              = "likes";
     public static final String LOCATION_OBJECT          = "location";
     public static final String LOCATION_TITLE           = "title";
-    public static final String USER_BIO                 = "bio";
+    public static final String USER_IMAGE_LARGE         = "large";
     public static final String USER_TOTAL_LIKES         = "total_likes";
     public static final String USER_TOTAL_PHOTOS        = "total_photos";
     public static final String USER_FIRST_NAME          = "first_name";

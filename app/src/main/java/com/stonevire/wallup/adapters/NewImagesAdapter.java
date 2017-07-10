@@ -18,12 +18,12 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.facebook.drawee.view.DraweeView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.NativeExpressAdView;
 import com.stonevire.wallup.R;
+import com.stonevire.wallup.activities.ImagePreviewActivity;
 import com.stonevire.wallup.activities.UserProfileActivity;
 import com.stonevire.wallup.interfaces.LoadMoreListener;
 import com.stonevire.wallup.utils.Const;
@@ -51,9 +51,6 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private int lastVisibleItem, totalItemCount;
     private JSONArray imagesArray;
     private RecyclerView mRecyclerView;
-    private DraweeView draweeView;
-
-    private String append = "?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=720&fit=max";
 
     /**
      * Constructor
@@ -61,9 +58,9 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
      * @param context,imagesArray,recyclerView
      */
     public NewImagesAdapter(Context context, JSONArray imagesArray, RecyclerView recyclerView) {
-        this.imagesArray = imagesArray;
-        this.mContext = context;
-        this.mRecyclerView = recyclerView;
+        this.imagesArray    = imagesArray;
+        this.mContext       = context;
+        this.mRecyclerView  = recyclerView;
 
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -117,24 +114,23 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         if (holder instanceof NewImagesHolder) {
             try {
 
-                JSONObject jsonObject = imagesArray.getJSONObject(position);
-                String details = jsonObject.getString(Const.DETAILS);
-                String new_details = details.replace("\\", "");
-
-                JSONObject detailsObject = new JSONObject(new_details);
-                JSONObject urls = detailsObject.getJSONObject(Const.IMAGE_URLS);
-                JSONObject author = detailsObject.getJSONObject(Const.IMAGE_USER);
+                JSONObject jsonObject       = imagesArray.getJSONObject(position);
+                String details              = jsonObject.getString(Const.DETAILS);
+                String new_details          = details.replace("\\", "");
+                JSONObject detailsObject    = new JSONObject(new_details);
+                JSONObject urls             = detailsObject.getJSONObject(Const.IMAGE_URLS);
+                JSONObject author           = detailsObject.getJSONObject(Const.IMAGE_USER);
+                JSONObject author_image     = author.getJSONObject(Const.IMAGE_USER_IMAGES);
 
                 if (detailsObject.has(Const.LOCATION_OBJECT)) {
                     JSONObject locationObject = detailsObject.getJSONObject(Const.LOCATION_OBJECT);
                     ((NewImagesHolder) holder).location.setText(locationObject.getString(Const.LOCATION_TITLE));
                 }
-                JSONObject author_image = author.getJSONObject(Const.IMAGE_USER_IMAGES);
 
                 ((NewImagesHolder) holder).draweeView.setBackgroundColor
                         (Color.parseColor(detailsObject.getString(Const.IMAGE_COLOR)));
-                ((NewImagesHolder) holder).draweeView.setImageURI(urls.getString(Const.IMAGE_RAW) + append);
-                ((NewImagesHolder) holder).authorImage.setImageURI(author_image.getString(Const.IMAGE_USER_IMAGE_MEDIUM));
+                ((NewImagesHolder) holder).draweeView.setImageURI(urls.getString("regular"));
+                ((NewImagesHolder) holder).authorImage.setImageURI(author_image.getString(Const.USER_IMAGE_LARGE));
                 ((NewImagesHolder) holder).authorName.setText(author.getString(Const.IMAGE_USER_NAME));
                 ((NewImagesHolder) holder).favourite.setText(detailsObject.getString(Const.IMAGE_LIKES));
 
@@ -142,6 +138,7 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     ViewCompat.setTransitionName(((NewImagesHolder) holder).authorImage, author.getString(Const.USERNAME));
                     ViewCompat.setTransitionName(((NewImagesHolder) holder).authorName,
                             author.getString(Const.USERNAME) + Const.USERNAME);
+                    ViewCompat.setTransitionName(((NewImagesHolder) holder).draweeView, author.getString(Const.USERNAME));
                 }
 
             } catch (JSONException e) {
@@ -225,16 +222,21 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         public NewImagesHolder(View itemView) {
             super(itemView);
 
-            draweeView = (SimpleDraweeView) itemView.findViewById(R.id.inflator_new_image_drawee);
-            authorImage = (SimpleDraweeView) itemView.findViewById(R.id.inflator_new_image_user_image);
-            authorName = (TextView) itemView.findViewById(R.id.inflator_new_image_user_name);
-            favourite = (TextView) itemView.findViewById(R.id.inflator_new_image_favourite);
-            location = (TextView) itemView.findViewById(R.id.inflator_new_image_location);
-            authorLayout = (LinearLayout) itemView.findViewById(R.id.inflator_new_image_author_layout);
+            draweeView      = (SimpleDraweeView) itemView.findViewById(R.id.inflator_new_image_drawee);
+            authorImage     = (SimpleDraweeView) itemView.findViewById(R.id.inflator_new_image_user_image);
+            authorName      = (TextView) itemView.findViewById(R.id.inflator_new_image_user_name);
+            favourite       = (TextView) itemView.findViewById(R.id.inflator_new_image_favourite);
+            location        = (TextView) itemView.findViewById(R.id.inflator_new_image_location);
+            authorLayout    = (LinearLayout) itemView.findViewById(R.id.inflator_new_image_author_layout);
 
             authorLayout.setOnClickListener(this);
+            draweeView.setOnClickListener(this);
         }
 
+        /**
+         * On Click View Holder
+         * @param v - View
+         */
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
         public void onClick(View v) {
@@ -242,18 +244,17 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             JSONObject jsonObject = null;
             try {
 
-                jsonObject = imagesArray.getJSONObject(getAdapterPosition());
-                String details = jsonObject.getString(Const.DETAILS);
-                String new_details = details.replace("\\", "");
-
-                JSONObject detailsObject = new JSONObject(new_details);
-                JSONObject author = detailsObject.getJSONObject(Const.IMAGE_USER);
-
+                jsonObject                  = imagesArray.getJSONObject(getAdapterPosition());
+                String details              = jsonObject.getString(Const.DETAILS);
+                String new_details          = details.replace("\\", "");
+                JSONObject detailsObject    = new JSONObject(new_details);
+                JSONObject urls             = detailsObject.getJSONObject(Const.IMAGE_URLS);
+                JSONObject author           = detailsObject.getJSONObject(Const.IMAGE_USER);
 
                 switch (v.getId()) {
+
                     case R.id.inflator_new_image_author_layout:
                         Intent intent = new Intent(mContext, UserProfileActivity.class);
-
                         intent.putExtra(Const.IMAGE_USER, String.valueOf(author));
                         intent.putExtra("transName", ViewCompat.getTransitionName(authorImage));
                         intent.putExtra("transName1", ViewCompat.getTransitionName(authorName));
@@ -263,6 +264,14 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                                 makeSceneTransitionAnimation((Activity) mContext, pairImage, pairName);
                         mContext.startActivity(intent, options.toBundle());
                         break;
+
+                    case R.id.inflator_new_image_drawee:
+                        Intent intent1 = new Intent(mContext, ImagePreviewActivity.class);
+                        intent1.putExtra("url",urls.getString("regular"));
+                        intent1.putExtra("transName",ViewCompat.getTransitionName(draweeView));
+                        ActivityOptionsCompat options1 = ActivityOptionsCompat.
+                                makeSceneTransitionAnimation((Activity) mContext, draweeView, ViewCompat.getTransitionName(draweeView));
+                        mContext.startActivity(intent1,options1.toBundle());
                 }
 
             } catch (JSONException e) {

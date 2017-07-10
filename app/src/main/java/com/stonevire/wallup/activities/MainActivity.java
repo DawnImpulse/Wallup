@@ -43,7 +43,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
 
-public class MainActivity extends AppCompatActivity implements View.OnTouchListener{
+public class MainActivity extends AppCompatActivity implements View.OnTouchListener {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.container)
@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
     /**
      * On Create
+     *
      * @param savedInstanceState
      */
     @Override
@@ -95,29 +96,26 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
         toolbar.setOnTouchListener(this);
         activityMainSearchOverflow.setOnTouchListener(this);
-        /*searchView.setOnQueryTextListener(this);
-        searchView.setOnSearchViewListener(this);*/
-
     }
 
     /**
      * Menu Options Create
+     *
      * @param menu
      * @return
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-
         return true;
     }
 
     /**
      * Menu Options Click
+     *
      * @param item
      * @return
      */
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -129,24 +127,32 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
         if (id == R.id.search) {
 
-            int cx = activityMainSearchOverflow.getWidth();
-            int cy = activityMainSearchOverflow.getHeight() / 2;
-            float radius = (float) Math.hypot(cx, cy);
-            Animator anim = ViewAnimationUtils.createCircularReveal(activityMainSearchOverflow, cx, cy, 0, radius);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                int cx = activityMainSearchOverflow.getWidth();
+                int cy = activityMainSearchOverflow.getHeight() / 2;
+                float radius = (float) Math.hypot(cx, cy);
+                Animator anim = ViewAnimationUtils.createCircularReveal(activityMainSearchOverflow, cx, cy, 0, radius);
 
-            activityMainSearchOverflow.setVisibility(View.VISIBLE);
-            toolbar.setVisibility(View.GONE);
-            anim.start();
-            includeSearchLayoutExternal.setVisibility(View.VISIBLE);
-            tabLayout.setVisibility(View.GONE);
-            viewPager.setVisibility(View.INVISIBLE);
+                activityMainSearchOverflow.setVisibility(View.VISIBLE);
+                toolbar.setVisibility(View.GONE);
+                anim.start();
+                includeSearchLayoutExternal.setVisibility(View.VISIBLE);
+                tabLayout.setVisibility(View.GONE);
+                viewPager.setVisibility(View.INVISIBLE);
+            } else {
+                activityMainSearchOverflow.setVisibility(View.VISIBLE);
+                toolbar.setVisibility(View.GONE);
+                includeSearchLayoutExternal.setVisibility(View.VISIBLE);
+                tabLayout.setVisibility(View.GONE);
+                viewPager.setVisibility(View.INVISIBLE);
+            }
         }
-
         return super.onOptionsItemSelected(item);
     }
 
     /**
      * On Activity Result
+     *
      * @param requestCode,resultCode,data
      */
     @Override
@@ -166,9 +172,9 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
     /**
      * On Click Listener
+     *
      * @param view
      */
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @OnClick({R.id.activity_main_search_close, R.id.activity_main_voice_search})
     public void onViewClicked(View view) {
         switch (view.getId()) {
@@ -186,44 +192,39 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
     /**
      * On Text Change
+     *
      * @param text
      */
     @OnTextChanged(R.id.activity_main_search_text)
     protected void onTextChanged(CharSequence text) {
-        if (text.toString().length()!=0)
-        {
-            activityMainVoiceSearch.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.vector_drawable_close));
+        if (text.toString().length() != 0) {
+            activityMainVoiceSearch.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.vector_drawable_close));
             searchTextBoxEmpty = false;
-        }else
-        {
-            activityMainVoiceSearch.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.vector_drawable_microphone));
+        } else {
+            activityMainVoiceSearch.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.vector_drawable_microphone));
             activityMainVoiceSearch.setColorFilter(ContextCompat.getColor(this, R.color.white));
         }
     }
 
     /**
      * On Touch Listener
+     *
      * @param v,event
      * @return true/false
      */
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        switch (v.getId())
-        {
-            case R.id.activity_main_search_overflow :
-                if (activityMainSearchOverflow.getVisibility()== View.VISIBLE)
-                {
+        switch (v.getId()) {
+            case R.id.activity_main_search_overflow:
+                if (activityMainSearchOverflow.getVisibility() == View.VISIBLE) {
                     return false;
-                }else
-                {
+                } else {
                     return true;
                 }
-            case R.id.toolbar :
-                if (toolbar.getVisibility()==View.VISIBLE)
-                {
+            case R.id.toolbar:
+                if (toolbar.getVisibility() == View.VISIBLE) {
                     return false;
-                }else
-                {
+                } else {
                     return true;
                 }
         }
@@ -259,6 +260,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
     /**
      * Setting Up ViewPager
+     *
      * @param viewPager
      */
     private void setupViewPager(ViewPager viewPager) {
@@ -306,6 +308,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
     /**
      * Support Navigation Up
+     *
      * @return
      */
     @Override
@@ -333,41 +336,44 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     /**
      * Closing Search Bar
      */
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void closeSearchBar() {
-        int cx = activityMainSearchOverflow.getWidth();
-        int cy = activityMainSearchOverflow.getHeight() / 2;
 
-        float initialRadius = (float) Math.hypot(cx, cy);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            int cx = activityMainSearchOverflow.getWidth();
+            int cy = activityMainSearchOverflow.getHeight() / 2;
+            float initialRadius = (float) Math.hypot(cx, cy);
+            Animator anim =
+                    ViewAnimationUtils.createCircularReveal(activityMainSearchOverflow, cx, cy, initialRadius, 0);
 
-        Animator anim =
-                ViewAnimationUtils.createCircularReveal(activityMainSearchOverflow, cx, cy, initialRadius, 0);
-        toolbar.setVisibility(View.VISIBLE);
-        anim.start();
-        anim.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
+            toolbar.setVisibility(View.VISIBLE);
+            anim.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                }
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    activityMainSearchOverflow.setVisibility(View.GONE);
+                }
+                @Override
+                public void onAnimationCancel(Animator animation) {
 
-            }
+                }
+                @Override
+                public void onAnimationRepeat(Animator animation) {
 
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                activityMainSearchOverflow.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
-            }
-        });
-        tabLayout.setVisibility(View.VISIBLE);
-        includeSearchLayoutExternal.setVisibility(View.INVISIBLE);
-        viewPager.setVisibility(View.VISIBLE);
+                }
+            });
+            anim.start();
+            tabLayout.setVisibility(View.VISIBLE);
+            includeSearchLayoutExternal.setVisibility(View.INVISIBLE);
+            viewPager.setVisibility(View.VISIBLE);
+        }else
+        {
+            toolbar.setVisibility(View.VISIBLE);
+            tabLayout.setVisibility(View.VISIBLE);
+            includeSearchLayoutExternal.setVisibility(View.INVISIBLE);
+            viewPager.setVisibility(View.VISIBLE);
+        }
     }
 
     /**
@@ -377,7 +383,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-// Start the activity, the intent will be populated with the speech text
         startActivityForResult(intent, 1);
     }
 }

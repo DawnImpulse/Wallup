@@ -16,6 +16,13 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <!--Fullscreen No ActionBar-->
+    <style name="AppTheme.NoActionBar.Fullscreen" parent="AppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
     <!--Splash Theme-->
     <style name="AppThemeSplash" parent="AppTheme">
         <item name="windowNoTitle">true</item>

@@ -57,8 +57,6 @@ public class UserProfileActivity extends AppCompatActivity implements RequestRes
     RecyclerView mRecyclerView;
 
     Intent intent;
-    String originalImageDimens = "h=64&w=64";
-    String newImageDimens = "h=128&w=128";
 
     JSONObject author;
     JSONObject author_images;
@@ -76,25 +74,24 @@ public class UserProfileActivity extends AppCompatActivity implements RequestRes
         setContentView(R.layout.activity_user_profile);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
-        //supportPostponeEnterTransition();
 
-        Intent i = getIntent();
+        intent           = getIntent();
+        mVolleyWrapper   = new VolleyWrapper(this);
 
-        mVolleyWrapper = new VolleyWrapper(this);
         try {
-            author = new JSONObject(getIntent().getStringExtra(Const.IMAGE_USER));
-            author_images = author.getJSONObject(Const.IMAGE_USER_IMAGES);
-            links = author.getJSONObject(Const.LINKS);
-
-            mVolleyWrapper.getCallArray(links.getString(Const.USER_PHOTOS) + Const.UNSPLASH_ID, Const.USER_IMAGES_CALLBACK);
-            mVolleyWrapper.setListener(this);
+            author          = new JSONObject(getIntent().getStringExtra(Const.IMAGE_USER));
+            author_images   = author.getJSONObject(Const.IMAGE_USER_IMAGES);
+            links           = author.getJSONObject(Const.LINKS);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                contentUserProfileImage.setTransitionName(i.getStringExtra("transName"));
-                activityUserProfileFirstName.setTransitionName(i.getStringExtra("transName1"));
+                contentUserProfileImage.setTransitionName(intent.getStringExtra("transName"));
+                activityUserProfileFirstName.setTransitionName(intent.getStringExtra("transName1"));
                 getWindow().setSharedElementEnterTransition(DraweeTransition.createTransitionSet(ScalingUtils.ScaleType.CENTER_CROP, ScalingUtils.ScaleType.FIT_CENTER));
                 getWindow().setSharedElementReturnTransition(DraweeTransition.createTransitionSet(ScalingUtils.ScaleType.FIT_CENTER, ScalingUtils.ScaleType.CENTER_CROP));
             }
+
+            mVolleyWrapper.getCallArray(links.getString(Const.USER_PHOTOS) + Const.UNSPLASH_ID, Const.USER_IMAGES_CALLBACK);
+            mVolleyWrapper.setListener(this);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -111,7 +108,7 @@ public class UserProfileActivity extends AppCompatActivity implements RequestRes
         if (author != null) {
             try {
                 contentUserProfileImage.setImageURI(
-                        author_images.getString(Const.IMAGE_USER_IMAGE_MEDIUM).replace(originalImageDimens, newImageDimens));
+                        author_images.getString(Const.USER_IMAGE_LARGE));
                 contentUserProfileLikes.setText(author.getString(Const.USER_TOTAL_LIKES));
                 contentUserProfileImages.setText(author.getString(Const.USER_TOTAL_PHOTOS));
                 contentUserProfileUsername.setText("@" + author.getString(Const.USERNAME));
@@ -134,7 +131,7 @@ public class UserProfileActivity extends AppCompatActivity implements RequestRes
                 e.printStackTrace();
             }
         } else {
-            Toast.makeText(this, "Author Empty", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please Refresh", Toast.LENGTH_SHORT).show();
         }
     }
 

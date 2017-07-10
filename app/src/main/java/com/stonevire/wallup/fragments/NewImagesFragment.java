@@ -99,8 +99,8 @@ public class NewImagesFragment extends Fragment implements RequestResponse, Swip
 
     /**
      * On Response - JSON Object
-     * @param response
-     * @param callback
+     *
+     * @param response,callback
      */
     @Override
     public void onResponse(JSONObject response, int callback) {
@@ -108,7 +108,6 @@ public class NewImagesFragment extends Fragment implements RequestResponse, Swip
         if (callback == Const.NEW_IMAGES_CALLBACK) {
             try {
                 if (response.getString(Const.SUCCESS).equals("true")) {
-
                     pageNo++;
                     imagesArray = response.getJSONArray(Const.IMAGES);
                     mNewImagesAdapter = new NewImagesAdapter(getContext(), imagesArray, mRecyclerView);
@@ -133,17 +132,16 @@ public class NewImagesFragment extends Fragment implements RequestResponse, Swip
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
             mSwipeRefreshLayout.setRefreshing(false);
         } else if (callback == Const.LOAD_MORE_IMAGES_CALLBACK) {
             try {
                 if (response.getString(Const.SUCCESS).equals("true")) {
-
                     pageNo++;
                     JSONArray tempArray = response.getJSONArray(Const.IMAGES);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                         imagesArray.remove(imagesArray.length() - 1);
-                    mNewImagesAdapter.notifyItemRemoved(imagesArray.length());
+                        mNewImagesAdapter.notifyItemRemoved(imagesArray.length());
+                    }
                     for (int i = 0; i < tempArray.length(); i++) {
                         imagesArray.put(tempArray.get(i));
                     }
@@ -162,6 +160,7 @@ public class NewImagesFragment extends Fragment implements RequestResponse, Swip
 
     /**
      * On Response - JSON Array
+     *
      * @param response
      * @param callback
      */
@@ -171,6 +170,7 @@ public class NewImagesFragment extends Fragment implements RequestResponse, Swip
 
     /**
      * On Response - String
+     *
      * @param response
      * @param callback
      */
