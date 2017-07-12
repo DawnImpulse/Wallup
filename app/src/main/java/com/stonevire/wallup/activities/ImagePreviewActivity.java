@@ -11,12 +11,14 @@ import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatImageView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.facebook.common.executors.UiThreadImmediateExecutorService;
@@ -25,6 +27,7 @@ import com.facebook.datasource.DataSource;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.view.DraweeTransition;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.core.ImagePipeline;
 import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
 import com.facebook.imagepipeline.image.CloseableImage;
@@ -33,10 +36,12 @@ import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.gjiazhe.panoramaimageview.GyroscopeObserver;
 import com.gjiazhe.panoramaimageview.PanoramaImageView;
 import com.stonevire.wallup.R;
+import com.stonevire.wallup.adapters.TagsAdapter;
 import com.stonevire.wallup.utils.Const;
 import com.stonevire.wallup.utils.DateModifier;
 import com.stonevire.wallup.utils.DisplayCalculations;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -55,7 +60,7 @@ public class ImagePreviewActivity extends AppCompatActivity {
     @BindView(R.id.activity_image_preview_fab_layout)
     RelativeLayout activityImagePreviewFabLayout;
     @BindView(R.id.activity_image_preview_details_layout)
-    ScrollView activityImagePreviewDetailsLayout;
+    FrameLayout activityImagePreviewDetailsLayout;
     @BindView(R.id.activity_image_preview_camera_make)
     TextView activityImagePreviewCameraMake;
     @BindView(R.id.activity_image_preview_camera_model)
@@ -72,10 +77,22 @@ public class ImagePreviewActivity extends AppCompatActivity {
     TextView activityImagePreviewDimensions;
     @BindView(R.id.activity_image_preview_published)
     TextView activityImagePreviewPublished;
+    @BindView(R.id.activity_image_preview_tag_recycler)
+    RecyclerView activityImagePreviewTagRecycler;
+    @BindView(R.id.activity_image_preview_author_image)
+    SimpleDraweeView activityImagePreviewAuthorImage;
+    @BindView(R.id.activity_image_preview_author_first_name)
+    TextView activityImagePreviewAuthorFirstName;
+    @BindView(R.id.activity_image_preview_author_last_name)
+    TextView activityImagePreviewAuthorLastName;
+    @BindView(R.id.activity_image_preview_location)
+    TextView activityImagePreviewLocation;
 
     private GyroscopeObserver gyroscopeObserver;
     Intent mIntent;
-    JSONObject imageObject, imageUrlsObject, authorObject, exif = null;
+    JSONObject mainObject, imageObject, imageUrlsObject, authorObject, authorImages, exif = null;
+    JSONArray tagsArray = null;
+    TagsAdapter mTagsAdapter;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -133,11 +150,20 @@ public class ImagePreviewActivity extends AppCompatActivity {
 
     private void imageObjectParsing() {
         try {
-            imageObject = new JSONObject(mIntent.getStringExtra(Const.IMAGE_OBJECT));
+            mainObject = new JSONObject(mIntent.getStringExtra(Const.IMAGE_OBJECT));
+            String details = mainObject.getString(Const.DETAILS);
+            String details1 = details.replace("\\", "");
+            imageObject = new JSONObject(details1);
             imageUrlsObject = imageObject.getJSONObject(Const.IMAGE_URLS);
             authorObject = imageObject.getJSONObject(Const.IMAGE_USER);
+            authorImages = authorObject.getJSONObject(Const.IMAGE_USER_IMAGES);
+
             if (imageObject.has(Const.EXIF))
                 exif = imageObject.getJSONObject(Const.EXIF);
+            if (mainObject.has(Const.TAGS)) {
+                String tag = mainObject.getString(Const.TAGS).replace("\\", "");
+                tagsArray = new JSONArray(tag);
+            }
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -197,10 +223,24 @@ public class ImagePreviewActivity extends AppCompatActivity {
             }
 
             activityImagePreviewPublished.setText(DateModifier.toDateFullMonthYear(imageObject.getString(Const.IMAGE_CREATED)
-                    .substring(0,imageObject.getString(Const.IMAGE_CREATED).indexOf("T"))));
+                    .substring(0, imageObject.getString(Const.IMAGE_CREATED).indexOf("T"))));
 
             activityImagePreviewDimensions.setText(imageObject.getString(Const.IMAGE_WIDTH)
-                    +" x "+imageObject.getString(Const.IMAGE_HEIGHT));
+                    + " x " + imageObject.getString(Const.IMAGE_HEIGHT));
+
+            if (tagsArray != null) {
+                mTagsAdapter = new TagsAdapter(this, tagsArray);
+                activityImagePreviewTagRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+                activityImagePreviewTagRecycler.setAdapter(mTagsAdapter);
+            }
+
+            activityImagePreviewAuthorImage.setImageURI(authorImages.getString(Const.USER_IMAGE_LARGE));
+            activityImagePreviewAuthorFirstName.setText(authorObject.getString(Const.USER_FIRST_NAME));
+            activityImagePreviewAuthorLastName.setText(" "+authorObject.getString(Const.USER_LAST_NAME));
+            if (imageObject.has(Const.LOCATION_OBJECT)) {
+                JSONObject locationObject = imageObject.getJSONObject(Const.LOCATION_OBJECT);
+                activityImagePreviewLocation.setText(locationObject.getString(Const.LOCATION_TITLE));
+            }
 
         } catch (JSONException e) {
             e.printStackTrace();

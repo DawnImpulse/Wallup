@@ -56,6 +56,7 @@ public class Const {
     public static final String IMAGES       = "images";
     public static final String ERRORID      = "errorID";
     public static final String DETAILS      = "details";
+    public static final String TAGS         = "tags";
 
     //------------------ Callbacks --------------------------------
 

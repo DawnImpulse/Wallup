@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="4dp"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/inflator_tags_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:alpha="0.6"
+            android:id="@+id/inflator_tags_drawee"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fresco:roundedCornerRadius="8dp" />
+
+        <Button
+            android:id="@+id/inflator_tags_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:textColor="@color/white" />
+    </RelativeLayout>
+
+</LinearLayout>
