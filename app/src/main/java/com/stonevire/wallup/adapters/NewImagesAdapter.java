@@ -267,7 +267,7 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                     case R.id.inflator_new_image_drawee:
                         Intent intent1 = new Intent(mContext, ImagePreviewActivity.class);
-                        intent1.putExtra("url",urls.getString("regular"));
+                        intent1.putExtra(Const.IMAGE_OBJECT,new_details); //sending cleaned image string object
                         intent1.putExtra("transName",ViewCompat.getTransitionName(draweeView));
                         ActivityOptionsCompat options1 = ActivityOptionsCompat.
                                 makeSceneTransitionAnimation((Activity) mContext, draweeView, ViewCompat.getTransitionName(draweeView));

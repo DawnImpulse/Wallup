@@ -16,6 +16,8 @@ import android.view.ViewAnimationUtils;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
 
 import com.facebook.common.executors.UiThreadImmediateExecutorService;
 import com.facebook.common.references.CloseableReference;
@@ -31,7 +33,12 @@ import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.gjiazhe.panoramaimageview.GyroscopeObserver;
 import com.gjiazhe.panoramaimageview.PanoramaImageView;
 import com.stonevire.wallup.R;
+import com.stonevire.wallup.utils.Const;
+import com.stonevire.wallup.utils.DateModifier;
 import com.stonevire.wallup.utils.DisplayCalculations;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -48,10 +55,27 @@ public class ImagePreviewActivity extends AppCompatActivity {
     @BindView(R.id.activity_image_preview_fab_layout)
     RelativeLayout activityImagePreviewFabLayout;
     @BindView(R.id.activity_image_preview_details_layout)
-    RelativeLayout activityImagePreviewDetailsLayout;
-
+    ScrollView activityImagePreviewDetailsLayout;
+    @BindView(R.id.activity_image_preview_camera_make)
+    TextView activityImagePreviewCameraMake;
+    @BindView(R.id.activity_image_preview_camera_model)
+    TextView activityImagePreviewCameraModel;
+    @BindView(R.id.activity_image_preview_shutter)
+    TextView activityImagePreviewShutter;
+    @BindView(R.id.activity_image_preview_focal)
+    TextView activityImagePreviewFocal;
+    @BindView(R.id.activity_image_preview_aperture)
+    TextView activityImagePreviewAperture;
+    @BindView(R.id.activity_image_preview_iso)
+    TextView activityImagePreviewIso;
+    @BindView(R.id.activity_image_preview_dimensions)
+    TextView activityImagePreviewDimensions;
+    @BindView(R.id.activity_image_preview_published)
+    TextView activityImagePreviewPublished;
 
     private GyroscopeObserver gyroscopeObserver;
+    Intent mIntent;
+    JSONObject imageObject, imageUrlsObject, authorObject, exif = null;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -59,36 +83,21 @@ public class ImagePreviewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_preview);
         ButterKnife.bind(this);
+        mIntent = getIntent();
 
         gyroscopeObserver = new GyroscopeObserver();
         gyroscopeObserver.setMaxRotateRadian(1.5);
-        //contentImagePreviewImage.setGyroscopeObserver(gyroscopeObserver);
+        contentImagePreviewImage.setGyroscopeObserver(gyroscopeObserver);
         contentImagePreviewImage.setEnableScrollbar(false);
 
-        Intent i = getIntent();
-        contentImagePreviewImage.setTransitionName(i.getStringExtra("transName"));
-        getWindow().setSharedElementEnterTransition(DraweeTransition.createTransitionSet(ScalingUtils.ScaleType.CENTER_CROP, ScalingUtils.ScaleType.FIT_CENTER));
-        getWindow().setSharedElementReturnTransition(DraweeTransition.createTransitionSet(ScalingUtils.ScaleType.FIT_CENTER, ScalingUtils.ScaleType.CENTER_CROP));
-        ImageRequest request = ImageRequestBuilder
-                .newBuilderWithSource(Uri.parse(i.getStringExtra("url")))
-                .build();
-        ImagePipeline imagePipeline = Fresco.getImagePipeline();
-        DataSource<CloseableReference<CloseableImage>>
-                dataSource = imagePipeline.fetchDecodedImage(request, this);
-
-        dataSource.subscribe(new BaseBitmapDataSubscriber() {
-
-            @Override
-            protected void onNewResultImpl(Bitmap bitmap) {
-                contentImagePreviewImage.setImageBitmap(bitmap);
-            }
-
-            @Override
-            protected void onFailureImpl(DataSource<CloseableReference<CloseableImage>> dataSource) {
-
-            }
-        }, UiThreadImmediateExecutorService.getInstance());
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            contentImagePreviewImage.setTransitionName(mIntent.getStringExtra("transName"));
+            getWindow().setSharedElementEnterTransition(DraweeTransition.createTransitionSet(ScalingUtils.ScaleType.CENTER_CROP, ScalingUtils.ScaleType.FIT_CENTER));
+            getWindow().setSharedElementReturnTransition(DraweeTransition.createTransitionSet(ScalingUtils.ScaleType.FIT_CENTER, ScalingUtils.ScaleType.CENTER_CROP));
+        }
+        imageObjectParsing();
+        gettingBitmap();
+        imageDetails();
     }
 
     @Override
@@ -117,6 +126,84 @@ public class ImagePreviewActivity extends AppCompatActivity {
                     fabDrawableAnimation(1);
                     detailsPageAnimation(1);
                 }
+        }
+
+    }
+
+
+    private void imageObjectParsing() {
+        try {
+            imageObject = new JSONObject(mIntent.getStringExtra(Const.IMAGE_OBJECT));
+            imageUrlsObject = imageObject.getJSONObject(Const.IMAGE_URLS);
+            authorObject = imageObject.getJSONObject(Const.IMAGE_USER);
+            if (imageObject.has(Const.EXIF))
+                exif = imageObject.getJSONObject(Const.EXIF);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Getting Bitmap from Fresco
+     */
+    private void gettingBitmap() {
+        ImageRequest request = null;
+        try {
+
+            request = ImageRequestBuilder
+                    .newBuilderWithSource(Uri.parse(imageUrlsObject.getString(Const.IMAGE_REGULAR)))
+                    .build();
+            ImagePipeline imagePipeline = Fresco.getImagePipeline();
+            DataSource<CloseableReference<CloseableImage>>
+                    dataSource = imagePipeline.fetchDecodedImage(request, this);
+
+            dataSource.subscribe(new BaseBitmapDataSubscriber() {
+
+                @Override
+                protected void onNewResultImpl(Bitmap bitmap) {
+                    contentImagePreviewImage.setImageBitmap(bitmap);
+                }
+
+                @Override
+                protected void onFailureImpl(DataSource<CloseableReference<CloseableImage>> dataSource) {
+
+                }
+            }, UiThreadImmediateExecutorService.getInstance());
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Setting Image Details
+     */
+    private void imageDetails() {
+        try {
+            if (exif != null) {
+                if (exif.has(Const.CAMERA_MAKE) && !exif.getString(Const.CAMERA_MAKE).equals("null"))
+                    activityImagePreviewCameraMake.setText(exif.getString(Const.CAMERA_MAKE));
+                if (exif.has(Const.CAMERA_MODEL) && !exif.getString(Const.CAMERA_MODEL).equals("null"))
+                    activityImagePreviewCameraModel.setText(exif.getString(Const.CAMERA_MODEL));
+                if (exif.has(Const.CAMERA_SHUTTER_SPEED) && !exif.getString(Const.CAMERA_SHUTTER_SPEED).equals("null"))
+                    activityImagePreviewShutter.setText(exif.getString(Const.CAMERA_SHUTTER_SPEED));
+                if (exif.has(Const.CAMERA_FOCAL_LENGTH) && !exif.getString(Const.CAMERA_FOCAL_LENGTH).equals("null"))
+                    activityImagePreviewFocal.setText(exif.getString(Const.CAMERA_FOCAL_LENGTH));
+                if (exif.has(Const.CAMERA_APERTURE) && !exif.getString(Const.CAMERA_APERTURE).equals("null"))
+                    activityImagePreviewAperture.setText(exif.getString(Const.CAMERA_APERTURE));
+                if (exif.has(Const.CAMERA_ISO) && !exif.getString(Const.CAMERA_ISO).equals("null"))
+                    activityImagePreviewIso.setText(exif.getString(Const.CAMERA_ISO));
+            }
+
+            activityImagePreviewPublished.setText(DateModifier.toDateFullMonthYear(imageObject.getString(Const.IMAGE_CREATED)
+                    .substring(0,imageObject.getString(Const.IMAGE_CREATED).indexOf("T"))));
+
+            activityImagePreviewDimensions.setText(imageObject.getString(Const.IMAGE_WIDTH)
+                    +" x "+imageObject.getString(Const.IMAGE_HEIGHT));
+
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
     }
@@ -152,6 +239,11 @@ public class ImagePreviewActivity extends AppCompatActivity {
         activityImagePreviewCrossButton.startAnimation(rotationCross);
     }
 
+    /**
+     * Show/Hide Details Overlay
+     *
+     * @param i , 0 - show
+     */
     private void detailsPageAnimation(int i) {
         if (i == 0) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -175,13 +267,16 @@ public class ImagePreviewActivity extends AppCompatActivity {
                     @Override
                     public void onAnimationStart(Animator animation) {
                     }
+
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         activityImagePreviewDetailsLayout.setVisibility(View.GONE);
                     }
+
                     @Override
                     public void onAnimationCancel(Animator animation) {
                     }
+
                     @Override
                     public void onAnimationRepeat(Animator animation) {
                     }

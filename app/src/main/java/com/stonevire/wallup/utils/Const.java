@@ -37,7 +37,17 @@ public class Const {
     public static final String USERNAME                 = "username";
     public static final String LINKS                    = "links";
     public static final String ERRORS                   = "errors";
-
+    public static final String IMAGE_REGULAR            = "regular";
+    public static final String EXIF                     = "exif";
+    public static final String CAMERA_MAKE              ="make";
+    public static final String CAMERA_MODEL             ="model";
+    public static final String CAMERA_SHUTTER_SPEED     ="exposure_time";
+    public static final String CAMERA_FOCAL_LENGTH      ="focal_length";
+    public static final String CAMERA_APERTURE          ="aperture";
+    public static final String CAMERA_ISO               ="iso";
+    public static final String IMAGE_CREATED            ="created_at";
+    public static final String IMAGE_HEIGHT             ="height";
+    public static final String IMAGE_WIDTH              ="width";
 
     //------------------ API Variables ----------------------------
 
@@ -52,5 +62,10 @@ public class Const {
     public static final int NEW_IMAGES_CALLBACK         = 1;
     public static final int LOAD_MORE_IMAGES_CALLBACK   = 2;
     public static final int USER_IMAGES_CALLBACK        = 3;
+
+    //------------------ Others -----------------------------------
+
+    public static final String IMAGE_OBJECT = "imageObject";
+
 
 }
