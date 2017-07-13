@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
-import android.widget.RelativeLayout;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.stonevire.wallup.R;
@@ -66,18 +65,12 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.TagsHolder> {
     }
 
     public class TagsHolder extends RecyclerView.ViewHolder {
-        /*RelativeLayout tagsButton;
-        TextView tagsText;*/
         Button tagsButton;
-        RelativeLayout tagsLayout;
         SimpleDraweeView drawee;
 
         public TagsHolder(View itemView) {
             super(itemView);
-            /*tagsButton = (RelativeLayout) itemView.findViewById(R.id.inflator_tags_button);
-            tagsText = (TextView) itemView.findViewById(R.id.inflator_tags_text);*/
             tagsButton  = (Button) itemView.findViewById(R.id.inflator_tags_button);
-            tagsLayout  = (RelativeLayout) itemView.findViewById(R.id.inflator_tags_layout);
             drawee      = (SimpleDraweeView) itemView.findViewById(R.id.inflator_tags_drawee);
         }
     }

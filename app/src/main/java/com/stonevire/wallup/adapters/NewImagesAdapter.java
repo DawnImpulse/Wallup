@@ -129,7 +129,7 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                 ((NewImagesHolder) holder).draweeView.setBackgroundColor
                         (Color.parseColor(detailsObject.getString(Const.IMAGE_COLOR)));
-                ((NewImagesHolder) holder).draweeView.setImageURI(urls.getString("regular"));
+                ((NewImagesHolder) holder).draweeView.setImageURI(urls.getString(Const.IMAGE_REGULAR));
                 ((NewImagesHolder) holder).authorImage.setImageURI(author_image.getString(Const.USER_IMAGE_LARGE));
                 ((NewImagesHolder) holder).authorName.setText(author.getString(Const.IMAGE_USER_NAME));
                 ((NewImagesHolder) holder).favourite.setText(detailsObject.getString(Const.IMAGE_LIKES));

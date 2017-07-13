@@ -113,6 +113,10 @@ public class ImagePreviewActivity extends AppCompatActivity {
             getWindow().setSharedElementReturnTransition(DraweeTransition.createTransitionSet(ScalingUtils.ScaleType.FIT_CENTER, ScalingUtils.ScaleType.CENTER_CROP));
         }
         imageObjectParsing();
+
+        /*byte[] byteArray = getIntent().getByteArrayExtra("abc");
+        Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+        contentImagePreviewImage.setImageBitmap(bmp);*/
         gettingBitmap();
         imageDetails();
     }
