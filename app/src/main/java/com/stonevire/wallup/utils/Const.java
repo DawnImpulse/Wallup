@@ -11,9 +11,10 @@ public class Const {
     public static final String NEW_IMAGES       = DOMAIN + "v1/listNewImages";
     public static final String TAGGING_IMAGES   = DOMAIN + "v1/taggingList";
 
-    public static final String UNSPLASH_ID          = "?client_id=a25247a07df2c569f6f3dc129f43b0eb3b0e3ff69b00d5b84dd031255e55b961";
-    public static final String UNSPLASH_USER_RANDOM = "https://source.unsplash.com/user/";
-    public static final String UNSPLASH_SEARCH      = "https://source.unsplash.com/search/photos"+UNSPLASH_ID+"&query=";
+    public static final String UNSPLASH_ID              = "?client_id=a25247a07df2c569f6f3dc129f43b0eb3b0e3ff69b00d5b84dd031255e55b961";
+    public static final String UNSPLASH_SOURCE          = "https://source.unsplash.com/";
+    public static final String UNSPLASH_USER_RANDOM     = UNSPLASH_SOURCE+"user/";
+    public static final String UNSPLASH_SEARCH          = UNSPLASH_SOURCE+"search/photos"+UNSPLASH_ID+"&query=";
 
     //----------------- Unsplash Image Properties------------------
 

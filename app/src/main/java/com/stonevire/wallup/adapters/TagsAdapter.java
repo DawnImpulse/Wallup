@@ -10,6 +10,7 @@ import android.widget.Button;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.stonevire.wallup.R;
+import com.stonevire.wallup.utils.Const;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,6 +29,11 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.TagsHolder> {
         tagsArray = jsonArray;
     }
 
+    /**
+     * On Create View Holder
+     * @param parent,viewType
+     * @return
+     */
     @Override
     public TagsHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(mContext).inflate(R.layout.inflator_tags, parent, false);
@@ -35,12 +41,16 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.TagsHolder> {
         return t;
     }
 
+    /**
+     * On Bind View Holder
+     * @param holder,position
+     */
     @Override
     public void onBindViewHolder(final TagsHolder holder, int position) {
         try {
             holder.tagsButton.setText(tagsArray.getString(position).toUpperCase());
             holder.tagsButton.requestLayout();
-            holder.drawee.setImageURI("https://source.unsplash.com/featured/120x64/?"+tagsArray.getString(position));
+            holder.drawee.setImageURI(Const.UNSPLASH_SOURCE+"120x64/?"+tagsArray.getString(position));
 
             ViewTreeObserver vto = holder.tagsButton.getViewTreeObserver();
 

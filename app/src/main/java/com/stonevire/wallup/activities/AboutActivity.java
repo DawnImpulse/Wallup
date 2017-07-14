@@ -12,6 +12,7 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 
 import com.stonevire.wallup.R;
+import com.stonevire.wallup.utils.DisplayCalculations;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -51,7 +52,7 @@ public class AboutActivity extends AppCompatActivity {
         DisplayMetrics displaymetrics = new DisplayMetrics();       //-------------------- Getting width of screen
         wm.getDefaultDisplay().getMetrics(displaymetrics);
         int width = displaymetrics.widthPixels;
-        width -= 16;
+        width -= DisplayCalculations.dpToPx(16,this);
 
         ViewGroup.LayoutParams lp1 = contentAboutLinear1.getLayoutParams();
         ViewGroup.LayoutParams lp2 = contentAboutLinear2.getLayoutParams();

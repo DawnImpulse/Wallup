@@ -30,6 +30,7 @@ import android.widget.TextView;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.stonevire.wallup.R;
+import com.stonevire.wallup.fragments.CategoryListFragment;
 import com.stonevire.wallup.fragments.NewImagesFragment;
 import com.stonevire.wallup.network.volley.VolleyWrapper;
 
@@ -266,7 +267,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     private void setupViewPager(ViewPager viewPager) {
         SectionsPagerAdapter adapter = new SectionsPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new NewImagesFragment(), "IMAGES");
-        adapter.addFragment(PlaceholderFragment.newInstance(1), "CURRENT");
+        adapter.addFragment(new CategoryListFragment(), "CATEGORY");
         adapter.addFragment(PlaceholderFragment.newInstance(2), "FUTURE");
 
         viewPager.setAdapter(adapter);
