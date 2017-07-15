@@ -89,5 +89,6 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:textColor="@color/white"
+        android:fontFamily="monospace"
         android:textSize="20sp" />
 </RelativeLayout>

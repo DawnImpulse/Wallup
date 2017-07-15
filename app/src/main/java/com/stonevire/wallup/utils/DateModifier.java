@@ -20,4 +20,15 @@ public class DateModifier {
             return date;
         }
     }
+
+    public static String toDateFullMonthYearHourMinutes(String date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
+        SimpleDateFormat sdfNew = new SimpleDateFormat("dd MMMM, yyyy  HH:mm");
+        try {
+            Date old = sdf.parse(date);
+            return sdfNew.format(old);
+        } catch (ParseException e) {
+            return date;
+        }
+    }
 }

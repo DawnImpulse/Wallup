@@ -16,21 +16,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewAnimationUtils;
-import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.stonevire.wallup.R;
 import com.stonevire.wallup.fragments.CategoryListFragment;
+import com.stonevire.wallup.fragments.FeedFragment;
 import com.stonevire.wallup.fragments.NewImagesFragment;
 import com.stonevire.wallup.network.volley.VolleyWrapper;
 
@@ -232,33 +230,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         return false;
     }
 
-    // Dummy PlaceHolder
-    public static class PlaceholderFragment extends Fragment {
-
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        public PlaceholderFragment() {
-        }
-
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText("hello");
-            //textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
-            return rootView;
-        }
-    }
-
     /**
      * Setting Up ViewPager
      *
@@ -267,8 +238,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     private void setupViewPager(ViewPager viewPager) {
         SectionsPagerAdapter adapter = new SectionsPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new NewImagesFragment(), "IMAGES");
+        adapter.addFragment(new FeedFragment(), "FEED");
         adapter.addFragment(new CategoryListFragment(), "CATEGORY");
-        adapter.addFragment(PlaceholderFragment.newInstance(2), "FUTURE");
 
         viewPager.setAdapter(adapter);
     }
@@ -351,14 +322,17 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 @Override
                 public void onAnimationStart(Animator animation) {
                 }
+
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     activityMainSearchOverflow.setVisibility(View.GONE);
                 }
+
                 @Override
                 public void onAnimationCancel(Animator animation) {
 
                 }
+
                 @Override
                 public void onAnimationRepeat(Animator animation) {
 
@@ -368,8 +342,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             tabLayout.setVisibility(View.VISIBLE);
             includeSearchLayoutExternal.setVisibility(View.INVISIBLE);
             viewPager.setVisibility(View.VISIBLE);
-        }else
-        {
+        } else {
             toolbar.setVisibility(View.VISIBLE);
             tabLayout.setVisibility(View.VISIBLE);
             includeSearchLayoutExternal.setVisibility(View.INVISIBLE);
