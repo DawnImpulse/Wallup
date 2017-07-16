@@ -16,7 +16,7 @@ import android.widget.Toast;
 import com.android.volley.VolleyError;
 import com.stonevire.wallup.R;
 import com.stonevire.wallup.adapters.LatestAdapter;
-import com.stonevire.wallup.interfaces.LoadMoreListener;
+import com.stonevire.wallup.interfaces.OnLoadMoreListener;
 import com.stonevire.wallup.network.volley.RequestResponse;
 import com.stonevire.wallup.network.volley.VolleyWrapper;
 import com.stonevire.wallup.utils.Const;
@@ -67,7 +67,7 @@ public class LatestFragment extends Fragment implements RequestResponse, SwipeRe
 
         if (imagesArray.length() == 0) {
             page = 1;
-            mVolleyWrapper.getCallArray(Const.UNSPLASH_LATEST_IMAGES + "&page=1", Const.FEED_CALLBACK);
+            mVolleyWrapper.getCallArray(Const.UNSPLASH_LATEST_IMAGES + "&page=1", Const.LATEST_CALLBACK);
             mVolleyWrapper.setListener(this);
         }
 
@@ -92,7 +92,7 @@ public class LatestFragment extends Fragment implements RequestResponse, SwipeRe
 
     @Override
     public void onResponse(JSONArray response, int callback) {
-        if (callback == Const.FEED_CALLBACK) {
+        if (callback == Const.LATEST_CALLBACK) {
             page++;
             imagesArray = response;
             mFeedAdapter = new LatestAdapter(getActivity(), imagesArray, fragmentLatestRecycler);
@@ -100,18 +100,18 @@ public class LatestFragment extends Fragment implements RequestResponse, SwipeRe
             fragmentLatestRecycler.setAdapter(mFeedAdapter);
             fragmentLatestRecycler.setNestedScrollingEnabled(true);
 
-            mFeedAdapter.setOnLoadMoreListener(new LoadMoreListener() {
+            mFeedAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
                 @Override
                 public void onLoadMore() {
                     imagesArray.put(null);
                     mFeedAdapter.notifyItemInserted(imagesArray.length());
 
-                    mVolleyWrapper.getCallArray(Const.UNSPLASH_LATEST_IMAGES + "&page=" + page, Const.FEED_LOAD_MORE);
+                    mVolleyWrapper.getCallArray(Const.UNSPLASH_LATEST_IMAGES + "&page=" + page, Const.LATEST_LOAD_MORE);
                 }
             });
 
             fragmentLatestSwipe.setRefreshing(false);
-        } else if (callback == Const.FEED_LOAD_MORE) {
+        } else if (callback == Const.LATEST_LOAD_MORE) {
             try {
                 page++;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -138,6 +138,6 @@ public class LatestFragment extends Fragment implements RequestResponse, SwipeRe
     @Override
     public void onRefresh() {
         page = 1;
-        mVolleyWrapper.getCallArray(Const.UNSPLASH_LATEST_IMAGES + "&page=1", Const.FEED_CALLBACK);
+        mVolleyWrapper.getCallArray(Const.UNSPLASH_LATEST_IMAGES + "&page=1", Const.LATEST_CALLBACK);
     }
 }

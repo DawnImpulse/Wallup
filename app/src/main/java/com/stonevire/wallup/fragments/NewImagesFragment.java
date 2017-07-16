@@ -17,7 +17,7 @@ import android.widget.Toast;
 import com.android.volley.VolleyError;
 import com.stonevire.wallup.R;
 import com.stonevire.wallup.adapters.NewImagesAdapter;
-import com.stonevire.wallup.interfaces.LoadMoreListener;
+import com.stonevire.wallup.interfaces.OnLoadMoreListener;
 import com.stonevire.wallup.network.volley.RequestResponse;
 import com.stonevire.wallup.network.volley.VolleyWrapper;
 import com.stonevire.wallup.utils.Const;
@@ -115,7 +115,7 @@ public class NewImagesFragment extends Fragment implements RequestResponse, Swip
                     mRecyclerView.setAdapter(mNewImagesAdapter);
                     mRecyclerView.setNestedScrollingEnabled(true);
 
-                    mNewImagesAdapter.setOnLoadMoreListener(new LoadMoreListener() {
+                    mNewImagesAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
                         @Override
                         public void onLoadMore() {
                             imagesArray.put(null);

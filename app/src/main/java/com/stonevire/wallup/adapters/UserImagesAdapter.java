@@ -14,7 +14,7 @@ import android.widget.ProgressBar;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.android.gms.ads.NativeExpressAdView;
 import com.stonevire.wallup.R;
-import com.stonevire.wallup.interfaces.LoadMoreListener;
+import com.stonevire.wallup.interfaces.OnLoadMoreListener;
 import com.stonevire.wallup.utils.Const;
 
 import org.json.JSONArray;
@@ -32,7 +32,7 @@ public class UserImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private final int VIEW_TYPE_LOADING = 1;
     private final int VIEW_TYPE_AD = 2;
 
-    private LoadMoreListener mLoadMoreListener;
+    private OnLoadMoreListener mLoadMoreListener;
 
     JSONArray mImagesArray;
 
@@ -166,7 +166,7 @@ public class UserImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
      * On Load More Listener (defined)
      * @param mLoadMoreListener
      */
-    public void setOnLoadMoreListener(LoadMoreListener mLoadMoreListener) {
+    public void setOnLoadMoreListener(OnLoadMoreListener mLoadMoreListener) {
         this.mLoadMoreListener = mLoadMoreListener;
     }
 

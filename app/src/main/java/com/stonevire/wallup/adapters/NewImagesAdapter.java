@@ -25,7 +25,7 @@ import com.google.android.gms.ads.NativeExpressAdView;
 import com.stonevire.wallup.R;
 import com.stonevire.wallup.activities.ImagePreviewActivity;
 import com.stonevire.wallup.activities.UserProfileActivity;
-import com.stonevire.wallup.interfaces.LoadMoreListener;
+import com.stonevire.wallup.interfaces.OnLoadMoreListener;
 import com.stonevire.wallup.utils.Const;
 
 import org.json.JSONArray;
@@ -44,7 +44,7 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private final int VIEW_TYPE_LOADING = 1;
     private final int VIEW_TYPE_AD = 2;
 
-    private LoadMoreListener mLoadMoreListener;
+    private OnLoadMoreListener mLoadMoreListener;
 
     private boolean isLoading;
     private int visibleThreshold = 5;
@@ -196,7 +196,7 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
      * On Load More Listener (defined)
      * @param mLoadMoreListener
      */
-    public void setOnLoadMoreListener(LoadMoreListener mLoadMoreListener) {
+    public void setOnLoadMoreListener(OnLoadMoreListener mLoadMoreListener) {
         this.mLoadMoreListener = mLoadMoreListener;
     }
 

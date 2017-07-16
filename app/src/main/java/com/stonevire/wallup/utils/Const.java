@@ -7,16 +7,17 @@ package com.stonevire.wallup.utils;
 public class Const {
 
     //----------------- API Endpoints ----------------------------
-    private static final String DOMAIN = "https://api.stonevire.com/wallup/";
-    public static final String NEW_IMAGES = DOMAIN + "v1/listNewImages";
-    public static final String TAGGING_IMAGES = DOMAIN + "v1/taggingList";
+    private static final String DOMAIN                  = "https://api.stonevire.com/wallup/";
+    public static final String NEW_IMAGES               = DOMAIN + "v1/listNewImages";
+    public static final String TAGGING_IMAGES           = DOMAIN + "v1/taggingList";
 
-    public static final String UNSPLASH_ID = "?client_id=e1d86d6d0dcb8ce3eea9d16c712c0feed5f1e9a05e5a5f252cf5ea090a3ebc80";
-    public static final String UNSPLASH_API = "https://api.unsplash.com/";
-    public static final String UNSPLASH_SOURCE = "https://source.unsplash.com/";
-    public static final String UNSPLASH_USER_RANDOM = UNSPLASH_SOURCE + "user/";
-    public static final String UNSPLASH_SEARCH = UNSPLASH_SOURCE + "search/photos" + UNSPLASH_ID + "&query=";
-    public static final String UNSPLASH_LATEST_IMAGES = UNSPLASH_API + "photos" + UNSPLASH_ID + "&order_by=latest&per_page=30";
+    public static final String UNSPLASH_ID              = "?client_id=e1d86d6d0dcb8ce3eea9d16c712c0feed5f1e9a05e5a5f252cf5ea090a3ebc80";
+    public static final String UNSPLASH_API             = "https://api.unsplash.com/";
+    public static final String UNSPLASH_SOURCE          = "https://source.unsplash.com/";
+    public static final String UNSPLASH_USER_RANDOM     = UNSPLASH_SOURCE + "user/";
+    public static final String UNSPLASH_SEARCH          = UNSPLASH_SOURCE + "search/photos" + UNSPLASH_ID + "&query=";
+    public static final String UNSPLASH_LATEST_IMAGES   = UNSPLASH_API + "photos" + UNSPLASH_ID + "&order_by=latest&per_page=30";
+    public static final String UNSPLASH_CURATED_IMAGES  = UNSPLASH_API + "photos/curated" + UNSPLASH_ID + "&order_by=latest&per_page=30";
 
     //----------------- Unsplash Image Properties------------------
 
@@ -66,8 +67,10 @@ public class Const {
     public static final int NEW_IMAGES_CALLBACK         = 1;
     public static final int LOAD_MORE_IMAGES_CALLBACK   = 2;
     public static final int USER_IMAGES_CALLBACK        = 3;
-    public static final int FEED_CALLBACK               = 4;
-    public static final int FEED_LOAD_MORE              = 5;
+    public static final int LATEST_CALLBACK             = 4;
+    public static final int LATEST_LOAD_MORE            = 5;
+    public static final int CURATED_CALLBACK            = 6;
+    public static final int CURATED_LOAD_MORE           = 7;
 
     //------------------ Others -----------------------------------
 

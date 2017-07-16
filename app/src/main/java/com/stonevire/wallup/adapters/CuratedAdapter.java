@@ -13,17 +13,16 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.stonevire.wallup.R;
 import com.stonevire.wallup.interfaces.OnLoadMoreListener;
 import com.stonevire.wallup.utils.Const;
-import com.stonevire.wallup.utils.DateModifier;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Created by Saksham on 7/15/2017.
+ * Created by Saksham on 7/16/2017.
  */
 
-public class LatestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class CuratedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     JSONArray imagesArray;
     Context mContext;
@@ -36,7 +35,7 @@ public class LatestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private int visibleThreshold = 5;
     private int lastVisibleItem, totalItemCount;
 
-    public LatestAdapter(Context context, JSONArray array, RecyclerView recyclerView) {
+    public CuratedAdapter(Context context, JSONArray array, RecyclerView recyclerView) {
         mContext = context;
         imagesArray = array;
         mRecyclerView = recyclerView;
@@ -65,8 +64,8 @@ public class LatestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v;
         if (viewType == VIEW_TYPE_ITEM) {
-            v = LayoutInflater.from(mContext).inflate(R.layout.inflator_latest, parent, false);
-            return new FeedHolder(v);
+            v = LayoutInflater.from(mContext).inflate(R.layout.inflator_curated, parent, false);
+            return new CuratedHolder(v);
         } else if (viewType == VIEW_TYPE_LOADING) {
             v = LayoutInflater.from(mContext).inflate(R.layout.inflator_loading_view, parent, false);
             return new LoadingViewHolder(v);
@@ -76,18 +75,17 @@ public class LatestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if (holder instanceof FeedHolder) {
+        if (holder instanceof CuratedHolder) {
             try {
                 JSONObject object = imagesArray.getJSONObject(position);
                 JSONObject user = object.getJSONObject(Const.IMAGE_USER);
                 JSONObject urls = object.getJSONObject(Const.IMAGE_URLS);
                 JSONObject profileImage = user.getJSONObject(Const.IMAGE_USER_IMAGES);
 
-                ((FeedHolder) holder).date.setText(DateModifier.toDateFullMonthYear(object.getString(Const.IMAGE_CREATED)));
-                ((FeedHolder) holder).firstName.setText(user.getString(Const.USER_FIRST_NAME));
-                ((FeedHolder) holder).lastName.setText(" " + user.getString(Const.USER_LAST_NAME));
-                ((FeedHolder) holder).authorImage.setImageURI(profileImage.getString(Const.USER_IMAGE_LARGE));
-                ((FeedHolder) holder).image.setImageURI(urls.getString(Const.IMAGE_REGULAR));
+                ((CuratedHolder) holder).firstName.setText(user.getString(Const.USER_FIRST_NAME));
+                ((CuratedHolder) holder).lastName.setText(" " + user.getString(Const.USER_LAST_NAME));
+                ((CuratedHolder) holder).authorImage.setImageURI(profileImage.getString(Const.USER_IMAGE_LARGE));
+                ((CuratedHolder) holder).image.setImageURI(urls.getString(Const.IMAGE_REGULAR));
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -143,20 +141,18 @@ public class LatestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     /**
      * Feed Holder
      */
-    private class FeedHolder extends RecyclerView.ViewHolder {
+    private class CuratedHolder extends RecyclerView.ViewHolder {
         SimpleDraweeView authorImage;
         SimpleDraweeView image;
-        TextView date;
         TextView firstName;
         TextView lastName;
 
-        public FeedHolder(View itemView) {
+        public CuratedHolder(View itemView) {
             super(itemView);
-            authorImage = (SimpleDraweeView) itemView.findViewById(R.id.inflator_latest_author_image);
-            image = (SimpleDraweeView) itemView.findViewById(R.id.inflator_latest_drawee);
-            date = (TextView) itemView.findViewById(R.id.inflator_latest_date);
-            firstName = (TextView) itemView.findViewById(R.id.inflator_latest_author_first_name);
-            lastName = (TextView) itemView.findViewById(R.id.inflator_latest_author_last_name);
+            authorImage = (SimpleDraweeView) itemView.findViewById(R.id.inflator_curated_author_image);
+            image = (SimpleDraweeView) itemView.findViewById(R.id.inflator_curated_drawee);
+            firstName = (TextView) itemView.findViewById(R.id.inflator_curated_author_first_name);
+            lastName = (TextView) itemView.findViewById(R.id.inflator_curated_author_last_name);
         }
     }
 
