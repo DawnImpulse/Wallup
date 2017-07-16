@@ -26,9 +26,9 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.stonevire.wallup.fragments.CuratedFragment;
 import com.stonevire.wallup.R;
-import com.stonevire.wallup.fragments.CategoryListFragment;
-import com.stonevire.wallup.fragments.FeedFragment;
+import com.stonevire.wallup.fragments.LatestFragment;
 import com.stonevire.wallup.fragments.NewImagesFragment;
 import com.stonevire.wallup.network.volley.VolleyWrapper;
 
@@ -237,9 +237,9 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
      */
     private void setupViewPager(ViewPager viewPager) {
         SectionsPagerAdapter adapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new NewImagesFragment(), "IMAGES");
-        adapter.addFragment(new FeedFragment(), "FEED");
-        adapter.addFragment(new CategoryListFragment(), "CATEGORY");
+        adapter.addFragment(new LatestFragment(), "LATEST");
+        adapter.addFragment(new NewImagesFragment(), "HAND PICKED");
+        adapter.addFragment(new CuratedFragment(), "CURATED");
 
         viewPager.setAdapter(adapter);
     }

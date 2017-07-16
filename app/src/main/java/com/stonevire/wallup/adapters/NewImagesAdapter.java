@@ -182,7 +182,7 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @Override
     public int getItemViewType(int position) {
         try {
-            if (position != 0 && position % 10 == 0) {
+            if (position != 0 && position % 10 == 9) {
                 return VIEW_TYPE_AD;
             }
             return imagesArray.get(position) == null ? VIEW_TYPE_LOADING : VIEW_TYPE_ITEM;

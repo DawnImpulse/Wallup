@@ -2,13 +2,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/blue_grey"
-    tools:context="com.stonevire.wallup.fragments.FeedFragment">
+    tools:context="com.stonevire.wallup.fragments.CuratedFragment">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/fragment_feed_recycler"
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="8dp" />
+        android:text="@string/hello_blank_fragment" />
 
 </FrameLayout>

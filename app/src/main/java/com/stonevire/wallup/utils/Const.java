@@ -11,7 +11,7 @@ public class Const {
     public static final String NEW_IMAGES = DOMAIN + "v1/listNewImages";
     public static final String TAGGING_IMAGES = DOMAIN + "v1/taggingList";
 
-    public static final String UNSPLASH_ID = "?client_id=a25247a07df2c569f6f3dc129f43b0eb3b0e3ff69b00d5b84dd031255e55b961";
+    public static final String UNSPLASH_ID = "?client_id=e1d86d6d0dcb8ce3eea9d16c712c0feed5f1e9a05e5a5f252cf5ea090a3ebc80";
     public static final String UNSPLASH_API = "https://api.unsplash.com/";
     public static final String UNSPLASH_SOURCE = "https://source.unsplash.com/";
     public static final String UNSPLASH_USER_RANDOM = UNSPLASH_SOURCE + "user/";
@@ -67,6 +67,7 @@ public class Const {
     public static final int LOAD_MORE_IMAGES_CALLBACK   = 2;
     public static final int USER_IMAGES_CALLBACK        = 3;
     public static final int FEED_CALLBACK               = 4;
+    public static final int FEED_LOAD_MORE              = 5;
 
     //------------------ Others -----------------------------------
 
