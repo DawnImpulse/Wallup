@@ -2,14 +2,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#e0e0e0"
+    android:background="@color/blue_grey"
     tools:context="com.stonevire.wallup.fragments.NewImagesFragment">
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/fragment_new_images_swipe"
         android:layout_width="match_parent"
-
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginTop="8dp">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/fragment_new_images_recycler"
