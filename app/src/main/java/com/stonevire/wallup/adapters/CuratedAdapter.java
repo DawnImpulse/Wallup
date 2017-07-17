@@ -17,6 +17,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.NativeExpressAdView;
 import com.stonevire.wallup.R;
 import com.stonevire.wallup.activities.ImagePreviewActivity;
 import com.stonevire.wallup.activities.UserProfileActivity;
@@ -39,8 +41,9 @@ public class CuratedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     OnLoadMoreListener mLoadMoreListener;
 
     boolean isLoading;
-    int VIEW_TYPE_LOADING = 0;
-    int VIEW_TYPE_ITEM = 1;
+    static final int VIEW_TYPE_LOADING = 0;
+    static final int VIEW_TYPE_ITEM = 1;
+    static final int VIEW_TYPE_AD = 2;
     private int visibleThreshold = 5;
     private int lastVisibleItem, totalItemCount;
 
@@ -72,42 +75,52 @@ public class CuratedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v;
-        if (viewType == VIEW_TYPE_ITEM) {
-            v = LayoutInflater.from(mContext).inflate(R.layout.inflator_curated, parent, false);
-            return new CuratedHolder(v);
-        } else if (viewType == VIEW_TYPE_LOADING) {
-            v = LayoutInflater.from(mContext).inflate(R.layout.inflator_loading_view, parent, false);
-            return new LoadingViewHolder(v);
+        switch (viewType) {
+            case VIEW_TYPE_ITEM:
+                v = LayoutInflater.from(mContext).inflate(R.layout.inflator_curated, parent, false);
+                return new CuratedHolder(v);
+            case VIEW_TYPE_LOADING:
+                v = LayoutInflater.from(mContext).inflate(R.layout.inflator_loading_view, parent, false);
+                return new LoadingViewHolder(v);
+            case VIEW_TYPE_AD: //
+            default:
+                v = LayoutInflater.from(mContext).inflate(R.layout.inflator_native_ad, parent, false);
+                return new AdHolder(v);
         }
-        return null;
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if (holder instanceof CuratedHolder) {
-            try {
-                JSONObject object = imagesArray.getJSONObject(position);
-                JSONObject user = object.getJSONObject(Const.IMAGE_USER);
-                JSONObject urls = object.getJSONObject(Const.IMAGE_URLS);
-                JSONObject profileImage = user.getJSONObject(Const.IMAGE_USER_IMAGES);
+        switch (holder.getItemViewType()) {
+            case VIEW_TYPE_ITEM:
+                try {
+                    JSONObject object = imagesArray.getJSONObject(position);
+                    JSONObject user = object.getJSONObject(Const.IMAGE_USER);
+                    JSONObject urls = object.getJSONObject(Const.IMAGE_URLS);
+                    JSONObject profileImage = user.getJSONObject(Const.IMAGE_USER_IMAGES);
 
-                ((CuratedHolder) holder).firstName.setText(user.getString(Const.USER_FIRST_NAME));
-                ((CuratedHolder) holder).lastName.setText(" " + user.getString(Const.USER_LAST_NAME));
-                ((CuratedHolder) holder).authorImage.setImageURI(profileImage.getString(Const.USER_IMAGE_LARGE));
-                ((CuratedHolder) holder).image.setImageURI(urls.getString(Const.IMAGE_REGULAR));
+                    ((CuratedHolder) holder).firstName.setText(user.getString(Const.USER_FIRST_NAME));
+                    ((CuratedHolder) holder).lastName.setText(" " + user.getString(Const.USER_LAST_NAME));
+                    ((CuratedHolder) holder).authorImage.setImageURI(profileImage.getString(Const.USER_IMAGE_LARGE));
+                    ((CuratedHolder) holder).image.setImageURI(urls.getString(Const.IMAGE_REGULAR));
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    ViewCompat.setTransitionName(((CuratedHolder) holder).authorImage, user.getString(Const.USERNAME));
-                    ViewCompat.setTransitionName(((CuratedHolder) holder).firstName, user.getString(Const.USER_FIRST_NAME));
-                    ViewCompat.setTransitionName(((CuratedHolder) holder).lastName, user.getString(Const.USER_LAST_NAME));
-                    ViewCompat.setTransitionName(((CuratedHolder) holder).image, user.getString(Const.USERNAME));
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        ViewCompat.setTransitionName(((CuratedHolder) holder).authorImage, user.getString(Const.USERNAME));
+                        ViewCompat.setTransitionName(((CuratedHolder) holder).firstName, user.getString(Const.USER_FIRST_NAME));
+                        ViewCompat.setTransitionName(((CuratedHolder) holder).lastName, user.getString(Const.USER_LAST_NAME));
+                        ViewCompat.setTransitionName(((CuratedHolder) holder).image, user.getString(Const.USERNAME));
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        } else if (holder instanceof LoadingViewHolder) {
-            ((LoadingViewHolder) holder).progressBar.setIndeterminate(true);
+                break;
+            case VIEW_TYPE_LOADING:
+                ((LoadingViewHolder) holder).progressBar.setIndeterminate(true);
+                break;
+            case VIEW_TYPE_AD: //
+            default:
+                ((AdHolder) holder).mAdView.loadAd(new AdRequest.Builder().build());
         }
     }
 
@@ -117,7 +130,15 @@ public class CuratedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     @Override
+    public void onViewAttachedToWindow(RecyclerView.ViewHolder holder) {
+        super.onViewAttachedToWindow(holder);
+    }
+
+    @Override
     public int getItemViewType(int position) {
+        if (position == 5) {
+            //return VIEW_TYPE_AD;
+        }
         try {
             return imagesArray.get(position) == null ? VIEW_TYPE_LOADING : VIEW_TYPE_ITEM;
         } catch (JSONException e) {
@@ -208,7 +229,7 @@ public class CuratedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
                     case R.id.inflator_curated_drawee:
                         Intent intent1 = new Intent(mContext, ImagePreviewActivity.class);
-                        intent1.putExtra(Const.IS_DIRECT_OBJECT,"true");
+                        intent1.putExtra(Const.IS_DIRECT_OBJECT, "true");
                         intent1.putExtra(Const.IMAGE_OBJECT, object.toString());
 
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -230,9 +251,11 @@ public class CuratedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
      * Ad View Holder
      */
     private class AdHolder extends RecyclerView.ViewHolder {
+        public NativeExpressAdView mAdView;
 
         public AdHolder(View itemView) {
             super(itemView);
+            mAdView = (NativeExpressAdView) itemView.findViewById(R.id.inflator_native_ad_view);
         }
     }
 }

@@ -58,6 +58,7 @@ public class CuratedFragment extends Fragment implements RequestResponse, SwipeR
         super.onViewCreated(view, savedInstanceState);
 
         if (imagesArray.length() == 0) {
+            page = 1;
             mVolleyWrapper.getCallArray(Const.UNSPLASH_CURATED_IMAGES + "&page=1", Const.CURATED_CALLBACK);
             mVolleyWrapper.setListener(this);
         }
@@ -104,7 +105,7 @@ public class CuratedFragment extends Fragment implements RequestResponse, SwipeR
                     imagesArray.put(null);
                     mCuratedAdapter.notifyItemInserted(imagesArray.length());
 
-                    mVolleyWrapper.getCallArray(Const.UNSPLASH_CURATED_IMAGES + "&page=" + page, Const.CURATED_CALLBACK);
+                    mVolleyWrapper.getCallArray(Const.UNSPLASH_CURATED_IMAGES + "&page=" + page, Const.CURATED_LOAD_MORE);
                 }
             });
 

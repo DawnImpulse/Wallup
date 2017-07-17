@@ -18,9 +18,11 @@ public class Const {
     public static final String UNSPLASH_SEARCH          = UNSPLASH_SOURCE + "search/photos" + UNSPLASH_ID + "&query=";
     public static final String UNSPLASH_LATEST_IMAGES   = UNSPLASH_API + "photos" + UNSPLASH_ID + "&order_by=latest&per_page=30";
     public static final String UNSPLASH_CURATED_IMAGES  = UNSPLASH_API + "photos/curated" + UNSPLASH_ID + "&order_by=latest&per_page=30";
+    public static final String UNSPLASH_GET_PHOTO       = UNSPLASH_API + "photos/";
 
     //----------------- Unsplash Image Properties------------------
 
+    public static final String IMAGE_ID             = "id";
     public static final String IMAGE_URLS           = "urls";
     public static final String IMAGE_USER           = "user";
     public static final String IMAGE_USER_IMAGES    = "profile_image";
@@ -64,13 +66,14 @@ public class Const {
 
     //------------------ Callbacks --------------------------------
 
-    public static final int NEW_IMAGES_CALLBACK         = 1;
-    public static final int LOAD_MORE_IMAGES_CALLBACK   = 2;
-    public static final int USER_IMAGES_CALLBACK        = 3;
-    public static final int LATEST_CALLBACK             = 4;
-    public static final int LATEST_LOAD_MORE            = 5;
-    public static final int CURATED_CALLBACK            = 6;
-    public static final int CURATED_LOAD_MORE           = 7;
+    public static final int NEW_IMAGES_CALLBACK             = 1;
+    public static final int LOAD_MORE_IMAGES_CALLBACK       = 2;
+    public static final int USER_IMAGES_CALLBACK            = 3;
+    public static final int LATEST_CALLBACK                 = 4;
+    public static final int LATEST_LOAD_MORE                = 5;
+    public static final int CURATED_CALLBACK                = 6;
+    public static final int CURATED_LOAD_MORE               = 7;
+    public static final int IMAGE_PREVIEW_DETAIL_CALLBACK   = 8;
 
     //------------------ Transition Names -------------------------
     public static final String TRANS_NEW_TO_PROFILE         = "trans1";

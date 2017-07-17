@@ -30,7 +30,6 @@ import android.widget.TextView;
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.NativeExpressAdView;
 import com.stonevire.wallup.R;
@@ -217,14 +216,6 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             AdRequest mAdRequest = new AdRequest.Builder().build();
             ((AdViewHolder) holder).mAdView.loadAd(mAdRequest);
-            ((AdViewHolder) holder).mAdView.setAdListener(new AdListener() {
-                @Override
-                public void onAdLoaded() {
-                    super.onAdLoaded();
-                    ((AdViewHolder) holder).mAdView.setVisibility(View.VISIBLE);
-                }
-
-            });
         }
     }
 
@@ -247,8 +238,8 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @Override
     public int getItemViewType(int position) {
         try {
-            if (position % 20 == 19) {
-                return VIEW_TYPE_AD;
+            if (position == 5) {
+                //return VIEW_TYPE_AD;
             }
             return imagesArray.get(position) == null ? VIEW_TYPE_LOADING : VIEW_TYPE_ITEM;
         } catch (JSONException e) {

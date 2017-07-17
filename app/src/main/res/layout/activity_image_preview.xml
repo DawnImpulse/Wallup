@@ -138,6 +138,7 @@
                                 android:id="@+id/activity_image_preview_focal"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:gravity="center"
                                 android:text="--"
                                 android:textColor="@color/white" />
                         </LinearLayout>

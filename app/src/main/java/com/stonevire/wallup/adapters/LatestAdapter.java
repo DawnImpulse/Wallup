@@ -17,6 +17,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.NativeExpressAdView;
 import com.stonevire.wallup.R;
 import com.stonevire.wallup.activities.ImagePreviewActivity;
 import com.stonevire.wallup.activities.UserProfileActivity;
@@ -42,6 +44,7 @@ public class LatestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     boolean isLoading;
     int VIEW_TYPE_LOADING = 0;
     int VIEW_TYPE_ITEM = 1;
+    int VIEW_TYPE_AD = 3;
     private int visibleThreshold = 5;
     private int lastVisibleItem, totalItemCount;
 
@@ -79,6 +82,9 @@ public class LatestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         } else if (viewType == VIEW_TYPE_LOADING) {
             v = LayoutInflater.from(mContext).inflate(R.layout.inflator_loading_view, parent, false);
             return new LoadingViewHolder(v);
+        } else if (viewType == VIEW_TYPE_AD) {
+            v = LayoutInflater.from(mContext).inflate(R.layout.inflator_native_ad, parent, false);
+            return new AdHolder(v);
         }
         return null;
     }
@@ -110,6 +116,9 @@ public class LatestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             }
         } else if (holder instanceof LoadingViewHolder) {
             ((LoadingViewHolder) holder).progressBar.setIndeterminate(true);
+        } else if (holder instanceof AdHolder) {
+            AdRequest mAdRequest = new AdRequest.Builder().build();
+            ((AdHolder) holder).mAdView.loadAd(mAdRequest);
         }
     }
 
@@ -120,6 +129,9 @@ public class LatestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     @Override
     public int getItemViewType(int position) {
+        if (position == 5) {
+            //return VIEW_TYPE_AD;
+        }
         try {
             return imagesArray.get(position) == null ? VIEW_TYPE_LOADING : VIEW_TYPE_ITEM;
         } catch (JSONException e) {
@@ -221,8 +233,7 @@ public class LatestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                             ActivityOptionsCompat options = ActivityOptionsCompat.
                                     makeSceneTransitionAnimation((Activity) mContext, image, ViewCompat.getTransitionName(image));
                             mContext.startActivity(intent1, options.toBundle());
-                        }else
-                        {
+                        } else {
                             mContext.startActivity(intent1);
                         }
                 }
@@ -236,9 +247,11 @@ public class LatestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
      * Ad View Holder
      */
     private class AdHolder extends RecyclerView.ViewHolder {
+        public NativeExpressAdView mAdView;
 
         public AdHolder(View itemView) {
             super(itemView);
+            mAdView = (NativeExpressAdView) itemView.findViewById(R.id.inflator_native_ad_view);
         }
     }
 }

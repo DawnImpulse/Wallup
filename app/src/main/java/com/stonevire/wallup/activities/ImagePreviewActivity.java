@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.animation.Animation;
@@ -19,7 +20,9 @@ import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.VolleyError;
 import com.facebook.common.executors.UiThreadImmediateExecutorService;
 import com.facebook.common.references.CloseableReference;
 import com.facebook.datasource.BaseDataSubscriber;
@@ -37,6 +40,8 @@ import com.gjiazhe.panoramaimageview.GyroscopeObserver;
 import com.gjiazhe.panoramaimageview.PanoramaImageView;
 import com.stonevire.wallup.R;
 import com.stonevire.wallup.adapters.TagsAdapter;
+import com.stonevire.wallup.network.volley.RequestResponse;
+import com.stonevire.wallup.network.volley.VolleyWrapper;
 import com.stonevire.wallup.utils.Const;
 import com.stonevire.wallup.utils.DateModifier;
 import com.stonevire.wallup.utils.DisplayCalculations;
@@ -49,7 +54,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class ImagePreviewActivity extends AppCompatActivity {
+public class ImagePreviewActivity extends AppCompatActivity implements RequestResponse {
 
     @BindView(R.id.content_image_preview_image)
     PanoramaImageView contentImagePreviewImage;
@@ -93,14 +98,17 @@ public class ImagePreviewActivity extends AppCompatActivity {
     JSONObject mainObject, imageObject, imageUrlsObject, authorObject, authorImages, exif = null;
     JSONArray tagsArray = null;
     TagsAdapter mTagsAdapter;
+    VolleyWrapper mVolleyWrapper;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_preview);
+        supportPostponeEnterTransition();
         ButterKnife.bind(this);
         mIntent = getIntent();
+        mVolleyWrapper = new VolleyWrapper(this);
 
         gyroscopeObserver = new GyroscopeObserver();
         gyroscopeObserver.setMaxRotateRadian(1.5);
@@ -153,9 +161,11 @@ public class ImagePreviewActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Image Object parsing
+     */
     private void imageObjectParsing() {
         try {
-
             if (!mIntent.hasExtra(Const.IS_DIRECT_OBJECT)) {
                 mainObject = new JSONObject(mIntent.getStringExtra(Const.IMAGE_OBJECT));
                 String details = mainObject.getString(Const.DETAILS);
@@ -168,6 +178,9 @@ public class ImagePreviewActivity extends AppCompatActivity {
                 }
             } else {
                 imageObject = new JSONObject(mIntent.getStringExtra(Const.IMAGE_OBJECT));
+                mVolleyWrapper.getCall(Const.UNSPLASH_GET_PHOTO +
+                        imageObject.getString(Const.IMAGE_ID) + Const.UNSPLASH_ID, Const.IMAGE_PREVIEW_DETAIL_CALLBACK);
+                mVolleyWrapper.setListener(this);
             }
             imageUrlsObject = imageObject.getJSONObject(Const.IMAGE_URLS);
             authorObject = imageObject.getJSONObject(Const.IMAGE_USER);
@@ -206,6 +219,7 @@ public class ImagePreviewActivity extends AppCompatActivity {
                     if (closeableImageRef != null && closeableImageRef.get() instanceof CloseableBitmap) {
                         contentImagePreviewImage.draw(null);
                         contentImagePreviewImage.setImageBitmap(((CloseableBitmap) closeableImageRef.get()).getUnderlyingBitmap());
+                        supportStartPostponedEnterTransition();
                     }
                 }
 
@@ -344,5 +358,57 @@ public class ImagePreviewActivity extends AppCompatActivity {
                 activityImagePreviewDetailsLayout.setVisibility(View.GONE);
             }
         }
+    }
+
+    @Override
+    public void onErrorResponse(VolleyError volleyError, int callback) {
+        Log.d("Test", volleyError.toString());
+        Toast.makeText(this, volleyError.toString(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onResponse(JSONObject response, int callback) {
+        if (callback == Const.IMAGE_PREVIEW_DETAIL_CALLBACK) {
+            if (response.has(Const.IMAGE_ID)) {
+                try {
+                    JSONObject exif = response.getJSONObject(Const.EXIF);
+                    {
+                        if (exif != null) {
+                            if (exif.has(Const.CAMERA_MAKE) && !exif.getString(Const.CAMERA_MAKE).equals("null"))
+                                activityImagePreviewCameraMake.setText(exif.getString(Const.CAMERA_MAKE));
+                            if (exif.has(Const.CAMERA_MODEL) && !exif.getString(Const.CAMERA_MODEL).equals("null"))
+                                activityImagePreviewCameraModel.setText(exif.getString(Const.CAMERA_MODEL));
+                            if (exif.has(Const.CAMERA_SHUTTER_SPEED) && !exif.getString(Const.CAMERA_SHUTTER_SPEED).equals("null"))
+                                activityImagePreviewShutter.setText(exif.getString(Const.CAMERA_SHUTTER_SPEED));
+                            if (exif.has(Const.CAMERA_FOCAL_LENGTH) && !exif.getString(Const.CAMERA_FOCAL_LENGTH).equals("null"))
+                                activityImagePreviewFocal.setText(exif.getString(Const.CAMERA_FOCAL_LENGTH));
+                            if (exif.has(Const.CAMERA_APERTURE) && !exif.getString(Const.CAMERA_APERTURE).equals("null"))
+                                activityImagePreviewAperture.setText(exif.getString(Const.CAMERA_APERTURE));
+                            if (exif.has(Const.CAMERA_ISO) && !exif.getString(Const.CAMERA_ISO).equals("null"))
+                                activityImagePreviewIso.setText(exif.getString(Const.CAMERA_ISO));
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }else if(response.has(Const.ERRORS))
+            {
+                try {
+                    Log.d("Test",response.getString(Const.ERRORS));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onResponse(JSONArray response, int callback) {
+
+    }
+
+    @Override
+    public void onResponse(String response, int callback) {
+
     }
 }

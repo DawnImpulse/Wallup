@@ -10,8 +10,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:visibility="gone"
+        android:visibility="visible"
         ads:adSize="360x132"
-        ads:adUnitId="@string/testId"/>
+        ads:adUnitId="@string/native_medium"/>
 
 </LinearLayout>
