@@ -333,8 +333,7 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                             ActivityOptionsCompat options = ActivityOptionsCompat.
                                     makeSceneTransitionAnimation((Activity) mContext, pairImage, pairFirstName, pairLastName);
                             mContext.startActivity(intent, options.toBundle());
-                        }else
-                        {
+                        } else {
                             mContext.startActivity(intent);
                         }
                         break;

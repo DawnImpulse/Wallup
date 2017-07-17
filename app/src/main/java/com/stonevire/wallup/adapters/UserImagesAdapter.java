@@ -2,7 +2,7 @@ package com.stonevire.wallup.adapters;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -56,7 +56,16 @@ public class UserImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
 
-                final LinearLayoutManager mLinearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                final GridLayoutManager mLinearLayoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
+                mLinearLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+
+                    @Override
+                    public int getSpanSize(int position) {
+                        if (mImagesArray.isNull(position))
+                            return 3;
+                        return 1;
+                    }
+                });
 
                 totalItemCount = mLinearLayoutManager.getItemCount();
                 lastVisibleItem = mLinearLayoutManager.findLastVisibleItemPosition();
@@ -101,17 +110,16 @@ public class UserImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             try {
                 JSONObject imageObject = mImagesArray.getJSONObject(position);
                 JSONObject urls = imageObject.getJSONObject(Const.IMAGE_URLS);
-
                 WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
 
-                DisplayMetrics displaymetrics = new DisplayMetrics();       //-------------------- Getting width of screen
+                //-------------------- Getting width of screen
+                DisplayMetrics displaymetrics = new DisplayMetrics();
                 wm.getDefaultDisplay().getMetrics(displaymetrics);
                 int width = displaymetrics.widthPixels;
 
                 ViewGroup.LayoutParams lp = ((UserImagesHolder) holder).draweeView.getLayoutParams();
                 lp.width = width / 3;
                 lp.height = width / 3;
-                ((UserImagesHolder) holder).draweeView.requestLayout();
                 ((UserImagesHolder) holder).draweeView.setBackgroundColor(
                         Color.parseColor(imageObject.getString(Const.IMAGE_COLOR)));
                 ((UserImagesHolder) holder).draweeView.setImageURI(urls.getString(Const.IMAGE_RAW) + append);
@@ -142,12 +150,11 @@ public class UserImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
      */
     @Override
     public int getItemViewType(int position) {
-        try {
-            return mImagesArray.get(position) == null ? VIEW_TYPE_LOADING : VIEW_TYPE_ITEM;
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return 0;
+
+        if (mImagesArray.isNull(position))
+            return VIEW_TYPE_LOADING;
+        else
+            return VIEW_TYPE_ITEM;
     }
 
     /**

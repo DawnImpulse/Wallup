@@ -3,13 +3,16 @@ package com.stonevire.wallup.activities;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,6 +22,7 @@ import com.facebook.drawee.view.DraweeTransition;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.stonevire.wallup.R;
 import com.stonevire.wallup.adapters.UserImagesAdapter;
+import com.stonevire.wallup.interfaces.OnLoadMoreListener;
 import com.stonevire.wallup.network.volley.RequestResponse;
 import com.stonevire.wallup.network.volley.VolleyWrapper;
 import com.stonevire.wallup.utils.Const;
@@ -56,16 +60,30 @@ public class UserProfileActivity extends AppCompatActivity implements RequestRes
     @BindView(R.id.content_user_profile_recycler)
     RecyclerView mRecyclerView;
 
+
     Intent intent;
 
     JSONObject author;
-    JSONObject author_images;
+    JSONObject author_image;
+    JSONArray imagesArray;
     JSONObject links;
-
     UserImagesAdapter mUserImagesAdapter;
+
+    int page = 1;
+    @BindView(R.id.app_bar)
+    AppBarLayout appBar;
+    @BindView(R.id.layout1)
+    LinearLayout layout1;
+    @BindView(R.id.layout2)
+    LinearLayout layout2;
+    @BindView(R.id.card)
+    CardView card;
+    @BindView(R.id.content_user_profile_nested)
+    LinearLayout contentUserProfileNested;
 
     /**
      * On Create
+     *
      * @param savedInstanceState
      */
     @Override
@@ -75,13 +93,14 @@ public class UserProfileActivity extends AppCompatActivity implements RequestRes
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
 
-        intent           = getIntent();
-        mVolleyWrapper   = new VolleyWrapper(this);
+        intent = getIntent();
+        mVolleyWrapper = new VolleyWrapper(this);
+        imagesArray = new JSONArray();
 
         try {
-            author          = new JSONObject(getIntent().getStringExtra(Const.IMAGE_USER));
-            author_images   = author.getJSONObject(Const.IMAGE_USER_IMAGES);
-            links           = author.getJSONObject(Const.LINKS);
+            author = new JSONObject(getIntent().getStringExtra(Const.IMAGE_USER));
+            author_image = author.getJSONObject(Const.IMAGE_USER_IMAGES);
+            links = author.getJSONObject(Const.LINKS);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 contentUserProfileImage.setTransitionName(intent.getStringExtra(Const.TRANS_NEW_TO_PROFILE));
@@ -92,7 +111,8 @@ public class UserProfileActivity extends AppCompatActivity implements RequestRes
                 getWindow().setSharedElementReturnTransition(DraweeTransition.createTransitionSet(ScalingUtils.ScaleType.FIT_CENTER, ScalingUtils.ScaleType.CENTER_CROP));
             }
 
-            mVolleyWrapper.getCallArray(links.getString(Const.USER_PHOTOS) + Const.UNSPLASH_ID, Const.USER_IMAGES_CALLBACK);
+            mVolleyWrapper.getCallArray(links.getString(Const.USER_PHOTOS) + Const.UNSPLASH_ID + "&per_page=30&page=" + page,
+                    Const.USER_IMAGES_CALLBACK);
             mVolleyWrapper.setListener(this);
 
         } catch (JSONException e) {
@@ -110,7 +130,7 @@ public class UserProfileActivity extends AppCompatActivity implements RequestRes
         if (author != null) {
             try {
                 contentUserProfileImage.setImageURI(
-                        author_images.getString(Const.USER_IMAGE_LARGE));
+                        author_image.getString(Const.USER_IMAGE_LARGE));
                 contentUserProfileLikes.setText(author.getString(Const.USER_TOTAL_LIKES));
                 contentUserProfileImages.setText(author.getString(Const.USER_TOTAL_PHOTOS));
                 contentUserProfileUsername.setText("@" + author.getString(Const.USERNAME));
@@ -139,6 +159,7 @@ public class UserProfileActivity extends AppCompatActivity implements RequestRes
 
     /**
      * On Error Response
+     *
      * @param volleyError,callback
      */
     @Override
@@ -149,6 +170,7 @@ public class UserProfileActivity extends AppCompatActivity implements RequestRes
 
     /**
      * On Response - JSON Object
+     *
      * @param response,callback
      */
     @Override
@@ -167,22 +189,57 @@ public class UserProfileActivity extends AppCompatActivity implements RequestRes
 
     /**
      * On Response - JSON Array
+     *
      * @param response,callback
      */
     @Override
     public void onResponse(JSONArray response, int callback) {
         switch (callback) {
             case Const.USER_IMAGES_CALLBACK:
+                page++;
+                imagesArray = response;
                 mUserImagesAdapter = new UserImagesAdapter(this, response, mRecyclerView);
-                mRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+                final GridLayoutManager grid = new GridLayoutManager(this, 3);
+                mRecyclerView.setLayoutManager(grid);
                 mRecyclerView.setAdapter(mUserImagesAdapter);
-                mRecyclerView.setNestedScrollingEnabled(true);
+
+                mUserImagesAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
+                    @Override
+                    public void onLoadMore() {
+                        imagesArray.put(null);
+                        mUserImagesAdapter.notifyItemInserted(imagesArray.length() - 1);
+                        try {
+                            mVolleyWrapper.getCallArray(links.getString(Const.USER_PHOTOS) + Const.UNSPLASH_ID +
+                                    "&per_page=30&page=" + page, Const.USER_IMAGES_LOADING_CALLBACK);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                break;
+
+            case Const.USER_IMAGES_LOADING_CALLBACK:
+                page++;
+                imagesArray.remove(imagesArray.length() - 1);
+                mUserImagesAdapter.notifyItemRemoved(imagesArray.length());
+
+                for (int i = 0; i < response.length(); i++) {
+                    try {
+                        imagesArray.put(response.getJSONObject(i));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                mUserImagesAdapter.notifyDataSetChanged();
+                mUserImagesAdapter.setLoaded();
 
         }
     }
 
     /**
      * On Response - String
+     *
      * @param response,callback
      */
     @Override

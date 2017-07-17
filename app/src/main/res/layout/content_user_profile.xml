@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:fresco="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_user_profile_nested"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
     app:behavior_overlapTop="56dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.stonevire.wallup.activities.UserProfileActivity"
     tools:showIn="@layout/activity_user_profile">
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -19,7 +21,6 @@
             android:id="@+id/card"
             android:layout_width="match_parent"
             android:layout_height="104dp"
-            android:layout_marginBottom="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginTop="8dp">
@@ -142,9 +143,9 @@
             android:id="@+id/content_user_profile_recycler"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="4dp"
             android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp" />
+            android:layout_marginRight="8dp"
+            android:clipToPadding="false"
+            android:paddingTop="8dp" />
     </LinearLayout>
-
-</android.support.v4.widget.NestedScrollView>
+</LinearLayout>
