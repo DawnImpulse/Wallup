@@ -179,20 +179,20 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 ((NewImagesHolder) holder).draweeView.setImageURI(urls.getString(Const.IMAGE_REGULAR));
                 ((NewImagesHolder) holder).authorImage.setImageURI(author_image.getString(Const.USER_IMAGE_LARGE));
                 ((NewImagesHolder) holder).authorFirstName.setText(author.getString(Const.USER_FIRST_NAME));
-                ((NewImagesHolder) holder).authorLastName.setText(" "+author.getString(Const.USER_LAST_NAME));
+                ((NewImagesHolder) holder).authorLastName.setText(" " + author.getString(Const.USER_LAST_NAME));
                 ((NewImagesHolder) holder).favourite.setText(detailsObject.getString(Const.IMAGE_LIKES));
 
                 // Adding Dynamic Color
                 ((NewImagesHolder) holder).authorFirstName.setTextColor(
-                        ColorModifier.getBlackOrWhite(detailsObject.getString(Const.IMAGE_COLOR),mContext));
+                        ColorModifier.getBlackOrWhite(detailsObject.getString(Const.IMAGE_COLOR), mContext));
                 ((NewImagesHolder) holder).authorLastName.setTextColor(
-                        ColorModifier.getBlackOrWhite(detailsObject.getString(Const.IMAGE_COLOR),mContext));
+                        ColorModifier.getBlackOrWhite(detailsObject.getString(Const.IMAGE_COLOR), mContext));
                 ((NewImagesHolder) holder).favourite.setTextColor(
-                        ColorModifier.getBlackOrWhite(detailsObject.getString(Const.IMAGE_COLOR),mContext));
+                        ColorModifier.getBlackOrWhite(detailsObject.getString(Const.IMAGE_COLOR), mContext));
                 ((NewImagesHolder) holder).location.setTextColor(
-                        ColorModifier.getBlackOrWhite(detailsObject.getString(Const.IMAGE_COLOR),mContext));
+                        ColorModifier.getBlackOrWhite(detailsObject.getString(Const.IMAGE_COLOR), mContext));
                 ((NewImagesHolder) holder).heart.setColorFilter(
-                        ColorModifier.getBlackOrWhite(detailsObject.getString(Const.IMAGE_COLOR),mContext));
+                        ColorModifier.getBlackOrWhite(detailsObject.getString(Const.IMAGE_COLOR), mContext));
 
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -248,7 +248,7 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public int getItemViewType(int position) {
         try {
             if (position % 20 == 19) {
-                 return VIEW_TYPE_AD;
+                return VIEW_TYPE_AD;
             }
             return imagesArray.get(position) == null ? VIEW_TYPE_LOADING : VIEW_TYPE_ITEM;
         } catch (JSONException e) {
@@ -295,7 +295,7 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             draweeView = (SimpleDraweeView) itemView.findViewById(R.id.inflator_new_image_drawee);
             authorImage = (SimpleDraweeView) itemView.findViewById(R.id.inflator_new_image_user_image);
             authorFirstName = (TextView) itemView.findViewById(R.id.inflator_new_image_user_first_name);
-            authorLastName  = (TextView) itemView.findViewById(R.id.inflator_new_image_user_last_name);
+            authorLastName = (TextView) itemView.findViewById(R.id.inflator_new_image_user_last_name);
             favourite = (TextView) itemView.findViewById(R.id.inflator_new_image_favourite);
             location = (TextView) itemView.findViewById(R.id.inflator_new_image_location);
             authorLayout = (LinearLayout) itemView.findViewById(R.id.inflator_new_image_author_layout);
@@ -322,7 +322,6 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 String details = jsonObject.getString(Const.DETAILS);
                 String new_details = details.replace("\\", "");
                 JSONObject detailsObject = new JSONObject(new_details);
-                JSONObject urls = detailsObject.getJSONObject(Const.IMAGE_URLS);
                 JSONObject author = detailsObject.getJSONObject(Const.IMAGE_USER);
 
                 switch (v.getId()) {
@@ -330,17 +329,23 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     case R.id.inflator_new_image_author_layout:
                         Intent intent = new Intent(mContext, UserProfileActivity.class);
                         intent.putExtra(Const.IMAGE_USER, String.valueOf(author));
-                        intent.putExtra(Const.TRANS_NEW_TO_PREVIEW, ViewCompat.getTransitionName(authorImage));
-                        intent.putExtra(Const.TRANS_NEW_TO_PREVIEW_1, ViewCompat.getTransitionName(authorFirstName));
-                        intent.putExtra(Const.TRANS_NEW_TO_PREVIEW_2, ViewCompat.getTransitionName(authorLastName));
 
-                        Pair<View, String> pairImage = Pair.create((View) authorImage, ViewCompat.getTransitionName(authorImage));
-                        Pair<View, String> pairFirstName = Pair.create((View) authorFirstName, ViewCompat.getTransitionName(authorFirstName));
-                        Pair<View, String> pairLastName = Pair.create((View) authorLastName, ViewCompat.getTransitionName(authorLastName));
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            intent.putExtra(Const.TRANS_NEW_TO_PROFILE, ViewCompat.getTransitionName(authorImage));
+                            intent.putExtra(Const.TRANS_NEW_TO_PROFILE_1, ViewCompat.getTransitionName(authorFirstName));
+                            intent.putExtra(Const.TRANS_NEW_TO_PROFILE_2, ViewCompat.getTransitionName(authorLastName));
 
-                        ActivityOptionsCompat options = ActivityOptionsCompat.
-                                makeSceneTransitionAnimation((Activity) mContext, pairImage, pairFirstName,pairLastName);
-                        mContext.startActivity(intent, options.toBundle());
+                            Pair<View, String> pairImage = Pair.create((View) authorImage, ViewCompat.getTransitionName(authorImage));
+                            Pair<View, String> pairFirstName = Pair.create((View) authorFirstName, ViewCompat.getTransitionName(authorFirstName));
+                            Pair<View, String> pairLastName = Pair.create((View) authorLastName, ViewCompat.getTransitionName(authorLastName));
+
+                            ActivityOptionsCompat options = ActivityOptionsCompat.
+                                    makeSceneTransitionAnimation((Activity) mContext, pairImage, pairFirstName, pairLastName);
+                            mContext.startActivity(intent, options.toBundle());
+                        }else
+                        {
+                            mContext.startActivity(intent);
+                        }
                         break;
 
                     case R.id.inflator_new_image_drawee:

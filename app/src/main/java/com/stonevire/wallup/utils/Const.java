@@ -73,13 +73,22 @@ public class Const {
     public static final int CURATED_LOAD_MORE           = 7;
 
     //------------------ Transition Names -------------------------
-    public static final String TRANS_NEW_TO_PREVIEW       = "trans1";
-    public static final String TRANS_NEW_TO_PREVIEW_1     = "trans2";
-    public static final String TRANS_NEW_TO_PREVIEW_2     = "trans3";
-    public static final String TRANS_NEW_TO_PREVIEW_3     = "trans4";
+    public static final String TRANS_NEW_TO_PROFILE         = "trans1";
+    public static final String TRANS_NEW_TO_PROFILE_1       = "trans2";
+    public static final String TRANS_NEW_TO_PROFILE_2       = "trans3";
+    public static final String TRANS_NEW_TO_PREVIEW_3       = "trans4";
+    public static final String TRANS_LATEST_TO_PROFILE      = "trans1";
+    public static final String TRANS_LATEST_TO_PROFILE_1    = "trans2";
+    public static final String TRANS_LATEST_TO_PROFILE_2    = "trans3";
+    public static final String TRANS_LATEST_TO_PREVIEW      = "trans4";
+    public static final String TRANS_CURATED_TO_PROFILE     = "trans1";
+    public static final String TRANS_CURATED_TO_PROFILE_1   = "trans2";
+    public static final String TRANS_CURATED_TO_PROFILE_2   = "trans3";
+    public static final String TRANS_CURATED_TO_PREVIEW     = "trans4";
     //------------------ Others -----------------------------------
 
     public static final String IMAGE_OBJECT = "imageObject";
+    public static final String IS_DIRECT_OBJECT = "isDirectObject";
 
 
 

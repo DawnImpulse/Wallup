@@ -1,16 +1,25 @@
 package com.stonevire.wallup.adapters;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.stonevire.wallup.R;
+import com.stonevire.wallup.activities.ImagePreviewActivity;
+import com.stonevire.wallup.activities.UserProfileActivity;
 import com.stonevire.wallup.interfaces.OnLoadMoreListener;
 import com.stonevire.wallup.utils.Const;
 import com.stonevire.wallup.utils.DateModifier;
@@ -89,6 +98,13 @@ public class LatestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 ((FeedHolder) holder).authorImage.setImageURI(profileImage.getString(Const.USER_IMAGE_LARGE));
                 ((FeedHolder) holder).image.setImageURI(urls.getString(Const.IMAGE_REGULAR));
 
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    ViewCompat.setTransitionName(((FeedHolder) holder).authorImage, user.getString(Const.USERNAME));
+                    ViewCompat.setTransitionName(((FeedHolder) holder).firstName, user.getString(Const.USER_FIRST_NAME));
+                    ViewCompat.setTransitionName(((FeedHolder) holder).lastName, user.getString(Const.USER_LAST_NAME));
+                    ViewCompat.setTransitionName(((FeedHolder) holder).image, user.getString(Const.USERNAME));
+                }
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -143,12 +159,13 @@ public class LatestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     /**
      * Feed Holder
      */
-    private class FeedHolder extends RecyclerView.ViewHolder {
+    private class FeedHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         SimpleDraweeView authorImage;
         SimpleDraweeView image;
         TextView date;
         TextView firstName;
         TextView lastName;
+        LinearLayout authorLayout;
 
         public FeedHolder(View itemView) {
             super(itemView);
@@ -157,6 +174,61 @@ public class LatestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             date = (TextView) itemView.findViewById(R.id.inflator_latest_date);
             firstName = (TextView) itemView.findViewById(R.id.inflator_latest_author_first_name);
             lastName = (TextView) itemView.findViewById(R.id.inflator_latest_author_last_name);
+            authorLayout = (LinearLayout) itemView.findViewById(R.id.inflator_latest_author_layout);
+
+            authorLayout.setOnClickListener(this);
+            image.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+
+            JSONObject object = null;
+            try {
+                object = imagesArray.getJSONObject(getAdapterPosition());
+                JSONObject user = object.getJSONObject(Const.IMAGE_USER);
+
+                switch (v.getId()) {
+                    case R.id.inflator_latest_author_layout:
+                        Intent intent = new Intent(mContext, UserProfileActivity.class);
+                        intent.putExtra(Const.IMAGE_USER, user.toString());
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            intent.putExtra(Const.TRANS_LATEST_TO_PROFILE, ViewCompat.getTransitionName(authorImage));
+                            intent.putExtra(Const.TRANS_LATEST_TO_PROFILE_1, ViewCompat.getTransitionName(firstName));
+                            intent.putExtra(Const.TRANS_LATEST_TO_PROFILE_2, ViewCompat.getTransitionName(lastName));
+
+                            Pair<View, String> pairImage = Pair.create((View) authorImage, ViewCompat.getTransitionName(authorImage));
+                            Pair<View, String> pairFirstName = Pair.create((View) firstName, ViewCompat.getTransitionName(firstName));
+                            Pair<View, String> pairLastName = Pair.create((View) lastName, ViewCompat.getTransitionName(lastName));
+
+                            ActivityOptionsCompat options = ActivityOptionsCompat.
+                                    makeSceneTransitionAnimation((Activity) mContext, pairImage, pairFirstName, pairLastName);
+                            mContext.startActivity(intent, options.toBundle());
+                        } else {
+                            mContext.startActivity(intent);
+                        }
+
+                        break;
+
+                    case R.id.inflator_latest_drawee:
+                        Intent intent1 = new Intent(mContext, ImagePreviewActivity.class);
+                        intent1.putExtra(Const.IMAGE_OBJECT, object.toString());
+                        intent1.putExtra(Const.IS_DIRECT_OBJECT, "true");
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            intent1.putExtra(Const.TRANS_LATEST_TO_PREVIEW, ViewCompat.getTransitionName(image));
+                            ActivityOptionsCompat options = ActivityOptionsCompat.
+                                    makeSceneTransitionAnimation((Activity) mContext, image, ViewCompat.getTransitionName(image));
+                            mContext.startActivity(intent1, options.toBundle());
+                        }else
+                        {
+                            mContext.startActivity(intent1);
+                        }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 

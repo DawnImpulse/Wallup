@@ -84,9 +84,9 @@ public class UserProfileActivity extends AppCompatActivity implements RequestRes
             links           = author.getJSONObject(Const.LINKS);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                contentUserProfileImage.setTransitionName(intent.getStringExtra(Const.TRANS_NEW_TO_PREVIEW));
-                activityUserProfileFirstName.setTransitionName(intent.getStringExtra(Const.TRANS_NEW_TO_PREVIEW_1));
-                activityUserProfileLastName.setTransitionName(intent.getStringExtra(Const.TRANS_NEW_TO_PREVIEW_2));
+                contentUserProfileImage.setTransitionName(intent.getStringExtra(Const.TRANS_NEW_TO_PROFILE));
+                activityUserProfileFirstName.setTransitionName(intent.getStringExtra(Const.TRANS_NEW_TO_PROFILE_1));
+                activityUserProfileLastName.setTransitionName(intent.getStringExtra(Const.TRANS_NEW_TO_PROFILE_2));
 
                 getWindow().setSharedElementEnterTransition(DraweeTransition.createTransitionSet(ScalingUtils.ScaleType.CENTER_CROP, ScalingUtils.ScaleType.FIT_CENTER));
                 getWindow().setSharedElementReturnTransition(DraweeTransition.createTransitionSet(ScalingUtils.ScaleType.FIT_CENTER, ScalingUtils.ScaleType.CENTER_CROP));

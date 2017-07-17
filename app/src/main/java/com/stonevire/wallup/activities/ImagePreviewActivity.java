@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,13 +22,14 @@ import android.widget.TextView;
 
 import com.facebook.common.executors.UiThreadImmediateExecutorService;
 import com.facebook.common.references.CloseableReference;
+import com.facebook.datasource.BaseDataSubscriber;
 import com.facebook.datasource.DataSource;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.view.DraweeTransition;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.core.ImagePipeline;
-import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
+import com.facebook.imagepipeline.image.CloseableBitmap;
 import com.facebook.imagepipeline.image.CloseableImage;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
@@ -155,20 +155,26 @@ public class ImagePreviewActivity extends AppCompatActivity {
 
     private void imageObjectParsing() {
         try {
-            mainObject = new JSONObject(mIntent.getStringExtra(Const.IMAGE_OBJECT));
-            String details = mainObject.getString(Const.DETAILS);
-            String details1 = details.replace("\\", "");
-            imageObject = new JSONObject(details1);
+
+            if (!mIntent.hasExtra(Const.IS_DIRECT_OBJECT)) {
+                mainObject = new JSONObject(mIntent.getStringExtra(Const.IMAGE_OBJECT));
+                String details = mainObject.getString(Const.DETAILS);
+                String details1 = details.replace("\\", "");
+                imageObject = new JSONObject(details1);
+
+                if (mainObject.has(Const.TAGS)) {
+                    String tag = mainObject.getString(Const.TAGS).replace("\\", "");
+                    tagsArray = new JSONArray(tag);
+                }
+            } else {
+                imageObject = new JSONObject(mIntent.getStringExtra(Const.IMAGE_OBJECT));
+            }
             imageUrlsObject = imageObject.getJSONObject(Const.IMAGE_URLS);
             authorObject = imageObject.getJSONObject(Const.IMAGE_USER);
             authorImages = authorObject.getJSONObject(Const.IMAGE_USER_IMAGES);
 
             if (imageObject.has(Const.EXIF))
                 exif = imageObject.getJSONObject(Const.EXIF);
-            if (mainObject.has(Const.TAGS)) {
-                String tag = mainObject.getString(Const.TAGS).replace("\\", "");
-                tagsArray = new JSONArray(tag);
-            }
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -189,11 +195,18 @@ public class ImagePreviewActivity extends AppCompatActivity {
             DataSource<CloseableReference<CloseableImage>>
                     dataSource = imagePipeline.fetchDecodedImage(request, this);
 
-            dataSource.subscribe(new BaseBitmapDataSubscriber() {
-
+            dataSource.subscribe(new BaseDataSubscriber<CloseableReference<CloseableImage>>() {
                 @Override
-                protected void onNewResultImpl(Bitmap bitmap) {
-                    contentImagePreviewImage.setImageBitmap(bitmap);
+                protected void onNewResultImpl(DataSource<CloseableReference<CloseableImage>> dataSource) {
+                    if (!dataSource.isFinished()) {
+                        return;
+                    }
+
+                    CloseableReference<CloseableImage> closeableImageRef = dataSource.getResult();
+                    if (closeableImageRef != null && closeableImageRef.get() instanceof CloseableBitmap) {
+                        contentImagePreviewImage.draw(null);
+                        contentImagePreviewImage.setImageBitmap(((CloseableBitmap) closeableImageRef.get()).getUnderlyingBitmap());
+                    }
                 }
 
                 @Override
@@ -241,7 +254,7 @@ public class ImagePreviewActivity extends AppCompatActivity {
 
             activityImagePreviewAuthorImage.setImageURI(authorImages.getString(Const.USER_IMAGE_LARGE));
             activityImagePreviewAuthorFirstName.setText(authorObject.getString(Const.USER_FIRST_NAME));
-            activityImagePreviewAuthorLastName.setText(" "+authorObject.getString(Const.USER_LAST_NAME));
+            activityImagePreviewAuthorLastName.setText(" " + authorObject.getString(Const.USER_LAST_NAME));
             if (imageObject.has(Const.LOCATION_OBJECT)) {
                 JSONObject locationObject = imageObject.getJSONObject(Const.LOCATION_OBJECT);
                 activityImagePreviewLocation.setText(locationObject.getString(Const.LOCATION_TITLE));
