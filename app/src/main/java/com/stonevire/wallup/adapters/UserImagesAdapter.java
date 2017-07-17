@@ -12,7 +12,6 @@ import android.view.WindowManager;
 import android.widget.ProgressBar;
 
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.google.android.gms.ads.NativeExpressAdView;
 import com.stonevire.wallup.R;
 import com.stonevire.wallup.interfaces.OnLoadMoreListener;
 import com.stonevire.wallup.utils.Const;
@@ -30,7 +29,6 @@ public class UserImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private final int VIEW_TYPE_ITEM = 0;
     private final int VIEW_TYPE_LOADING = 1;
-    private final int VIEW_TYPE_AD = 2;
 
     private OnLoadMoreListener mLoadMoreListener;
 
@@ -45,6 +43,7 @@ public class UserImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     /**
      * Constructor
+     *
      * @param context,imagesArray,recyclerView
      */
     public UserImagesAdapter(Context context, JSONArray imagesArray, RecyclerView recyclerView) {
@@ -74,6 +73,7 @@ public class UserImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     /**
      * On Create View Holder
+     *
      * @param parent,viewType
      * @return
      */
@@ -86,15 +86,13 @@ public class UserImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         } else if (viewType == VIEW_TYPE_LOADING) {
             view = LayoutInflater.from(mContext).inflate(R.layout.inflator_loading_view, parent, false);
             return new LoadingViewHolder(view);
-        } else if (viewType == VIEW_TYPE_AD) {
-            //view = LayoutInflater.from(mContext).inflate(R.layout.inflator_native_ad, parent, false);
-            //return new AdViewHolder(view);
         }
         return null;
     }
 
     /**
      * On Bind View Holder
+     *
      * @param holder,position
      */
     @Override
@@ -104,15 +102,15 @@ public class UserImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 JSONObject imageObject = mImagesArray.getJSONObject(position);
                 JSONObject urls = imageObject.getJSONObject(Const.IMAGE_URLS);
 
-                WindowManager wm = (WindowManager)mContext.getSystemService(Context.WINDOW_SERVICE);
+                WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
 
                 DisplayMetrics displaymetrics = new DisplayMetrics();       //-------------------- Getting width of screen
                 wm.getDefaultDisplay().getMetrics(displaymetrics);
                 int width = displaymetrics.widthPixels;
 
                 ViewGroup.LayoutParams lp = ((UserImagesHolder) holder).draweeView.getLayoutParams();
-                lp.width = width/3;
-                lp.height = width/3;
+                lp.width = width / 3;
+                lp.height = width / 3;
                 ((UserImagesHolder) holder).draweeView.requestLayout();
                 ((UserImagesHolder) holder).draweeView.setBackgroundColor(
                         Color.parseColor(imageObject.getString(Const.IMAGE_COLOR)));
@@ -122,24 +120,13 @@ public class UserImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 e.printStackTrace();
             }
         } else if (holder instanceof LoadingViewHolder) {
-
-        } else if (holder instanceof AdViewHolder) {
-
-            /*AdRequest mAdRequest = new AdRequest.Builder().build();
-            ((AdViewHolder) holder).mAdView.loadAd(mAdRequest);
-            ((AdViewHolder) holder).mAdView.setAdListener(new AdListener() {
-                @Override
-                public void onAdLoaded() {
-                    super.onAdLoaded();
-                    ((AdViewHolder) holder).mAdView.setVisibility(View.VISIBLE);
-                }
-
-            });*/
+            ((LoadingViewHolder) holder).progressBar.setIndeterminate(true);
         }
     }
 
     /**
      * Get count of Items
+     *
      * @return Count of Items
      */
     @Override
@@ -149,6 +136,7 @@ public class UserImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     /**
      * Return the Type of view to show on Current View
+     *
      * @param position
      * @return View Type (int)
      */
@@ -164,6 +152,7 @@ public class UserImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     /**
      * On Load More Listener (defined)
+     *
      * @param mLoadMoreListener
      */
     public void setOnLoadMoreListener(OnLoadMoreListener mLoadMoreListener) {
@@ -199,18 +188,6 @@ public class UserImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         public LoadingViewHolder(View itemView) {
             super(itemView);
             progressBar = (ProgressBar) itemView.findViewById(R.id.inflator_loading_view_progress);
-        }
-    }
-
-    /**
-     * Ad View Holder
-     */
-    private static class AdViewHolder extends RecyclerView.ViewHolder {
-        public NativeExpressAdView mAdView;
-
-        public AdViewHolder(View itemView) {
-            super(itemView);
-            mAdView = (NativeExpressAdView) itemView.findViewById(R.id.inflator_native_ad_view);
         }
     }
 }

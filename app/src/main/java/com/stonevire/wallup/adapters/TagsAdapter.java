@@ -31,6 +31,7 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.TagsHolder> {
 
     /**
      * On Create View Holder
+     *
      * @param parent,viewType
      * @return
      */
@@ -41,16 +42,13 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.TagsHolder> {
         return t;
     }
 
-    /**
-     * On Bind View Holder
-     * @param holder,position
-     */
     @Override
-    public void onBindViewHolder(final TagsHolder holder, int position) {
+    public void onViewAttachedToWindow(final TagsHolder holder) {
+        super.onViewAttachedToWindow(holder);
         try {
-            holder.tagsButton.setText(tagsArray.getString(position).toUpperCase());
+            holder.tagsButton.setText(tagsArray.getString(holder.getAdapterPosition()).toUpperCase());
             holder.tagsButton.requestLayout();
-            holder.drawee.setImageURI(Const.UNSPLASH_SOURCE+"120x64/?"+tagsArray.getString(position));
+            holder.drawee.setImageURI(Const.UNSPLASH_SOURCE + "120x64/?" + tagsArray.getString(holder.getAdapterPosition()));
 
             ViewTreeObserver vto = holder.tagsButton.getViewTreeObserver();
 
@@ -58,14 +56,24 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.TagsHolder> {
                 @Override
                 public void onGlobalLayout() {
                     ViewGroup.LayoutParams lp1 = holder.drawee.getLayoutParams();
-                    lp1.width   = holder.tagsButton.getWidth();
-                    lp1.height  = holder.tagsButton.getHeight();
+                    lp1.width = holder.tagsButton.getWidth();
+                    lp1.height = holder.tagsButton.getHeight();
                 }
             });
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
 
+    /**
+     * On Bind View Holder
+     *
+     * @param holder,position
+     */
+
+
+    @Override
+    public void onBindViewHolder(final TagsHolder holder, int position) {
     }
 
 
@@ -80,8 +88,8 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.TagsHolder> {
 
         public TagsHolder(View itemView) {
             super(itemView);
-            tagsButton  = (Button) itemView.findViewById(R.id.inflator_tags_button);
-            drawee      = (SimpleDraweeView) itemView.findViewById(R.id.inflator_tags_drawee);
+            tagsButton = (Button) itemView.findViewById(R.id.inflator_tags_button);
+            drawee = (SimpleDraweeView) itemView.findViewById(R.id.inflator_tags_drawee);
         }
     }
 }
