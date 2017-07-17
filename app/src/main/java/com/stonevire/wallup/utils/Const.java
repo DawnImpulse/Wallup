@@ -72,9 +72,15 @@ public class Const {
     public static final int CURATED_CALLBACK            = 6;
     public static final int CURATED_LOAD_MORE           = 7;
 
+    //------------------ Transition Names -------------------------
+    public static final String TRANS_NEW_TO_PREVIEW       = "trans1";
+    public static final String TRANS_NEW_TO_PREVIEW_1     = "trans2";
+    public static final String TRANS_NEW_TO_PREVIEW_2     = "trans3";
+    public static final String TRANS_NEW_TO_PREVIEW_3     = "trans4";
     //------------------ Others -----------------------------------
 
     public static final String IMAGE_OBJECT = "imageObject";
+
 
 
 }

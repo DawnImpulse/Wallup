@@ -108,7 +108,8 @@ public class ImagePreviewActivity extends AppCompatActivity {
         contentImagePreviewImage.setEnableScrollbar(false);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            contentImagePreviewImage.setTransitionName(mIntent.getStringExtra("transName"));
+            contentImagePreviewImage.setTransitionName(mIntent.getStringExtra(Const.TRANS_NEW_TO_PREVIEW_3));
+
             getWindow().setSharedElementEnterTransition(DraweeTransition.createTransitionSet(ScalingUtils.ScaleType.CENTER_CROP, ScalingUtils.ScaleType.FIT_CENTER));
             getWindow().setSharedElementReturnTransition(DraweeTransition.createTransitionSet(ScalingUtils.ScaleType.FIT_CENTER, ScalingUtils.ScaleType.CENTER_CROP));
         }

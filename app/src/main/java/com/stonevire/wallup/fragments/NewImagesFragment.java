@@ -121,7 +121,7 @@ public class NewImagesFragment extends Fragment implements RequestResponse, Swip
                             imagesArray.put(null);
                             mNewImagesAdapter.notifyItemInserted(imagesArray.length() - 1);
 
-                            params = new HashMap<String, String>();
+                            params = new HashMap<>();
                             params.put(Const.PAGE_NO, String.valueOf(pageNo));
                             volleyWrapper.postCall(Const.NEW_IMAGES, params, Const.LOAD_MORE_IMAGES_CALLBACK);
                         }

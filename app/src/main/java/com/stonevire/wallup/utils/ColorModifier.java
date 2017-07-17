@@ -12,8 +12,9 @@ import com.stonevire.wallup.R;
 
 public class ColorModifier {
 
-    public static int getBlackOrWhite(int color, Context context)
+    public static int getBlackOrWhite(String color1, Context context)
     {
+        int color = Color.parseColor(color1);
         int red = Color.red(color);
         int blue = Color.blue(color);
         int green = Color.green(color);
