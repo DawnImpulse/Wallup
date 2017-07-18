@@ -38,6 +38,20 @@
             android:name=".activities.ImagePreviewActivity"
             android:label="@string/title_activity_image_preview"
             android:theme="@style/AppTheme.NoActionBar.Fullscreen"></activity>
+
+        <service
+            android:name="com.stonevire.wallup.services.LiveImagesService"
+            android:enabled="true"
+            android:label="Wallup Images"
+            android:permission="android.permission.BIND_WALLPAPER">
+            <intent-filter>
+                <action android:name="android.service.wallpaper.WallpaperService" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.service.wallpaper"
+                android:resource="@xml/wallpaper" />
+        </service>
     </application>
 
 </manifest>
