@@ -341,11 +341,16 @@ public class NewImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     case R.id.inflator_new_image_drawee:
                         Intent intent1 = new Intent(mContext, ImagePreviewActivity.class);
                         intent1.putExtra(Const.IMAGE_OBJECT, jsonObject.toString()); //sending cleaned image string object
-                        intent1.putExtra(Const.TRANS_NEW_TO_PREVIEW_3, ViewCompat.getTransitionName(draweeView));
 
-                        ActivityOptionsCompat options1 = ActivityOptionsCompat.
-                                makeSceneTransitionAnimation((Activity) mContext, draweeView, ViewCompat.getTransitionName(draweeView));
-                        mContext.startActivity(intent1, options1.toBundle());
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            intent1.putExtra(Const.TRANS_NEW_TO_PREVIEW_3, ViewCompat.getTransitionName(draweeView));
+
+                            ActivityOptionsCompat options1 = ActivityOptionsCompat.
+                                    makeSceneTransitionAnimation((Activity) mContext, draweeView, ViewCompat.getTransitionName(draweeView));
+                            mContext.startActivity(intent1, options1.toBundle());
+                        } else {
+                            mContext.startActivity(intent1);
+                        }
                 }
 
             } catch (JSONException e) {

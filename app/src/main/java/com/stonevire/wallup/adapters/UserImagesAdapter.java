@@ -1,7 +1,12 @@
 package com.stonevire.wallup.adapters;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
@@ -13,6 +18,7 @@ import android.widget.ProgressBar;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.stonevire.wallup.R;
+import com.stonevire.wallup.activities.ImagePreviewActivity;
 import com.stonevire.wallup.interfaces.OnLoadMoreListener;
 import com.stonevire.wallup.utils.Const;
 
@@ -124,6 +130,10 @@ public class UserImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         Color.parseColor(imageObject.getString(Const.IMAGE_COLOR)));
                 ((UserImagesHolder) holder).draweeView.setImageURI(urls.getString(Const.IMAGE_RAW) + append);
 
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    ViewCompat.setTransitionName(((UserImagesHolder) holder).draweeView, imageObject.getString(Const.IMAGE_ID));
+                }
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -177,12 +187,36 @@ public class UserImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     /**
      * User Images View Holder
      */
-    private class UserImagesHolder extends RecyclerView.ViewHolder {
+    private class UserImagesHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         SimpleDraweeView draweeView;
 
         public UserImagesHolder(View itemView) {
             super(itemView);
             draweeView = (SimpleDraweeView) itemView.findViewById(R.id.inflator_user_images_drawee);
+            draweeView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            try {
+                switch (v.getId()) {
+                    case R.id.inflator_user_images_drawee:
+                        Intent intent = new Intent(mContext, ImagePreviewActivity.class);
+                        intent.putExtra(Const.IMAGE_OBJECT, mImagesArray.getJSONObject(getAdapterPosition()).toString());
+                        intent.putExtra(Const.IS_DIRECT_OBJECT,"true");
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            intent.putExtra(Const.TRANS_USER_TO_PREVIEW, ViewCompat.getTransitionName(draweeView));
+                            ActivityOptionsCompat options1 = ActivityOptionsCompat.
+                                    makeSceneTransitionAnimation((Activity) mContext, draweeView, ViewCompat.getTransitionName(draweeView));
+                            mContext.startActivity(intent, options1.toBundle());
+                        } else {
+                            mContext.startActivity(intent);
+                        }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 

@@ -122,11 +122,6 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
             getWindow().setSharedElementReturnTransition(DraweeTransition.createTransitionSet(ScalingUtils.ScaleType.FIT_CENTER, ScalingUtils.ScaleType.CENTER_CROP));
         }
         imageObjectParsing();
-
-        /*byte[] byteArray = getIntent().getByteArrayExtra("abc");
-        Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-        contentImagePreviewImage.setImageBitmap(bmp);*/
-        gettingBitmap();
         imageDetails();
     }
 
@@ -135,6 +130,7 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
         super.onResume();
         // Register GyroscopeObserver.
         gyroscopeObserver.register(this);
+        gettingBitmap();
     }
 
     @Override
@@ -142,6 +138,7 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
         super.onPause();
         // Unregister GyroscopeObserver.
         gyroscopeObserver.unregister();
+        contentImagePreviewImage.setImageBitmap(null);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -217,7 +214,6 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
 
                     CloseableReference<CloseableImage> closeableImageRef = dataSource.getResult();
                     if (closeableImageRef != null && closeableImageRef.get() instanceof CloseableBitmap) {
-                        contentImagePreviewImage.draw(null);
                         contentImagePreviewImage.setImageBitmap(((CloseableBitmap) closeableImageRef.get()).getUnderlyingBitmap());
                         supportStartPostponedEnterTransition();
                     }

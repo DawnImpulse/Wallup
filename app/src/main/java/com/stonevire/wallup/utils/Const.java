@@ -91,6 +91,7 @@ public class Const {
     public static final String TRANS_CURATED_TO_PROFILE_1   = "trans2";
     public static final String TRANS_CURATED_TO_PROFILE_2   = "trans3";
     public static final String TRANS_CURATED_TO_PREVIEW     = "trans4";
+    public static final String TRANS_USER_TO_PREVIEW        = "trans4";
     //------------------ Others -----------------------------------
 
     public static final String IMAGE_OBJECT = "imageObject";
