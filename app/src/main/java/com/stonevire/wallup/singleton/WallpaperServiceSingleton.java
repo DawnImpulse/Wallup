@@ -30,7 +30,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Comparator;
 
 /**
@@ -45,6 +48,7 @@ public class WallpaperServiceSingleton {
     Handler handler = new Handler();
     SurfaceHolder mSurfaceHolder;
     File mFile;
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
 
     boolean shouldDrawAfterFetch = false;
     boolean drawOk;
@@ -60,43 +64,70 @@ public class WallpaperServiceSingleton {
     final Runnable drawRunner = new Runnable() {
         @Override
         public void run() {
-            if (directory().listFiles().length != 0) {
-                if (Prefs.contains(Const.LIVE_IMAGES_POSITION)) {
-                    int temp = Prefs.getInt(Const.LIVE_IMAGES_COUNT, 2) - 1;
-                    position = Prefs.getInt(Const.LIVE_IMAGES_POSITION, temp);
-                } else {
-                    position = 1;
-                }
 
-                Log.d("Test", String.valueOf(position));
-
-                if (position > Prefs.getInt(Const.LIVE_IMAGES_COUNT, 1)) {
-
-                    position = Prefs.getInt(Const.LIVE_IMAGES_COUNT, 3) - 3;
-                    if (position < 0)
-                        position = Prefs.getInt(Const.LIVE_IMAGES_COUNT, 2) - 1;
-                    draw();
-
-                } else if (position >= Prefs.getInt(Const.LIVE_IMAGES_COUNT, 1) - 3 && directory().listFiles().length >= 5) {
-                    fetchImage(false, 1);
-                    draw();
+            Calendar calendar = Calendar.getInstance();
+            Calendar current = Calendar.getInstance();
+            if (Prefs.contains(Const.LIVE_IMAGES_UPCOMING_TIME)) {
+                String upcoming = Prefs.getString(Const.LIVE_IMAGES_UPCOMING_TIME, "");
+                if (!upcoming.equals("")) {
+                    try {
+                        calendar.setTime(sdf.parse(upcoming));
+                        if (calendar.getTimeInMillis() > current.getTimeInMillis()) {
+                            long remaining = calendar.getTimeInMillis() - current.getTimeInMillis();
+                            handler.postDelayed(drawRunner, remaining);
+                        } else {
+                            drawInitializer();
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                        drawInitializer();
+                    }
                 } else
-                    draw();
-                handler.postDelayed(drawRunner, 10 * 1000);
-            } else {
-                if (Prefs.contains(Const.LIVE_IMAGES_POSITION))
-                    position = Prefs.getInt(Const.LIVE_IMAGES_COUNT, 1);
-                else {
-                    Prefs.putInt(Const.LIVE_IMAGES_POSITION, 1);
-                    position = 1;
-                }
-                fetchImage(true, 4);
+                    drawInitializer();
+            } else
+                drawInitializer();
 
-                handler.postDelayed(drawRunner, 20 * 1000);
-            }
+
         }
 
     };
+
+    private void drawInitializer() {
+        if (directory().listFiles().length != 0) {
+            if (Prefs.contains(Const.LIVE_IMAGES_POSITION)) {
+                int temp = Prefs.getInt(Const.LIVE_IMAGES_COUNT, 2) - 1;
+                position = Prefs.getInt(Const.LIVE_IMAGES_POSITION, temp);
+            } else {
+                position = 1;
+            }
+
+            Log.d("Test", String.valueOf(position));
+
+            if (position > Prefs.getInt(Const.LIVE_IMAGES_COUNT, 1)) {
+
+                position = Prefs.getInt(Const.LIVE_IMAGES_COUNT, 3) - 3;
+                if (position < 0)
+                    position = Prefs.getInt(Const.LIVE_IMAGES_COUNT, 2) - 1;
+                draw();
+
+            } else if (position >= Prefs.getInt(Const.LIVE_IMAGES_COUNT, 1) - 3 && directory().listFiles().length >= 5) {
+                fetchImage(false, 1);
+                draw();
+            } else
+                draw();
+            //handler.postDelayed(drawRunner, 10 * 1000);
+        } else {
+            if (Prefs.contains(Const.LIVE_IMAGES_POSITION))
+                position = Prefs.getInt(Const.LIVE_IMAGES_COUNT, 1);
+            else {
+                Prefs.putInt(Const.LIVE_IMAGES_POSITION, 1);
+                position = 1;
+            }
+            fetchImage(true, 4);
+
+            //handler.postDelayed(drawRunner, 20 * 1000);
+        }
+    }
 
     private WallpaperServiceSingleton() {
     }
@@ -173,6 +204,13 @@ public class WallpaperServiceSingleton {
                 if (c != null) mSurfaceHolder.unlockCanvasAndPost(c);
             }
         }
+
+        Calendar current = Calendar.getInstance();
+        Calendar calender = Calendar.getInstance();
+        calender.add(Calendar.SECOND, 30);
+        String nextDateTime = sdf.format(calender.getTime());
+        Prefs.putString(Const.LIVE_IMAGES_UPCOMING_TIME, nextDateTime);
+        handler.postDelayed(drawRunner, calender.getTimeInMillis() - current.getTimeInMillis());
     }
 
     private void fetchImage(final boolean refresh, final int count) {

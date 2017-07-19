@@ -98,7 +98,8 @@ public class Const {
     public static final String LIVE_IMAGES_POSITION = "position";
     public static final String LIVE_IMAGES_CACHE_SIZE = "cache_size";
     public static final String LIVE_IMAGES_COUNT = "count";
-    public static final String LIVE_IMAGES_BASE_COUNT = "base_count";
+    public static final String LIVE_IMAGES_UPCOMING_TIME = "upcoming_time";
+
     //------------------ Others -----------------------------------
 
     public static final String IMAGE_OBJECT = "imageObject";
