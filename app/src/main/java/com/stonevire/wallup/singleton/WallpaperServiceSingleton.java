@@ -77,16 +77,16 @@ public class WallpaperServiceSingleton implements RequestResponse {
     final Runnable drawRunner = new Runnable() {
         @Override
         public void run() {
-            int rotation = display.getRotation() / 90;
+            int rotation = display.getRotation();
             int savedRotation = Prefs.getInt(Const.LIVE_IMAGES_ROTATION, -1);
-            int savedRotation1 = savedRotation / 90;
 
             if (savedRotation != -1) {
-                if (rotation % 2 == savedRotation1 % 2)
+                if (rotation % 2 == savedRotation % 2)
                     drawTimeInitializer();
                 else {
-                    drawInitializer();
+                    Prefs.putInt(Const.LIVE_IMAGES_ROTATION, display.getRotation());
                     rotationChanged = true;
+                    drawInitializer();
                 }
             } else {
                 Prefs.putInt(Const.LIVE_IMAGES_ROTATION, display.getRotation());
@@ -341,7 +341,7 @@ public class WallpaperServiceSingleton implements RequestResponse {
             count = Prefs.getInt(Const.LIVE_IMAGES_COUNT, 1);
             fos = new FileOutputStream(directoryFile("wall" + count));
             Prefs.putInt(Const.LIVE_IMAGES_COUNT, ++count);
-            bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -405,7 +405,7 @@ public class WallpaperServiceSingleton implements RequestResponse {
     }
 
     private void randomImageCall() {
-        mVolleyWrapper.getCall(Const.UNSPLASH_RANDOM_CALL + "1080", Const.WALLPAPER_SERVICE_CALLBACK);
+        mVolleyWrapper.getCall(Const.UNSPLASH_RANDOM_CALL + "1920&h=1080", Const.WALLPAPER_SERVICE_CALLBACK);
         mVolleyWrapper.setListener(this);
     }
 
