@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Environment;
@@ -92,8 +93,6 @@ public class WallpaperServiceSingleton implements RequestResponse {
                 Prefs.putInt(Const.LIVE_IMAGES_ROTATION, display.getRotation());
                 drawTimeInitializer();
             }
-
-
         }
 
     };
@@ -206,9 +205,9 @@ public class WallpaperServiceSingleton implements RequestResponse {
 
         if (drawOk) {
             try {
-                c = mSurfaceHolder.lockCanvas();
+                //c = mSurfaceHolder.lockCanvas();
                 synchronized (mSurfaceHolder) {
-                    if (c != null) {
+                    if (c == null) {
                         if (rotationChanged == true) {
                             position = position - 1;
                             rotationChanged = false;
@@ -217,13 +216,48 @@ public class WallpaperServiceSingleton implements RequestResponse {
                         if (mFile.length() != 0) {
                             File[] files = mFile.listFiles();
                             boolean fileDrawStatus = false;
+                            final Paint p = new Paint();
+                            p.setAlpha(3);
+                            final int[] visibility = {0};
+
+                            Log.d("Wallup", "Visibility Here 0");
 
                             for (int i = 0; i < files.length; i++) {
                                 if (files[i].getName().equals("wall" + position)) {
                                     try {
-                                        Bitmap mBitmap = scaledBitmap(getFromInternalStorage(files[i].getName()));
-                                        c.drawBitmap(mBitmap, 0, 0, null);
-                                        mBitmap.recycle();
+                                        final Bitmap mBitmap = scaledBitmap(getFromInternalStorage(files[i].getName()));
+                                        final Handler h = new Handler();
+
+                                        final Canvas[] finalC = {mSurfaceHolder.lockCanvas()};
+                                        //finalC.drawColor(ContextCompat.getColor(mContext, R.color.black));
+
+                                        final Runnable bitmapRunner;
+                                        bitmapRunner = new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Log.d("Wallup", "B-Visibility " + visibility[0]);
+                                                if (visibility[0] < 255) {
+                                                    visibility[0] = visibility[0] + 20;
+                                                    p.setAlpha(visibility[0]);
+                                                    finalC[0].drawBitmap(mBitmap, 0, 0, p);
+                                                    mSurfaceHolder.unlockCanvasAndPost(finalC[0]);
+                                                    finalC[0] = mSurfaceHolder.lockCanvas();
+                                                    h.postDelayed(this, 20);
+                                                }else
+                                                {
+                                                    mSurfaceHolder.unlockCanvasAndPost(finalC[0]);
+                                                }
+                                            }
+                                        };
+
+                                        //finalC.drawBitmap(mBitmap, 0, 0, p);
+                                        Log.d("Wallup", "Visibility Here");
+                                        bitmapRunner.run();
+                                        /*while (visibility[0] < 255) {
+                                            p.setAlpha(visibility[0]);
+                                            handler.postDelayed(bitmapRunner, 10);
+                                        }*/
+                                        visibility[0] = 0;
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                     }
