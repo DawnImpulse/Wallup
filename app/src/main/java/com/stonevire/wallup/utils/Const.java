@@ -21,6 +21,7 @@ public class Const {
     public static final String UNSPLASH_LATEST_IMAGES = UNSPLASH_API + "photos" + UNSPLASH_ID + "&order_by=latest&per_page=30";
     public static final String UNSPLASH_CURATED_IMAGES = UNSPLASH_API + "photos/curated" + UNSPLASH_ID + "&order_by=latest&per_page=30";
     public static final String UNSPLASH_GET_PHOTO = UNSPLASH_API + "photos/";
+    public static final String UNSPLASH_RANDOM_CALL = UNSPLASH_API + "photos/random/" + UNSPLASH_ID + "&width=";
 
     //----------------- Unsplash Image Properties------------------
 
@@ -56,6 +57,7 @@ public class Const {
     public static final String IMAGE_UPDATED_AT = "updated_at";
     public static final String IMAGE_HEIGHT = "height";
     public static final String IMAGE_WIDTH = "width";
+    public static final String CUSTOM = "custom";
 
     //------------------ API Variables ----------------------------
 
@@ -77,6 +79,7 @@ public class Const {
     public static final int CURATED_LOAD_MORE = 7;
     public static final int IMAGE_PREVIEW_DETAIL_CALLBACK = 8;
     public static final int USER_IMAGES_LOADING_CALLBACK = 9;
+    public static final int WALLPAPER_SERVICE_CALLBACK = 10;
 
     //------------------ Transition Names -------------------------
     public static final String TRANS_NEW_TO_PROFILE = "trans1";
@@ -99,6 +102,7 @@ public class Const {
     public static final String LIVE_IMAGES_CACHE_SIZE = "cache_size";
     public static final String LIVE_IMAGES_COUNT = "count";
     public static final String LIVE_IMAGES_UPCOMING_TIME = "upcoming_time";
+    public static final String LIVE_IMAGES_ROTATION = "rotation";
 
     //------------------ Others -----------------------------------
 
