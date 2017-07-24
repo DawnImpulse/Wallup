@@ -108,6 +108,8 @@ public class WallpaperServiceSingleton implements RequestResponse {
                     calendar.setTime(sdf.parse(upcoming));
                     if (calendar.getTimeInMillis() > current.getTimeInMillis()) {
                         long remaining = calendar.getTimeInMillis() - current.getTimeInMillis();
+                        rotationChanged = true;
+                        drawInitializer();
                         handler.postDelayed(drawRunner, remaining);
                     } else {
                         drawInitializer();
@@ -120,6 +122,7 @@ public class WallpaperServiceSingleton implements RequestResponse {
                 drawInitializer();
         } else
             drawInitializer();
+        drawInitializer();
     }
 
     private void drawInitializer() {
@@ -217,7 +220,6 @@ public class WallpaperServiceSingleton implements RequestResponse {
                             File[] files = mFile.listFiles();
                             boolean fileDrawStatus = false;
                             final Paint p = new Paint();
-                            p.setAlpha(3);
                             final int[] visibility = {0};
 
                             Log.d("Wallup", "Visibility Here 0");
@@ -227,7 +229,6 @@ public class WallpaperServiceSingleton implements RequestResponse {
                                     try {
                                         final Bitmap mBitmap = scaledBitmap(getFromInternalStorage(files[i].getName()));
                                         final Handler h = new Handler();
-
                                         final Canvas[] finalC = {mSurfaceHolder.lockCanvas()};
                                         //finalC.drawColor(ContextCompat.getColor(mContext, R.color.black));
 
@@ -235,16 +236,14 @@ public class WallpaperServiceSingleton implements RequestResponse {
                                         bitmapRunner = new Runnable() {
                                             @Override
                                             public void run() {
-                                                Log.d("Wallup", "B-Visibility " + visibility[0]);
                                                 if (visibility[0] < 255) {
-                                                    visibility[0] = visibility[0] + 20;
+                                                    visibility[0] = visibility[0] + 5;
                                                     p.setAlpha(visibility[0]);
                                                     finalC[0].drawBitmap(mBitmap, 0, 0, p);
                                                     mSurfaceHolder.unlockCanvasAndPost(finalC[0]);
                                                     finalC[0] = mSurfaceHolder.lockCanvas();
-                                                    h.postDelayed(this, 20);
-                                                }else
-                                                {
+                                                    h.postDelayed(this, 5);
+                                                } else {
                                                     mSurfaceHolder.unlockCanvasAndPost(finalC[0]);
                                                 }
                                             }
