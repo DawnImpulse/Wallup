@@ -3,22 +3,15 @@ package com.stonevire.wallup.services;
 import android.app.WallpaperInfo;
 import android.app.WallpaperManager;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.ContextWrapper;
-import android.graphics.Point;
-import android.os.Handler;
 import android.service.wallpaper.WallpaperService;
 import android.util.Log;
-import android.view.Display;
 import android.view.SurfaceHolder;
-import android.view.WindowManager;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.pixplicity.easyprefs.library.Prefs;
 import com.stonevire.wallup.singleton.WallpaperServiceSingleton;
 import com.stonevire.wallup.utils.Const;
-
-import java.io.File;
 
 import timber.log.BuildConfig;
 import timber.log.Timber;
@@ -50,13 +43,14 @@ public class LiveImagesService extends WallpaperService {
                 .build();
 
         //e = new LiveImagesServiceEngine();
-        if (j == 0) {
+       /* if (j == 0) {
             mEngine = new LiveImagesServiceEngine1();
             return mEngine;
         } else
-            return new LiveImagesServiceEngine2();
-    }
+            return new LiveImagesServiceEngine2();*/
 
+        return new LiveImagesServiceEngine1();
+    }
 
     @Override
     public void onDestroy() {
@@ -66,46 +60,23 @@ public class LiveImagesService extends WallpaperService {
 
     private class LiveImagesServiceEngine1 extends Engine {
         int i = 1;
-        File mFile;
         boolean drawOk;
-        boolean earlyFetch = false;
-        boolean saveDraw = false;
-        int position;
         int cachedSize = 5;
-        SurfaceHolder mHolder;
-        WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
-        Point point = new Point();
-        Display display = wm.getDefaultDisplay();
-        private LiveImagesServiceEngine1 mLiveImagesServiceEngine;
-        private Handler handler = new Handler();
-        private boolean visible = true;
 
         public LiveImagesServiceEngine1() {
             j = 1;
         }
 
-        SurfaceHolder.Callback view;
 
         @Override
-        public boolean isPreview() {
-            return super.isPreview();
-        }
-
-
-       /* @Override
         public void onDestroy() {
-            synchronized (this) {
-                super.onDestroy();
-                if (drawOk)
-                    onVisibilityChanged(true);
-                Log.d("Test", "In Destroy " + i);
-            }
-        }*/
+            super.onDestroy();
+            Log.d("Test", "In Destroy " + i);
+
+        }
 
         @Override
         public void onCreate(SurfaceHolder surfaceHolder) {
-            if (isPreview())
-                i = 1;
             cachedSize = Prefs.getInt(Const.LIVE_IMAGES_CACHE_SIZE, 5);
             super.onCreate(surfaceHolder);
         }
@@ -122,7 +93,7 @@ public class LiveImagesService extends WallpaperService {
         @Override
         public void onSurfaceDestroyed(SurfaceHolder holder) {
             super.onSurfaceDestroyed(holder);
-            //WallpaperServiceSingleton.getInstance().removeHandler();
+            WallpaperServiceSingleton.getInstance().removeHandler();
             Log.d("Test", "Surface Destroyed " + i);
         }
 
@@ -130,34 +101,15 @@ public class LiveImagesService extends WallpaperService {
         public void onVisibilityChanged(boolean visible) {
             super.onVisibilityChanged(visible);
             if (visible) {
-                //handler.post(drawRunner);
                 WallpaperServiceSingleton.getInstance().WallpaperHandler(getApplicationContext(), getSurfaceHolder());
-                drawOk = true;
                 Log.d("Test", "Surface Visibility True " + i);
             } else {
-                //handler.removeCallbacks(drawRunner);
                 WallpaperServiceSingleton.getInstance().removeHandler();
-                drawOk = false;
                 Log.d("Test", "Surface Visibility False" + i);
             }
 
         }
 
-        @Override
-        public void onSurfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-            super.onSurfaceChanged(holder, format, width, height);
-            WallpaperServiceSingleton.getInstance().WallpaperHandler(getApplicationContext(), getSurfaceHolder());
-            Log.d("Test", "Surface Changed");
-
-        }
-
-        @Override
-        public void onSurfaceRedrawNeeded(SurfaceHolder holder) {
-            super.onSurfaceRedrawNeeded(holder);
-            WallpaperServiceSingleton.getInstance().WallpaperHandler(getApplicationContext(), getSurfaceHolder());
-            Log.d("Test", "Surface Redraw Needed");
-
-        }
 
         boolean wallpaperWasSetByAnotherApp() {
             WallpaperManager wp_mngr = WallpaperManager.getInstance(getApplicationContext());
@@ -172,7 +124,8 @@ public class LiveImagesService extends WallpaperService {
         }
     }
 
-    private class LiveImagesServiceEngine2 extends Engine {
+    /*private class LiveImagesServiceEngine2 extends Engine {
+
 
         int i = 2;
         File mFile;
@@ -198,7 +151,7 @@ public class LiveImagesService extends WallpaperService {
         }
 
 
-        /*@Override
+        *//*@Override
         public void onDestroy() {
             synchronized (this) {
                 super.onDestroy();
@@ -206,7 +159,7 @@ public class LiveImagesService extends WallpaperService {
                     onVisibilityChanged(true);
                 Log.d("Test", "In Destroy " + i);
             }
-        }*/
+        }*//*
 
         @Override
         public void onCreate(SurfaceHolder surfaceHolder) {
@@ -279,5 +232,5 @@ public class LiveImagesService extends WallpaperService {
                 return !info.getComponent().equals(new ComponentName(getApplicationContext(), getClass()));
             }
         }
-    }
+    }*/
 }

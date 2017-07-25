@@ -66,7 +66,7 @@ public class WallpaperServiceSingleton implements RequestResponse {
 
     boolean shouldDrawAfterFetch = false;
     boolean drawOk;
-    boolean rotationChanged = false;
+    boolean increment = false;
     int position;
     int cachedSize = 5;
     int moreImagesToFetch = 0;
@@ -78,21 +78,7 @@ public class WallpaperServiceSingleton implements RequestResponse {
     final Runnable drawRunner = new Runnable() {
         @Override
         public void run() {
-            int rotation = display.getRotation();
-            int savedRotation = Prefs.getInt(Const.LIVE_IMAGES_ROTATION, -1);
-
-            if (savedRotation != -1) {
-                if (rotation % 2 == savedRotation % 2)
-                    drawTimeInitializer();
-                else {
-                    Prefs.putInt(Const.LIVE_IMAGES_ROTATION, display.getRotation());
-                    rotationChanged = true;
-                    drawInitializer();
-                }
-            } else {
-                Prefs.putInt(Const.LIVE_IMAGES_ROTATION, display.getRotation());
-                drawTimeInitializer();
-            }
+            drawTimeInitializer();
         }
 
     };
@@ -106,9 +92,9 @@ public class WallpaperServiceSingleton implements RequestResponse {
             if (!upcoming.equals("")) {
                 try {
                     calendar.setTime(sdf.parse(upcoming));
-                    if (calendar.getTimeInMillis() > current.getTimeInMillis()) {
+                    if (calendar.getTimeInMillis() < current.getTimeInMillis()) {
                         long remaining = calendar.getTimeInMillis() - current.getTimeInMillis();
-                        rotationChanged = true;
+                        increment = true;
                         drawInitializer();
                         handler.postDelayed(drawRunner, remaining);
                     } else {
@@ -122,7 +108,6 @@ public class WallpaperServiceSingleton implements RequestResponse {
                 drawInitializer();
         } else
             drawInitializer();
-        drawInitializer();
     }
 
     private void drawInitializer() {
@@ -180,14 +165,14 @@ public class WallpaperServiceSingleton implements RequestResponse {
             Timber.plant(new Timber.DebugTree());
         }
         this.mContext = mContext;
-        mVolleyWrapper = new VolleyWrapper(mContext);
+        this.mVolleyWrapper = new VolleyWrapper(mContext);
 
-        wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
-        display = wm.getDefaultDisplay();
+        this.wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+        this.display = wm.getDefaultDisplay();
         this.mSurfaceHolder = surfaceHolder;
-        mFile = directory();
+        this.mFile = directory();
+        this.drawOk = true;
         handler.post(drawRunner);
-        drawOk = true;
 
         if (!Prefs.contains(Const.LIVE_IMAGES_COUNT)) {
             if (directory().listFiles().length != 0) {
@@ -204,86 +189,76 @@ public class WallpaperServiceSingleton implements RequestResponse {
     }
 
     private void draw() {
-        Canvas c = null;
+        final Canvas[] c = {null};
 
         if (drawOk) {
             try {
-                //c = mSurfaceHolder.lockCanvas();
-                synchronized (mSurfaceHolder) {
-                    if (c == null) {
-                        if (rotationChanged == true) {
-                            position = position - 1;
-                            rotationChanged = false;
-                        }
-                        mFile = directory();
-                        if (mFile.length() != 0) {
-                            File[] files = mFile.listFiles();
-                            boolean fileDrawStatus = false;
-                            final Paint p = new Paint();
-                            final int[] visibility = {0};
+                c[0] = mSurfaceHolder.lockCanvas();
 
-                            Log.d("Wallup", "Visibility Here 0");
+                if (c[0] != null) {
+                    mFile = directory();
+                    if (mFile.length() != 0) {
+                        File[] files = mFile.listFiles();
+                        boolean fileDrawStatus = false;
+                        final Paint p = new Paint();
+                        final int[] visibility = {0};
 
-                            for (int i = 0; i < files.length; i++) {
-                                if (files[i].getName().equals("wall" + position)) {
-                                    try {
-                                        final Bitmap mBitmap = scaledBitmap(getFromInternalStorage(files[i].getName()));
-                                        final Handler h = new Handler();
-                                        final Canvas[] finalC = {mSurfaceHolder.lockCanvas()};
-                                        //finalC.drawColor(ContextCompat.getColor(mContext, R.color.black));
+                        for (int i = 0; i < files.length; i++) {
+                            if (files[i].getName().equals("wall" + position)) {
+                                try {
+                                    final Bitmap mBitmap = scaledBitmap(getFromInternalStorage(files[i].getName()));
+                                    final Handler h = new Handler();
 
-                                        final Runnable bitmapRunner;
-                                        bitmapRunner = new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                if (visibility[0] < 255) {
-                                                    visibility[0] = visibility[0] + 5;
-                                                    p.setAlpha(visibility[0]);
-                                                    finalC[0].drawBitmap(mBitmap, 0, 0, p);
-                                                    mSurfaceHolder.unlockCanvasAndPost(finalC[0]);
-                                                    finalC[0] = mSurfaceHolder.lockCanvas();
-                                                    h.postDelayed(this, 5);
-                                                } else {
-                                                    mSurfaceHolder.unlockCanvasAndPost(finalC[0]);
-                                                }
+                                    final Runnable bitmapRunner;
+                                    bitmapRunner = new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if (visibility[0] < 255) {
+                                                visibility[0] = visibility[0] + 5;
+                                                p.setAlpha(visibility[0]);
+                                                c[0].drawBitmap(mBitmap, 0, 0, p);
+                                                mSurfaceHolder.unlockCanvasAndPost(c[0]);
+                                                c[0] = mSurfaceHolder.lockCanvas();
+                                                h.postDelayed(this, 5);
+                                            } else {
+                                                mSurfaceHolder.unlockCanvasAndPost(c[0]);
                                             }
-                                        };
+                                        }
+                                    };
 
-                                        //finalC.drawBitmap(mBitmap, 0, 0, p);
-                                        Log.d("Wallup", "Visibility Here");
-                                        bitmapRunner.run();
-                                        /*while (visibility[0] < 255) {
-                                            p.setAlpha(visibility[0]);
-                                            handler.postDelayed(bitmapRunner, 10);
-                                        }*/
-                                        visibility[0] = 0;
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                    fileDrawStatus = true;
+                                    bitmapRunner.run();
+                                    visibility[0] = 0;
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                fileDrawStatus = true;
+                                if (increment) {
                                     position += 1;
                                     Prefs.putInt(LIVE_IMAGES_POSITION, position);
-                                    break;
+                                    increment = false;
                                 }
-                            }
-                            Log.d("Test", "--" + position);
-                            if (!fileDrawStatus) {
-                                Log.d("Test", "Not Drawn " + position);
-                                if (position != Prefs.getInt(Const.LIVE_IMAGES_COUNT, 1) - 1)
-                                    Prefs.putInt(LIVE_IMAGES_POSITION, Prefs.getInt(Const.LIVE_IMAGES_COUNT, 1));
+                                break;
                             }
                         }
-                    } else {
-                        Log.d("Test", "Canvas is Null !!");
+                        Log.d("Test", "--" + position);
+                        if (!fileDrawStatus) {
+                            Log.d("Test", "Not Drawn " + position);
+                            if (position != Prefs.getInt(Const.LIVE_IMAGES_COUNT, 1) - 1)
+                                Prefs.putInt(LIVE_IMAGES_POSITION, Prefs.getInt(Const.LIVE_IMAGES_COUNT, 1));
+                        }
                     }
+                } else {
+                    Log.d("Test", "Canvas is Null !!");
                 }
+
             } catch (IllegalStateException e) {
                 Log.d("Test", "Inside Exception");
                 e.printStackTrace();
             } catch (NullPointerException e) {
                 e.printStackTrace();
             } finally {
-                if (c != null) mSurfaceHolder.unlockCanvasAndPost(c);
+                //if (c[0] != null) mSurfaceHolder.unlockCanvasAndPost(c[0]);
             }
         }
 
@@ -291,7 +266,7 @@ public class WallpaperServiceSingleton implements RequestResponse {
 
         Calendar current = Calendar.getInstance();
         Calendar calender = Calendar.getInstance();
-        calender.add(Calendar.SECOND, 30);
+        calender.add(Calendar.SECOND, 60);
         String nextDateTime = sdf.format(calender.getTime());
         Prefs.putString(Const.LIVE_IMAGES_UPCOMING_TIME, nextDateTime);
         handler.postDelayed(drawRunner, calender.getTimeInMillis() - current.getTimeInMillis());
@@ -495,7 +470,6 @@ public class WallpaperServiceSingleton implements RequestResponse {
     @Override
     public void onErrorResponse(VolleyError volleyError, int callback) {
         Log.e("Wallup", String.valueOf(volleyError));
-        randomImageCall();
         //Toast.makeText(mContext, "Unable To Download Images . Kindly Reapply Wallpaper !!", Toast.LENGTH_SHORT).show();
     }
 
