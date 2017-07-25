@@ -126,6 +126,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="12dp"
                         android:layout_marginRight="8dp"
+
                         android:maxLength="18"
                         android:text="---"
                         android:textColor="@color/black" />

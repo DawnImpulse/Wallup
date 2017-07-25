@@ -1,6 +1,8 @@
 package com.stonevire.wallup.activities;
 
 import android.content.Intent;
+import android.graphics.Paint;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -33,6 +35,7 @@ import org.json.JSONObject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class UserProfileActivity extends AppCompatActivity implements RequestResponse {
     VolleyWrapper mVolleyWrapper;
@@ -68,8 +71,6 @@ public class UserProfileActivity extends AppCompatActivity implements RequestRes
     JSONArray imagesArray;
     JSONObject links;
     UserImagesAdapter mUserImagesAdapter;
-
-    int page = 1;
     @BindView(R.id.app_bar)
     AppBarLayout appBar;
     @BindView(R.id.layout1)
@@ -80,6 +81,9 @@ public class UserProfileActivity extends AppCompatActivity implements RequestRes
     CardView card;
     @BindView(R.id.content_user_profile_nested)
     LinearLayout contentUserProfileNested;
+
+    int page = 1;
+
 
     /**
      * On Create
@@ -114,6 +118,8 @@ public class UserProfileActivity extends AppCompatActivity implements RequestRes
             mVolleyWrapper.getCallArray(links.getString(Const.USER_PHOTOS) + Const.UNSPLASH_ID + "&per_page=30&page=" + page,
                     Const.USER_IMAGES_CALLBACK);
             mVolleyWrapper.setListener(this);
+
+            contentUserProfileUsername.setPaintFlags(contentUserProfileUsername.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -254,5 +260,18 @@ public class UserProfileActivity extends AppCompatActivity implements RequestRes
     public void onBackPressed() {
         supportFinishAfterTransition();
         super.onBackPressed();
+    }
+
+    @OnClick(R.id.card)
+    public void onViewClicked() {
+        String url = null;
+        try {
+            url = links.getString(Const.USER_HTML) + Const.UTM_PARAMETERS;
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setData(Uri.parse(url));
+            startActivity(i);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }

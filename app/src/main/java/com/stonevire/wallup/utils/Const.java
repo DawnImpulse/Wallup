@@ -58,6 +58,7 @@ public class Const {
     public static final String IMAGE_HEIGHT = "height";
     public static final String IMAGE_WIDTH = "width";
     public static final String CUSTOM = "custom";
+    public static final String USER_HTML = "html";
 
     //------------------ API Variables ----------------------------
 
@@ -106,6 +107,7 @@ public class Const {
 
     //------------------ Others -----------------------------------
 
+    public static final String UTM_PARAMETERS = "?utm_source=wallup&utm_medium=referral&utm_campaign=api-credit";
     public static final String IMAGE_OBJECT = "imageObject";
     public static final String IS_DIRECT_OBJECT = "isDirectObject";
 
