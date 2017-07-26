@@ -4,6 +4,8 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,6 +19,7 @@ import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -42,6 +45,8 @@ import com.stonevire.wallup.R;
 import com.stonevire.wallup.adapters.TagsAdapter;
 import com.stonevire.wallup.network.volley.RequestResponse;
 import com.stonevire.wallup.network.volley.VolleyWrapper;
+import com.stonevire.wallup.utils.BitmapModifier;
+import com.stonevire.wallup.utils.ColorModifier;
 import com.stonevire.wallup.utils.Const;
 import com.stonevire.wallup.utils.DateModifier;
 import com.stonevire.wallup.utils.DisplayCalculations;
@@ -92,6 +97,26 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
     TextView activityImagePreviewAuthorLastName;
     @BindView(R.id.activity_image_preview_location)
     TextView activityImagePreviewLocation;
+    @BindView(R.id.t1)
+    TextView t1;
+    @BindView(R.id.t2)
+    TextView t2;
+    @BindView(R.id.t3)
+    TextView t3;
+    @BindView(R.id.t4)
+    TextView t4;
+    @BindView(R.id.t5)
+    TextView t5;
+    @BindView(R.id.t6)
+    TextView t6;
+    @BindView(R.id.t7)
+    TextView t7;
+    @BindView(R.id.t8)
+    TextView t8;
+    @BindView(R.id.activity_image_preview_download)
+    Button activityImagePreviewDownload;
+    @BindView(R.id.activity_image_preview_wallpaper)
+    Button activityImagePreviewWallpaper;
 
     private GyroscopeObserver gyroscopeObserver;
     Intent mIntent;
@@ -99,6 +124,7 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
     JSONArray tagsArray = null;
     TagsAdapter mTagsAdapter;
     VolleyWrapper mVolleyWrapper;
+    Bitmap mBitmap;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -214,8 +240,11 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
 
                     CloseableReference<CloseableImage> closeableImageRef = dataSource.getResult();
                     if (closeableImageRef != null && closeableImageRef.get() instanceof CloseableBitmap) {
+                        mBitmap = ((CloseableBitmap) closeableImageRef.get()).getUnderlyingBitmap();
                         contentImagePreviewImage.setImageBitmap(((CloseableBitmap) closeableImageRef.get()).getUnderlyingBitmap());
                         supportStartPostponedEnterTransition();
+
+                        colorApplier(ColorModifier.getNonDarkColor(BitmapModifier.colorSwatch(mBitmap), ImagePreviewActivity.this));
                     }
                 }
 
@@ -228,6 +257,33 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Apply the non Dark color to all highlighting parts of layout
+     *
+     * @param color - Color to be used
+     */
+    private void colorApplier(int color) {
+
+        t1.setTextColor(color);
+        t2.setTextColor(color);
+        t3.setTextColor(color);
+        t4.setTextColor(color);
+        t5.setTextColor(color);
+        t6.setTextColor(color);
+        t7.setTextColor(color);
+        t8.setTextColor(color);
+
+        //Get gradient drawable of the 3 buttons and then set color
+        GradientDrawable gd = (GradientDrawable) activityImagePreviewFabLayout.getBackground().getCurrent();
+        GradientDrawable gd1 = (GradientDrawable) activityImagePreviewDownload.getBackground().getCurrent();
+        GradientDrawable gd2 = (GradientDrawable) activityImagePreviewWallpaper.getBackground().getCurrent();
+        gd.setColor(color);
+        gd1.setColor(color);
+        //gd2.setColor(color);
+        //gd2.setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.DST_IN));
+        //gd2.set
     }
 
     /**
@@ -387,10 +443,9 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-            }else if(response.has(Const.ERRORS))
-            {
+            } else if (response.has(Const.ERRORS)) {
                 try {
-                    Log.d("Test",response.getString(Const.ERRORS));
+                    Log.d("Test", response.getString(Const.ERRORS));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

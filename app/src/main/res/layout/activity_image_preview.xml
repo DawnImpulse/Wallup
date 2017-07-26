@@ -11,6 +11,36 @@
         android:id="@+id/include2"
         layout="@layout/content_image_preview" />
 
+    <RelativeLayout
+        android:id="@+id/activity_image_preview_fab_layout"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_gravity="center_vertical|left"
+        android:layout_margin="16dp"
+        android:background="@drawable/fab_circle"
+        android:elevation="6dp"
+        app:layout_anchor="@+id/include2"
+        app:layout_anchorGravity="bottom|right">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/activity_image_preview_info_button"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            app:srcCompat="@drawable/vector_drawable_information_variant" />
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/activity_image_preview_cross_button"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:alpha="0"
+            android:tint="@color/black"
+            app:srcCompat="@drawable/vector_drawable_close" />
+    </RelativeLayout>
+
     <FrameLayout
         android:id="@+id/activity_image_preview_details_layout"
         android:layout_width="match_parent"
@@ -36,6 +66,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
                     android:orientation="vertical">
 
                     <RelativeLayout
@@ -51,6 +83,7 @@
                             android:orientation="vertical">
 
                             <TextView
+                                android:id="@+id/t1"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Model"
@@ -74,6 +107,7 @@
                             android:orientation="vertical">
 
                             <TextView
+                                android:id="@+id/t2"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Make"
@@ -104,6 +138,7 @@
                             android:orientation="vertical">
 
                             <TextView
+                                android:id="@+id/t3"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:gravity="left"
@@ -127,6 +162,7 @@
                             android:orientation="vertical">
 
                             <TextView
+                                android:id="@+id/t4"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
@@ -153,7 +189,7 @@
                             android:orientation="vertical">
 
                             <TextView
-                                android:id="@+id/textView"
+                                android:id="@+id/t5"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:gravity="right"
@@ -183,6 +219,7 @@
                             android:orientation="vertical">
 
                             <TextView
+                                android:id="@+id/t6"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Dimensions"
@@ -205,6 +242,7 @@
                             android:orientation="vertical">
 
                             <TextView
+                                android:id="@+id/t7"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Aperture"
@@ -229,6 +267,7 @@
                             android:orientation="vertical">
 
                             <TextView
+                                android:id="@+id/t8"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
@@ -321,6 +360,7 @@
                     android:layout_marginRight="84dp">
 
                     <Button
+                        android:id="@+id/activity_image_preview_download"
                         android:layout_width="wrap_content"
                         android:layout_height="36dp"
                         android:layout_gravity="center"
@@ -329,9 +369,10 @@
                         android:paddingLeft="16dp"
                         android:paddingRight="16dp"
                         android:text="Download"
-                        android:textColor="@color/white" />
+                        android:textColor="@color/black" />
 
                     <Button
+                        android:id="@+id/activity_image_preview_wallpaper"
                         android:layout_width="wrap_content"
                         android:layout_height="36dp"
                         android:layout_gravity="center"
@@ -347,35 +388,5 @@
 
         </ScrollView>
     </FrameLayout>
-
-    <RelativeLayout
-        android:id="@+id/activity_image_preview_fab_layout"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_gravity="center_vertical|left"
-        android:layout_margin="16dp"
-        android:background="@drawable/fab_circle"
-        android:elevation="6dp"
-        app:layout_anchor="@+id/include2"
-        app:layout_anchorGravity="bottom|right">
-
-        <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/activity_image_preview_info_button"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:tint="@color/white"
-            app:srcCompat="@drawable/vector_drawable_information_variant" />
-
-        <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/activity_image_preview_cross_button"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:alpha="0"
-            app:srcCompat="@drawable/vector_drawable_close" />
-    </RelativeLayout>
 
 </android.support.design.widget.CoordinatorLayout>
