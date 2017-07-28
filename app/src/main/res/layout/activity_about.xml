@@ -31,9 +31,24 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
 
-                <com.facebook.drawee.view.SimpleDraweeView
+
+                <android.support.v7.widget.AppCompatImageView
+                    android:id="@+id/logo"
                     android:layout_width="88dp"
-                    android:layout_height="88dp" />
+                    android:layout_height="88dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    app:srcCompat="@mipmap/ic_launcher" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@id/logo"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="32dp"
+                    android:text="Wallup"
+                    android:textColor="@color/white"
+                    android:textSize="24sp" />
             </RelativeLayout>
 
             <android.support.v7.widget.Toolbar
