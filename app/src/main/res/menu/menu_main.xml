@@ -25,4 +25,11 @@
         android:orderInCategory="2"
         android:title="@string/about"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_live_images"
+        android:orderInCategory="3"
+        android:title="Live Images"
+        app:showAsAction="never" />
+
 </menu>

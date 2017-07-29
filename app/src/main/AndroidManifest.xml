@@ -36,10 +36,10 @@
         <activity
             android:name=".activities.ImagePreviewActivity"
             android:label="@string/title_activity_image_preview"
-            android:theme="@style/AppTheme.NoActionBar.Fullscreen"></activity>
+            android:theme="@style/AppTheme.NoActionBar.Fullscreen" />
 
         <service
-            android:name="com.stonevire.wallup.services.LiveImagesService"
+            android:name=".services.LiveImagesService"
             android:enabled="true"
             android:label="Wallup Images"
             android:permission="android.permission.BIND_WALLPAPER">
@@ -51,6 +51,10 @@
                 android:name="android.service.wallpaper"
                 android:resource="@xml/wallpaper" />
         </service>
+
+        <activity
+            android:name=".activities.LiveImagesActivity"
+            android:label="Live Images"></activity>
     </application>
 
 </manifest>

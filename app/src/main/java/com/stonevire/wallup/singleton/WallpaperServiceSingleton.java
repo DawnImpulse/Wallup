@@ -1,13 +1,13 @@
 package com.stonevire.wallup.singleton;
 
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.net.Uri;
-import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 import android.view.Display;
@@ -615,12 +615,12 @@ public class WallpaperServiceSingleton implements RequestResponse {
      * @return File object of that path
      */
     private File directoryFile(String fileName) {
-       /* ContextWrapper cw = new ContextWrapper(mContext);
-
-        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);*/
-        String Path = Environment.getExternalStorageDirectory().getPath().toString() + "/Wallup";
-        File directory = new File(Path);
+        ContextWrapper cw = new ContextWrapper(mContext);
+        File directory = cw.getDir("images", Context.MODE_PRIVATE);
         return new File(directory, fileName);
+        /*String Path = Environment.getExternalStorageDirectory().getPath().toString() + "/Wallup";
+        File directory = new File(Path);
+        return new File(directory, fileName);*/
     }
 
     /**
@@ -629,16 +629,16 @@ public class WallpaperServiceSingleton implements RequestResponse {
      * @return - File object
      */
     private File directory() {
-        /*ContextWrapper cw = new ContextWrapper(mContext);
-        return cw.getDir("imageDir", Context.MODE_PRIVATE);*/
+        ContextWrapper cw = new ContextWrapper(mContext);
+        return cw.getDir("images", Context.MODE_PRIVATE);
 
-        String Path = Environment.getExternalStorageDirectory().getPath().toString() + "/Wallup";
+        /*String Path = Environment.getExternalStorageDirectory().getPath().toString() + "/Wallup";
         File file = new File(Path);
         if (!file.exists()) {
             file.mkdir();
         }
 
-        return file;
+        return file;*/
     }
 
     /**

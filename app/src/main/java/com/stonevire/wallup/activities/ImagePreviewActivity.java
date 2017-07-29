@@ -5,6 +5,7 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Build;
@@ -281,6 +282,7 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
         GradientDrawable gd2 = (GradientDrawable) activityImagePreviewWallpaper.getBackground().getCurrent();
         gd.setColor(color);
         gd1.setColor(color);
+        gd2.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
         //gd2.setColor(color);
         //gd2.setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.DST_IN));
         //gd2.set

@@ -119,11 +119,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_about) {
-            Intent intent = new Intent(MainActivity.this, AboutActivity.class);
-            startActivity(intent);
-        }
-
         if (id == R.id.search) {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -145,6 +140,17 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 tabLayout.setVisibility(View.GONE);
                 viewPager.setVisibility(View.INVISIBLE);
             }
+        }
+
+        if (id == R.id.action_about) {
+            Intent intent = new Intent(MainActivity.this, AboutActivity.class);
+            startActivity(intent);
+        }
+
+        //Intent to Live Images Activity
+        if (id == R.id.action_live_images){
+            Intent intent = new Intent(MainActivity.this, LiveImagesActivity.class);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
