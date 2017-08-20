@@ -24,7 +24,6 @@ import com.stonevire.wallup.activities.ImagePreviewActivity;
 import com.stonevire.wallup.activities.UserProfileActivity;
 import com.stonevire.wallup.interfaces.OnLoadMoreListener;
 import com.stonevire.wallup.utils.Const;
-import com.stonevire.wallup.utils.DateModifier;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -98,7 +97,6 @@ public class LatestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 JSONObject urls = object.getJSONObject(Const.IMAGE_URLS);
                 JSONObject profileImage = user.getJSONObject(Const.IMAGE_USER_IMAGES);
 
-                ((FeedHolder) holder).date.setText(DateModifier.toDateFullMonthYear(object.getString(Const.IMAGE_CREATED)));
                 ((FeedHolder) holder).firstName.setText(user.getString(Const.USER_FIRST_NAME));
                 ((FeedHolder) holder).lastName.setText(" " + user.getString(Const.USER_LAST_NAME));
                 ((FeedHolder) holder).authorImage.setImageURI(profileImage.getString(Const.USER_IMAGE_LARGE));
@@ -174,7 +172,6 @@ public class LatestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private class FeedHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         SimpleDraweeView authorImage;
         SimpleDraweeView image;
-        TextView date;
         TextView firstName;
         TextView lastName;
         LinearLayout authorLayout;
@@ -183,7 +180,6 @@ public class LatestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             super(itemView);
             authorImage = (SimpleDraweeView) itemView.findViewById(R.id.inflator_latest_author_image);
             image = (SimpleDraweeView) itemView.findViewById(R.id.inflator_latest_drawee);
-            date = (TextView) itemView.findViewById(R.id.inflator_latest_date);
             firstName = (TextView) itemView.findViewById(R.id.inflator_latest_author_first_name);
             lastName = (TextView) itemView.findViewById(R.id.inflator_latest_author_last_name);
             authorLayout = (LinearLayout) itemView.findViewById(R.id.inflator_latest_author_layout);

@@ -5,12 +5,6 @@
     android:background="@color/blue_grey"
     tools:context="com.stonevire.wallup.fragments.CuratedFragment">
 
-    <ProgressBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true" />
-
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/fragment_curated_swipe"
         android:layout_width="match_parent"
