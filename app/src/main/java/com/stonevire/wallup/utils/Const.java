@@ -22,6 +22,8 @@ public class Const {
     public static final String UNSPLASH_CURATED_IMAGES = UNSPLASH_API + "photos/curated" + UNSPLASH_ID + "&order_by=latest&per_page=30";
     public static final String UNSPLASH_GET_PHOTO = UNSPLASH_API + "photos/";
     public static final String UNSPLASH_RANDOM_CALL = UNSPLASH_API + "photos/random/" + UNSPLASH_ID + "&w=";
+    public static final String UNSPLASH_TRENDING_IMAGES = UNSPLASH_API + "photos" + UNSPLASH_ID + "&order_by=popular&per_page=30";
+
 
     //----------------- Unsplash Image Properties------------------
 
@@ -71,8 +73,8 @@ public class Const {
 
     //------------------ Callbacks --------------------------------
 
-    public static final int NEW_IMAGES_CALLBACK = 1;
-    public static final int LOAD_MORE_IMAGES_CALLBACK = 2;
+    public static final int TRENDING_CALLBACK = 1;
+    public static final int LOAD_MORE_TRENDING_IMAGES_CALLBACK = 2;
     public static final int USER_IMAGES_CALLBACK = 3;
     public static final int LATEST_CALLBACK = 4;
     public static final int LATEST_LOAD_MORE = 5;

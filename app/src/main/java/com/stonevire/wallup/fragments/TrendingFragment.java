@@ -1,5 +1,6 @@
 package com.stonevire.wallup.fragments;
 
+
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -33,12 +34,12 @@ import butterknife.Unbinder;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class LatestFragment extends Fragment implements RequestResponse, SwipeRefreshLayout.OnRefreshListener {
+public class TrendingFragment extends Fragment implements RequestResponse, SwipeRefreshLayout.OnRefreshListener {
 
     @BindView(R.id.fragment_latest_recycler)
-    RecyclerView fragmentLatestRecycler;
+    RecyclerView fragmentTrendingRecycler;
     @BindView(R.id.fragment_latest_swipe)
-    SwipeRefreshLayout fragmentLatestSwipe;
+    SwipeRefreshLayout fragmentTrendingSwipe;
     Unbinder unbinder;
 
     VolleyWrapper mVolleyWrapper;
@@ -47,7 +48,7 @@ public class LatestFragment extends Fragment implements RequestResponse, SwipeRe
 
     int page;
 
-    public LatestFragment() {
+    public TrendingFragment() {
         // Required empty public constructor
     }
 
@@ -67,11 +68,11 @@ public class LatestFragment extends Fragment implements RequestResponse, SwipeRe
 
         if (imagesArray.length() == 0) {
             page = 1;
-            mVolleyWrapper.getCallArray(Const.UNSPLASH_LATEST_IMAGES + "&page=1", Const.LATEST_CALLBACK);
+            mVolleyWrapper.getCallArray(Const.UNSPLASH_TRENDING_IMAGES + "&page=1", Const.TRENDING_CALLBACK);
             mVolleyWrapper.setListener(this);
         }
 
-        fragmentLatestSwipe.setOnRefreshListener(this);
+        fragmentTrendingSwipe.setOnRefreshListener(this);
     }
 
     @Override
@@ -92,13 +93,13 @@ public class LatestFragment extends Fragment implements RequestResponse, SwipeRe
 
     @Override
     public void onResponse(JSONArray response, int callback) {
-        if (callback == Const.LATEST_CALLBACK) {
+        if (callback == Const.TRENDING_CALLBACK) {
             page++;
             imagesArray = response;
-            mFeedAdapter = new LatestAdapter(getActivity(), imagesArray, fragmentLatestRecycler);
-            fragmentLatestRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
-            fragmentLatestRecycler.setAdapter(mFeedAdapter);
-            fragmentLatestRecycler.setNestedScrollingEnabled(true);
+            mFeedAdapter = new LatestAdapter(getActivity(), imagesArray, fragmentTrendingRecycler);
+            fragmentTrendingRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
+            fragmentTrendingRecycler.setAdapter(mFeedAdapter);
+            fragmentTrendingRecycler.setNestedScrollingEnabled(true);
 
             mFeedAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
                 @Override
@@ -106,12 +107,12 @@ public class LatestFragment extends Fragment implements RequestResponse, SwipeRe
                     imagesArray.put(null);
                     mFeedAdapter.notifyItemInserted(imagesArray.length());
 
-                    mVolleyWrapper.getCallArray(Const.UNSPLASH_TRENDING_IMAGES + "&page=" + page, Const.LATEST_LOAD_MORE);
+                    mVolleyWrapper.getCallArray(Const.UNSPLASH_TRENDING_IMAGES + "&page=" + page, Const.LOAD_MORE_TRENDING_IMAGES_CALLBACK);
                 }
             });
 
-            fragmentLatestSwipe.setRefreshing(false);
-        } else if (callback == Const.LATEST_LOAD_MORE) {
+            fragmentTrendingSwipe.setRefreshing(false);
+        } else if (callback == Const.LOAD_MORE_TRENDING_IMAGES_CALLBACK) {
             try {
                 page++;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
