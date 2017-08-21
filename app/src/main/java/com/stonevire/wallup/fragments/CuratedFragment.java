@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 
 import com.android.volley.VolleyError;
 import com.stonevire.wallup.R;
-import com.stonevire.wallup.adapters.CuratedAdapter;
+import com.stonevire.wallup.adapters.MainAdapter;
 import com.stonevire.wallup.interfaces.OnLoadMoreListener;
 import com.stonevire.wallup.network.volley.RequestResponse;
 import com.stonevire.wallup.network.volley.VolleyWrapper;
@@ -36,7 +36,7 @@ public class CuratedFragment extends Fragment implements RequestResponse, SwipeR
 
     JSONArray imagesArray;
     VolleyWrapper mVolleyWrapper;
-    CuratedAdapter mCuratedAdapter;
+    MainAdapter mCuratedAdapter;
 
     int page;
 
@@ -94,7 +94,7 @@ public class CuratedFragment extends Fragment implements RequestResponse, SwipeR
         if (callback == Const.CURATED_CALLBACK) {
             page++;
             imagesArray = response;
-            mCuratedAdapter = new CuratedAdapter(getActivity(), imagesArray, fragmentCuratedRecycler);
+            mCuratedAdapter = new MainAdapter(getActivity(), imagesArray, fragmentCuratedRecycler);
             fragmentCuratedRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
             fragmentCuratedRecycler.setAdapter(mCuratedAdapter);
             fragmentCuratedRecycler.setNestedScrollingEnabled(true);

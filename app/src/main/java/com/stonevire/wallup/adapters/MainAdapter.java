@@ -3,7 +3,15 @@ package com.stonevire.wallup.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.PixelFormat;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.support.v4.view.ViewCompat;
@@ -12,10 +20,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.NativeExpressAdView;
@@ -23,6 +33,7 @@ import com.stonevire.wallup.R;
 import com.stonevire.wallup.activities.ImagePreviewActivity;
 import com.stonevire.wallup.activities.UserProfileActivity;
 import com.stonevire.wallup.interfaces.OnLoadMoreListener;
+import com.stonevire.wallup.utils.ColorModifier;
 import com.stonevire.wallup.utils.Const;
 
 import org.json.JSONArray;
@@ -33,7 +44,7 @@ import org.json.JSONObject;
  * Created by Saksham on 7/15/2017.
  */
 
-public class LatestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     JSONArray imagesArray;
     Context mContext;
@@ -47,7 +58,7 @@ public class LatestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private int visibleThreshold = 5;
     private int lastVisibleItem, totalItemCount;
 
-    public LatestAdapter(Context context, JSONArray array, RecyclerView recyclerView) {
+    public MainAdapter(Context context, JSONArray array, RecyclerView recyclerView) {
         mContext = context;
         imagesArray = array;
         mRecyclerView = recyclerView;
@@ -76,7 +87,7 @@ public class LatestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v;
         if (viewType == VIEW_TYPE_ITEM) {
-            v = LayoutInflater.from(mContext).inflate(R.layout.inflator_latest, parent, false);
+            v = LayoutInflater.from(mContext).inflate(R.layout.inflator_main, parent, false);
             return new FeedHolder(v);
         } else if (viewType == VIEW_TYPE_LOADING) {
             v = LayoutInflater.from(mContext).inflate(R.layout.inflator_loading_view, parent, false);
@@ -92,15 +103,58 @@ public class LatestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof FeedHolder) {
             try {
-                JSONObject object = imagesArray.getJSONObject(position);
+                final JSONObject object = imagesArray.getJSONObject(position);
                 JSONObject user = object.getJSONObject(Const.IMAGE_USER);
                 JSONObject urls = object.getJSONObject(Const.IMAGE_URLS);
                 JSONObject profileImage = user.getJSONObject(Const.IMAGE_USER_IMAGES);
 
+                // Adding Background Color as View Hierarchy
+                Drawable b = new Drawable() {
+                    @Override
+                    public void draw(@NonNull Canvas canvas) {
+                        try {
+                            canvas.drawColor(Color.parseColor(object.getString(Const.IMAGE_COLOR)));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void setAlpha(@IntRange(from = 0, to = 255) int alpha) {
+
+                    }
+
+                    @Override
+                    public void setColorFilter(@Nullable ColorFilter colorFilter) {
+
+                    }
+
+                    @Override
+                    public int getOpacity() {
+                        return PixelFormat.UNKNOWN;
+                    }
+                };
+
+                GenericDraweeHierarchyBuilder builder =
+                        new GenericDraweeHierarchyBuilder(mContext.getResources());
+                GenericDraweeHierarchy hierarchy = builder
+                        .setFadeDuration(300)
+                        .setBackground(b)
+                        .build();
+
+                ((FeedHolder) holder).authorLayout.setBackgroundColor(Color.parseColor(object.getString(Const.IMAGE_COLOR)));
+                ((FeedHolder) holder).image.setHierarchy(hierarchy);
                 ((FeedHolder) holder).firstName.setText(user.getString(Const.USER_FIRST_NAME));
                 ((FeedHolder) holder).lastName.setText(" " + user.getString(Const.USER_LAST_NAME));
                 ((FeedHolder) holder).authorImage.setImageURI(profileImage.getString(Const.USER_IMAGE_LARGE));
                 ((FeedHolder) holder).image.setImageURI(urls.getString(Const.IMAGE_REGULAR));
+
+                //Adding Dynamic Color
+
+                ((FeedHolder) holder).firstName.setTextColor(
+                        ColorModifier.getBlackOrWhite(object.getString(Const.IMAGE_COLOR), mContext));
+                ((FeedHolder) holder).lastName.setTextColor(
+                        ColorModifier.getBlackOrWhite(object.getString(Const.IMAGE_COLOR), mContext));
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     ViewCompat.setTransitionName(((FeedHolder) holder).authorImage, user.getString(Const.USERNAME));
@@ -174,15 +228,15 @@ public class LatestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         SimpleDraweeView image;
         TextView firstName;
         TextView lastName;
-        LinearLayout authorLayout;
+        RelativeLayout authorLayout;
 
         public FeedHolder(View itemView) {
             super(itemView);
-            authorImage = (SimpleDraweeView) itemView.findViewById(R.id.inflator_latest_author_image);
-            image = (SimpleDraweeView) itemView.findViewById(R.id.inflator_latest_drawee);
-            firstName = (TextView) itemView.findViewById(R.id.inflator_latest_author_first_name);
-            lastName = (TextView) itemView.findViewById(R.id.inflator_latest_author_last_name);
-            authorLayout = (LinearLayout) itemView.findViewById(R.id.inflator_latest_author_layout);
+            authorImage = (SimpleDraweeView) itemView.findViewById(R.id.inflator_main_author_image);
+            image = (SimpleDraweeView) itemView.findViewById(R.id.inflator_main_drawee);
+            firstName = (TextView) itemView.findViewById(R.id.inflator_latest_main_first_name);
+            lastName = (TextView) itemView.findViewById(R.id.inflator_main_author_last_name);
+            authorLayout = (RelativeLayout) itemView.findViewById(R.id.inflator_main_author_layout);
 
             authorLayout.setOnClickListener(this);
             image.setOnClickListener(this);
@@ -197,7 +251,7 @@ public class LatestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 JSONObject user = object.getJSONObject(Const.IMAGE_USER);
 
                 switch (v.getId()) {
-                    case R.id.inflator_latest_author_layout:
+                    case R.id.inflator_main_author_layout:
                         Intent intent = new Intent(mContext, UserProfileActivity.class);
                         intent.putExtra(Const.IMAGE_USER, user.toString());
 
@@ -219,7 +273,7 @@ public class LatestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
                         break;
 
-                    case R.id.inflator_latest_drawee:
+                    case R.id.inflator_main_drawee:
                         Intent intent1 = new Intent(mContext, ImagePreviewActivity.class);
                         intent1.putExtra(Const.IMAGE_OBJECT, object.toString());
                         intent1.putExtra(Const.IS_DIRECT_OBJECT, "true");

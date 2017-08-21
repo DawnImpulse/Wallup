@@ -16,7 +16,7 @@ import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.stonevire.wallup.R;
-import com.stonevire.wallup.adapters.LatestAdapter;
+import com.stonevire.wallup.adapters.MainAdapter;
 import com.stonevire.wallup.interfaces.OnLoadMoreListener;
 import com.stonevire.wallup.network.volley.RequestResponse;
 import com.stonevire.wallup.network.volley.VolleyWrapper;
@@ -44,7 +44,7 @@ public class TrendingFragment extends Fragment implements RequestResponse, Swipe
 
     VolleyWrapper mVolleyWrapper;
     JSONArray imagesArray;
-    LatestAdapter mFeedAdapter;
+    MainAdapter mFeedAdapter;
 
     int page;
 
@@ -96,7 +96,7 @@ public class TrendingFragment extends Fragment implements RequestResponse, Swipe
         if (callback == Const.TRENDING_CALLBACK) {
             page++;
             imagesArray = response;
-            mFeedAdapter = new LatestAdapter(getActivity(), imagesArray, fragmentTrendingRecycler);
+            mFeedAdapter = new MainAdapter(getActivity(), imagesArray, fragmentTrendingRecycler);
             fragmentTrendingRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
             fragmentTrendingRecycler.setAdapter(mFeedAdapter);
             fragmentTrendingRecycler.setNestedScrollingEnabled(true);
@@ -139,6 +139,6 @@ public class TrendingFragment extends Fragment implements RequestResponse, Swipe
     @Override
     public void onRefresh() {
         page = 1;
-        mVolleyWrapper.getCallArray(Const.UNSPLASH_TRENDING_IMAGES + "&page=1", Const.LATEST_CALLBACK);
+        mVolleyWrapper.getCallArray(Const.UNSPLASH_TRENDING_IMAGES + "&page=1", Const.TRENDING_CALLBACK);
     }
 }

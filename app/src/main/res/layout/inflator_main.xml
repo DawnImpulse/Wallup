@@ -13,45 +13,47 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-
-        <LinearLayout
-            android:id="@+id/inflator_latest_author_layout"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:id="@+id/inflator_main_author_layout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="16dp">
+            android:paddingTop="8dp">
 
             <com.facebook.drawee.view.SimpleDraweeView
-                android:id="@+id/inflator_latest_author_image"
+                android:id="@+id/inflator_main_author_image"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:layout_centerVertical="true"
                 android:layout_marginLeft="16dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="16dp"
                 fresco:roundAsCircle="true" />
 
             <TextView
-                android:id="@+id/inflator_latest_author_first_name"
+                android:id="@+id/inflator_latest_main_first_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_centerVertical="true"
                 android:layout_marginLeft="16dp"
+                android:layout_toRightOf="@+id/inflator_main_author_image"
                 android:fontFamily="monospace"
                 android:maxLines="1" />
 
             <TextView
-                android:id="@+id/inflator_latest_author_last_name"
+                android:id="@+id/inflator_main_author_last_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/inflator_latest_main_first_name"
                 android:fontFamily="monospace"
                 android:maxLength="16"
                 android:maxLines="1" />
 
-        </LinearLayout>
+        </RelativeLayout>
 
         <com.facebook.drawee.view.SimpleDraweeView
-            android:id="@+id/inflator_latest_drawee"
+            android:id="@+id/inflator_main_drawee"
             android:layout_width="match_parent"
-            android:layout_height="240dp"
-            android:layout_marginTop="16dp" />
+            android:layout_height="240dp" />
     </LinearLayout>
 </android.support.v7.widget.CardView>
