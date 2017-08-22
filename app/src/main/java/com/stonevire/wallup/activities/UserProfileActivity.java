@@ -1,7 +1,6 @@
 package com.stonevire.wallup.activities;
 
 import android.content.Intent;
-import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -9,7 +8,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
+import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -48,21 +47,20 @@ public class UserProfileActivity extends AppCompatActivity implements RequestRes
     TextView activityUserProfileFirstName;
     @BindView(R.id.activity_user_profile_last_name)
     TextView activityUserProfileLastName;
-    @BindView(R.id.content_user_profile_image)
-    SimpleDraweeView contentUserProfileImage;
-    @BindView(R.id.content_user_profile_images)
-    TextView contentUserProfileImages;
-    @BindView(R.id.content_user_profile_likes)
-    TextView contentUserProfileLikes;
-    @BindView(R.id.content_user_profile_location)
-    TextView contentUserProfileLocation;
-    @BindView(R.id.content_user_profile_username)
-    TextView contentUserProfileUsername;
     @BindView(R.id.toolbar_layout)
     CollapsingToolbarLayout collapsingToolbarLayout;
     @BindView(R.id.content_user_profile_recycler)
     RecyclerView mRecyclerView;
-
+    @BindView(R.id.app_bar)
+    AppBarLayout appBar;
+    @BindView(R.id.content_user_profile_nested)
+    LinearLayout contentUserProfileNested;
+    @BindView(R.id.activity_user_profile_author_image)
+    SimpleDraweeView activityUserProfileAuthorImage;
+    @BindView(R.id.activity_user_profile_unsplash_icon)
+    AppCompatImageView activityUserProfileUnsplashIcon;
+    @BindView(R.id.activity_user_profile_username)
+    TextView activityUserProfileUsername;
 
     Intent intent;
 
@@ -71,19 +69,8 @@ public class UserProfileActivity extends AppCompatActivity implements RequestRes
     JSONArray imagesArray;
     JSONObject links;
     UserImagesAdapter mUserImagesAdapter;
-    @BindView(R.id.app_bar)
-    AppBarLayout appBar;
-    @BindView(R.id.layout1)
-    LinearLayout layout1;
-    @BindView(R.id.layout2)
-    LinearLayout layout2;
-    @BindView(R.id.card)
-    CardView card;
-    @BindView(R.id.content_user_profile_nested)
-    LinearLayout contentUserProfileNested;
 
     int page = 1;
-
 
     /**
      * On Create
@@ -107,7 +94,7 @@ public class UserProfileActivity extends AppCompatActivity implements RequestRes
             links = author.getJSONObject(Const.LINKS);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                contentUserProfileImage.setTransitionName(intent.getStringExtra(Const.TRANS_NEW_TO_PROFILE));
+                activityUserProfileAuthorImage.setTransitionName(intent.getStringExtra(Const.TRANS_NEW_TO_PROFILE));
                 activityUserProfileFirstName.setTransitionName(intent.getStringExtra(Const.TRANS_NEW_TO_PROFILE_1));
                 activityUserProfileLastName.setTransitionName(intent.getStringExtra(Const.TRANS_NEW_TO_PROFILE_2));
 
@@ -119,11 +106,14 @@ public class UserProfileActivity extends AppCompatActivity implements RequestRes
                     Const.USER_IMAGES_CALLBACK);
             mVolleyWrapper.setListener(this);
 
-            contentUserProfileUsername.setPaintFlags(contentUserProfileUsername.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+
+            //contentUserProfileUsername.setPaintFlags(contentUserProfileUsername.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        activityUserProfileUnsplashIcon.setColorFilter(ContextCompat.getColor(this, R.color.white));
     }
 
     /**
@@ -135,11 +125,9 @@ public class UserProfileActivity extends AppCompatActivity implements RequestRes
 
         if (author != null) {
             try {
-                contentUserProfileImage.setImageURI(
+                activityUserProfileAuthorImage.setImageURI(
                         author_image.getString(Const.USER_IMAGE_LARGE));
-                contentUserProfileLikes.setText(author.getString(Const.USER_TOTAL_LIKES));
-                contentUserProfileImages.setText(author.getString(Const.USER_TOTAL_PHOTOS));
-                contentUserProfileUsername.setText("@" + author.getString(Const.USERNAME));
+                activityUserProfileUsername.setText("@" + author.getString(Const.USERNAME));
                 activityUserProfileFirstName.setText(author.getString(Const.USER_FIRST_NAME));
                 activityUserProfileRandomImage.setImageURI(Const.UNSPLASH_USER_RANDOM +
                         author.getString(Const.USERNAME) + "/1920x1080");
@@ -150,9 +138,6 @@ public class UserProfileActivity extends AppCompatActivity implements RequestRes
 
                 if (!author.getString(Const.USER_LAST_NAME).equals("null")) {
                     activityUserProfileLastName.setText(author.getString(Const.USER_LAST_NAME));
-                }
-                if (!author.getString(Const.USER_LOCATION).equals("null")) {
-                    contentUserProfileLocation.setText(author.getString(Const.USER_LOCATION));
                 }
 
             } catch (JSONException e) {
@@ -262,7 +247,7 @@ public class UserProfileActivity extends AppCompatActivity implements RequestRes
         super.onBackPressed();
     }
 
-    @OnClick(R.id.card)
+    @OnClick(R.id.activity_user_profile_unsplash_badge)
     public void onViewClicked() {
         String url = null;
         try {
