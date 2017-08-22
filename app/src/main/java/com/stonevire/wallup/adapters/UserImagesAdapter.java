@@ -7,9 +7,8 @@ import android.graphics.Color;
 import android.os.Build;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.view.ViewCompat;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,8 +61,8 @@ public class UserImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
 
-                final GridLayoutManager mLinearLayoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
-                mLinearLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                final LinearLayoutManager mLinearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                /*mLinearLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
 
                     @Override
                     public int getSpanSize(int position) {
@@ -71,7 +70,7 @@ public class UserImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                             return 3;
                         return 1;
                     }
-                });
+                });*/
 
                 totalItemCount = mLinearLayoutManager.getItemCount();
                 lastVisibleItem = mLinearLayoutManager.findLastVisibleItemPosition();
@@ -119,13 +118,14 @@ public class UserImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
 
                 //-------------------- Getting width of screen
-                DisplayMetrics displaymetrics = new DisplayMetrics();
+                /*DisplayMetrics displaymetrics = new DisplayMetrics();
                 wm.getDefaultDisplay().getMetrics(displaymetrics);
                 int width = displaymetrics.widthPixels;
 
                 ViewGroup.LayoutParams lp = ((UserImagesHolder) holder).draweeView.getLayoutParams();
                 lp.width = width / 3;
-                lp.height = width / 3;
+                lp.height = width / 3;*/
+
                 ((UserImagesHolder) holder).draweeView.setBackgroundColor(
                         Color.parseColor(imageObject.getString(Const.IMAGE_COLOR)));
                 ((UserImagesHolder) holder).draweeView.setImageURI(urls.getString(Const.IMAGE_RAW) + append);

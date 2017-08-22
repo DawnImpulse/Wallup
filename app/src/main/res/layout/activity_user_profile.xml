@@ -85,7 +85,8 @@
                         android:layout_marginBottom="4dp"
                         android:layout_marginLeft="24dp"
                         android:layout_marginRight="16dp"
-                        android:background="@drawable/unsplash_author_badge">
+                        android:background="@drawable/unsplash_author_badge"
+                        android:elevation="4dp">
 
                         <android.support.v7.widget.AppCompatImageView
                             android:id="@+id/activity_user_profile_unsplash_icon"

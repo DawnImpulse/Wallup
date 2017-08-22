@@ -9,7 +9,7 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatImageView;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -190,8 +190,7 @@ public class UserProfileActivity extends AppCompatActivity implements RequestRes
                 page++;
                 imagesArray = response;
                 mUserImagesAdapter = new UserImagesAdapter(this, response, mRecyclerView);
-                final GridLayoutManager grid = new GridLayoutManager(this, 3);
-                mRecyclerView.setLayoutManager(grid);
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
                 mRecyclerView.setAdapter(mUserImagesAdapter);
 
                 mUserImagesAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
