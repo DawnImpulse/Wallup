@@ -3,11 +3,13 @@ package com.stonevire.wallup.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
@@ -15,6 +17,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -24,9 +27,19 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.facebook.common.executors.CallerThreadExecutor;
+import com.facebook.common.references.CloseableReference;
+import com.facebook.datasource.DataSource;
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
+import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.core.ImagePipeline;
+import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
+import com.facebook.imagepipeline.image.CloseableImage;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.NativeExpressAdView;
 import com.stonevire.wallup.R;
@@ -142,19 +155,13 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         .setBackground(b)
                         .build();
 
-                ((FeedHolder) holder).authorLayout.setBackgroundColor(Color.parseColor(object.getString(Const.IMAGE_COLOR)));
+                //((FeedHolder) holder).authorLayout.setBackgroundColor(Color.parseColor(object.getString(Const.IMAGE_COLOR)));
                 ((FeedHolder) holder).image.setHierarchy(hierarchy);
                 ((FeedHolder) holder).firstName.setText(user.getString(Const.USER_FIRST_NAME));
                 ((FeedHolder) holder).lastName.setText(" " + user.getString(Const.USER_LAST_NAME));
                 ((FeedHolder) holder).authorImage.setImageURI(profileImage.getString(Const.USER_IMAGE_LARGE));
-                ((FeedHolder) holder).image.setImageURI(urls.getString(Const.IMAGE_REGULAR));
 
-                //Adding Dynamic Color
-
-                ((FeedHolder) holder).firstName.setTextColor(
-                        ColorModifier.getBlackOrWhite(object.getString(Const.IMAGE_COLOR), mContext));
-                ((FeedHolder) holder).lastName.setTextColor(
-                        ColorModifier.getBlackOrWhite(object.getString(Const.IMAGE_COLOR), mContext));
+                imageAndPaletteSet((FeedHolder) holder, urls.getString(Const.IMAGE_REGULAR));
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     ViewCompat.setTransitionName(((FeedHolder) holder).authorImage, user.getString(Const.USERNAME));
@@ -184,12 +191,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         if (position == 5) {
             //return VIEW_TYPE_AD;
         }
-        try {
-            return imagesArray.get(position) == null ? VIEW_TYPE_LOADING : VIEW_TYPE_ITEM;
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return VIEW_TYPE_LOADING;
-        }
+        return imagesArray.isNull(position) ? VIEW_TYPE_LOADING : VIEW_TYPE_ITEM;
     }
 
     /**
@@ -303,5 +305,52 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             super(itemView);
             mAdView = (NativeExpressAdView) itemView.findViewById(R.id.inflator_native_ad_view);
         }
+    }
+
+    /**
+     * Set the SimpleDrawee with its URL & Get its Palette for Dynamic Color of Background etc..
+     *
+     * @param holder - FeedHolder instance
+     * @param url    - Direct URL of the Image
+     */
+    private void imageAndPaletteSet(final FeedHolder holder, String url) {
+        Uri uri = Uri.parse(url);
+        ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(uri).build();
+        DraweeController controller = Fresco.newDraweeControllerBuilder()
+                .setImageRequest(imageRequest)
+                .setOldController(holder.image.getController())
+                .build();
+
+        holder.image.setController(controller);
+
+        final ImagePipeline imagePipeline = Fresco.getImagePipeline();
+
+        DataSource<CloseableReference<CloseableImage>> dataSource =
+                imagePipeline.fetchDecodedImage(imageRequest, holder.image.getContext());
+        dataSource.subscribe(new BaseBitmapDataSubscriber() {
+            @Override
+            protected void onFailureImpl(DataSource<CloseableReference<CloseableImage>> dataSource) {
+
+            }
+
+            @Override
+            protected void onNewResultImpl(@Nullable Bitmap bitmap) {
+                try {
+                    Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
+                        @Override
+                        public void onGenerated(Palette palette) {
+                            int backgroundColor = ColorModifier.getNonDarkColor(palette, mContext);
+                            holder.authorLayout.setBackgroundColor(backgroundColor);
+                            holder.firstName.setTextColor(
+                                    ColorModifier.getBlackOrWhiteInt(backgroundColor, mContext));
+                            holder.lastName.setTextColor(
+                                    ColorModifier.getBlackOrWhiteInt(backgroundColor, mContext));
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }, CallerThreadExecutor.getInstance());
     }
 }

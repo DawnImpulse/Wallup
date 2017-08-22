@@ -38,6 +38,23 @@ public class ColorModifier {
         }
     }
 
+    public static int getBlackOrWhiteInt(int parsedColor, Context context) {
+
+        //getting red color intensity
+        int red = Color.red(parsedColor);
+        //getting blue color intensity
+        int blue = Color.blue(parsedColor);
+        //getting green color intensity
+        int green = Color.green(parsedColor);
+
+        // Check whether the color lies in scale favour to contrast WHITE or BLACK
+        if ((red * 0.299 + green * 0.587 + blue * 0.114) > 186) {
+            return ContextCompat.getColor(context, R.color.black);
+        } else {
+            return ContextCompat.getColor(context, R.color.white);
+        }
+    }
+
     /**
      * Get a non Dark from the palette
      *

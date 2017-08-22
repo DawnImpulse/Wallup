@@ -85,6 +85,9 @@ public class TrendingFragment extends Fragment implements RequestResponse, Swipe
     public void onErrorResponse(VolleyError volleyError, int callback) {
         Log.d("Test", String.valueOf(volleyError));
         Toast.makeText(getActivity(), String.valueOf(volleyError), Toast.LENGTH_SHORT).show();
+
+        if (callback == Const.LOAD_MORE_TRENDING_IMAGES_CALLBACK)
+            mVolleyWrapper.getCallArray(Const.UNSPLASH_TRENDING_IMAGES + "&page=" + page, Const.LOAD_MORE_TRENDING_IMAGES_CALLBACK);
     }
 
     @Override

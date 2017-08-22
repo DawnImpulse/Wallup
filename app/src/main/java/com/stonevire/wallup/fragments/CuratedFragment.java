@@ -6,9 +6,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.stonevire.wallup.R;
@@ -80,7 +82,11 @@ public class CuratedFragment extends Fragment implements RequestResponse, SwipeR
 
     @Override
     public void onErrorResponse(VolleyError volleyError, int callback) {
+        Log.d("Test", String.valueOf(volleyError));
+        Toast.makeText(getActivity(), String.valueOf(volleyError), Toast.LENGTH_SHORT).show();
 
+        if (callback == Const.CURATED_LOAD_MORE)
+            mVolleyWrapper.getCallArray(Const.UNSPLASH_CURATED_IMAGES + "&page=" + page, Const.CURATED_LOAD_MORE);
     }
 
     @Override
