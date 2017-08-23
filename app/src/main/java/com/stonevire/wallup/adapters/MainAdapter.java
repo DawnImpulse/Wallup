@@ -40,7 +40,6 @@ import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
 import com.facebook.imagepipeline.image.CloseableImage;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.NativeExpressAdView;
 import com.stonevire.wallup.R;
 import com.stonevire.wallup.activities.ImagePreviewActivity;
@@ -161,6 +160,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 ((FeedHolder) holder).lastName.setText(" " + user.getString(Const.USER_LAST_NAME));
                 ((FeedHolder) holder).authorImage.setImageURI(profileImage.getString(Const.USER_IMAGE_LARGE));
 
+                //Set Image URI & Dynamic Color to Text & Background
                 imageAndPaletteSet((FeedHolder) holder, urls.getString(Const.IMAGE_REGULAR));
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -175,9 +175,6 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             }
         } else if (holder instanceof LoadingViewHolder) {
             ((LoadingViewHolder) holder).progressBar.setIndeterminate(true);
-        } else if (holder instanceof AdHolder) {
-            AdRequest mAdRequest = new AdRequest.Builder().build();
-            ((AdHolder) holder).mAdView.loadAd(mAdRequest);
         }
     }
 
@@ -188,9 +185,6 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public int getItemViewType(int position) {
-        if (position == 5) {
-            //return VIEW_TYPE_AD;
-        }
         return imagesArray.isNull(position) ? VIEW_TYPE_LOADING : VIEW_TYPE_ITEM;
     }
 
@@ -318,10 +312,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(uri).build();
         DraweeController controller = Fresco.newDraweeControllerBuilder()
                 .setImageRequest(imageRequest)
-                .setOldController(holder.image.getController())
                 .build();
-
-        holder.image.setController(controller);
 
         final ImagePipeline imagePipeline = Fresco.getImagePipeline();
 
@@ -352,5 +343,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 }
             }
         }, CallerThreadExecutor.getInstance());
+
+        holder.image.setController(controller);
     }
 }

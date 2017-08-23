@@ -1,20 +1,37 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/blue_grey"
     tools:context="com.stonevire.wallup.fragments.LatestFragment">
 
+    <com.eyalbira.loadingdots.LoadingDots
+        android:id="@+id/fragment_latest_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        app:LoadingDots_dots_color="@color/colorPrimary"
+        app:LoadingDots_dots_count="4"
+        app:LoadingDots_dots_size="8dp"
+        app:LoadingDots_dots_space="4dp"
+        app:LoadingDots_jump_duration="300"
+        app:LoadingDots_jump_height="8dp"
+        app:LoadingDots_loop_duration="1000"
+        app:LoadingDots_loop_start_delay="100" />
+
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/fragment_latest_swipe"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="8dp">
+        android:layout_height="match_parent">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/fragment_latest_recycler"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingTop="8dp" />
     </android.support.v4.widget.SwipeRefreshLayout>
 
 </RelativeLayout>

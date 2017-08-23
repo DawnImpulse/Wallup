@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
+import com.eyalbira.loadingdots.LoadingDots;
 import com.stonevire.wallup.R;
 import com.stonevire.wallup.adapters.MainAdapter;
 import com.stonevire.wallup.interfaces.OnLoadMoreListener;
@@ -34,6 +35,8 @@ public class CuratedFragment extends Fragment implements RequestResponse, SwipeR
     RecyclerView fragmentCuratedRecycler;
     @BindView(R.id.fragment_curated_swipe)
     SwipeRefreshLayout fragmentCuratedSwipe;
+    @BindView(R.id.fragment_curated_loading)
+    LoadingDots fragmentCuratedLoading;
     Unbinder unbinder;
 
     JSONArray imagesArray;
@@ -96,6 +99,7 @@ public class CuratedFragment extends Fragment implements RequestResponse, SwipeR
 
     @Override
     public void onResponse(JSONArray response, int callback) {
+        fragmentCuratedLoading.setVisibility(View.GONE);
 
         if (callback == Const.CURATED_CALLBACK) {
             page++;

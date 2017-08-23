@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
+import com.eyalbira.loadingdots.LoadingDots;
 import com.stonevire.wallup.R;
 import com.stonevire.wallup.adapters.MainAdapter;
 import com.stonevire.wallup.interfaces.OnLoadMoreListener;
@@ -39,6 +40,8 @@ public class LatestFragment extends Fragment implements RequestResponse, SwipeRe
     RecyclerView fragmentLatestRecycler;
     @BindView(R.id.fragment_latest_swipe)
     SwipeRefreshLayout fragmentLatestSwipe;
+    @BindView(R.id.fragment_latest_loading)
+    LoadingDots fragmentLatestLoading;
     Unbinder unbinder;
 
     VolleyWrapper mVolleyWrapper;
@@ -95,6 +98,7 @@ public class LatestFragment extends Fragment implements RequestResponse, SwipeRe
 
     @Override
     public void onResponse(JSONArray response, int callback) {
+        fragmentLatestLoading.setVisibility(View.GONE);
         if (callback == Const.LATEST_CALLBACK) {
             page++;
             imagesArray = response;
