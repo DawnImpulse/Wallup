@@ -7,11 +7,12 @@ package com.stonevire.wallup.utils;
 public class Const {
 
     //----------------- API Endpoints ----------------------------
-    private static final String DOMAIN = "https://api.stonevire.com/wallup/";
-    public static final String NEW_IMAGES = DOMAIN + "v1/listNewImages";
-    public static final String TAGGING_IMAGES = DOMAIN + "v1/taggingList";
+    private static final String DI_DOMAIN = "https://api.dawnimpulse.com/wallup/";
+    public static final String NEW_IMAGES = DI_DOMAIN + "v1/listNewImages";
+    public static final String TAGGING_IMAGES = DI_DOMAIN + "v1/taggingList";
 
     public static final String UNSPLASH_ID = "?client_id=a25247a07df2c569f6f3dc129f43b0eb3b0e3ff69b00d5b84dd031255e55b961";
+    public static final String WALLUP_UNSPLASH_CLIENT_ID = "?client_id=320ecd79cf43b87639c8e40af4b04e8d4a5a2b98";
     //Dawn ID    - a25247a07df2c569f6f3dc129f43b0eb3b0e3ff69b00d5b84dd031255e55b961
     //Saksham ID - e1d86d6d0dcb8ce3eea9d16c712c0feed5f1e9a05e5a5f252cf5ea090a3ebc80
     public static final String UNSPLASH_API = "https://api.unsplash.com/";
@@ -25,6 +26,7 @@ public class Const {
     public static final String UNSPLASH_TRENDING_IMAGES = UNSPLASH_API + "photos" + UNSPLASH_ID + "&order_by=popular&per_page=30";
 
 
+    public static final String TRENDING_API = DI_DOMAIN + "unsplash_trending" + WALLUP_UNSPLASH_CLIENT_ID;
     //----------------- Unsplash Image Properties------------------
 
     public static final String IMAGE_ID = "id";
@@ -47,6 +49,7 @@ public class Const {
     public static final String USERNAME = "username";
     public static final String LINKS = "links";
     public static final String ERRORS = "errors";
+    public static final String ERROR_MESSAGE = "errorMessage";
     public static final String IMAGE_REGULAR = "regular";
     public static final String EXIF = "exif";
     public static final String CAMERA_MAKE = "make";

@@ -72,7 +72,7 @@ public class TrendingFragment extends Fragment implements RequestResponse, Swipe
 
         if (imagesArray.length() == 0) {
             page = 1;
-            mVolleyWrapper.getCallArray(Const.UNSPLASH_TRENDING_IMAGES + "&page=1", Const.TRENDING_CALLBACK);
+            mVolleyWrapper.getCallArray(Const.TRENDING_API + "&page=1", Const.TRENDING_CALLBACK);
             mVolleyWrapper.setListener(this);
         }
 
@@ -91,11 +91,19 @@ public class TrendingFragment extends Fragment implements RequestResponse, Swipe
         Toast.makeText(getActivity(), String.valueOf(volleyError), Toast.LENGTH_SHORT).show();
 
         if (callback == Const.LOAD_MORE_TRENDING_IMAGES_CALLBACK)
-            mVolleyWrapper.getCallArray(Const.UNSPLASH_TRENDING_IMAGES + "&page=" + page, Const.LOAD_MORE_TRENDING_IMAGES_CALLBACK);
+            mVolleyWrapper.getCallArray(Const.TRENDING_API + "&page=" + page, Const.LOAD_MORE_TRENDING_IMAGES_CALLBACK);
     }
 
     @Override
     public void onResponse(JSONObject response, int callback) {
+        try {
+            if(response.getString(Const.SUCCESS).equals("false"))
+            {
+                Toast.makeText(getActivity(), response.getString(Const.ERROR_MESSAGE), Toast.LENGTH_SHORT).show();
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -116,7 +124,7 @@ public class TrendingFragment extends Fragment implements RequestResponse, Swipe
                     imagesArray.put(null);
                     mFeedAdapter.notifyItemInserted(imagesArray.length());
 
-                    mVolleyWrapper.getCallArray(Const.UNSPLASH_TRENDING_IMAGES + "&page=" + page, Const.LOAD_MORE_TRENDING_IMAGES_CALLBACK);
+                    mVolleyWrapper.getCallArray(Const.TRENDING_API + "&page=" + page, Const.LOAD_MORE_TRENDING_IMAGES_CALLBACK);
                 }
             });
 
@@ -148,6 +156,6 @@ public class TrendingFragment extends Fragment implements RequestResponse, Swipe
     @Override
     public void onRefresh() {
         page = 1;
-        mVolleyWrapper.getCallArray(Const.UNSPLASH_TRENDING_IMAGES + "&page=1", Const.TRENDING_CALLBACK);
+        mVolleyWrapper.getCallArray(Const.TRENDING_API + "&page=1", Const.TRENDING_CALLBACK);
     }
 }
