@@ -330,12 +330,15 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
                         @Override
                         public void onGenerated(Palette palette) {
-                            int backgroundColor = ColorModifier.getNonDarkColor(palette, mContext);
-                            holder.authorLayout.setBackgroundColor(backgroundColor);
-                            holder.firstName.setTextColor(
-                                    ColorModifier.getBlackOrWhiteInt(backgroundColor, mContext));
-                            holder.lastName.setTextColor(
-                                    ColorModifier.getBlackOrWhiteInt(backgroundColor, mContext));
+                            if (palette != null)
+                            {
+                                int backgroundColor = ColorModifier.getNonDarkColor(palette, mContext);
+                                holder.authorLayout.setBackgroundColor(backgroundColor);
+                                holder.firstName.setTextColor(
+                                        ColorModifier.getBlackOrWhiteInt(backgroundColor, mContext));
+                                holder.lastName.setTextColor(
+                                        ColorModifier.getBlackOrWhiteInt(backgroundColor, mContext));
+                            }
                         }
                     });
                 } catch (Exception e) {

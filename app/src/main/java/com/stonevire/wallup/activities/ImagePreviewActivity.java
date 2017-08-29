@@ -11,6 +11,9 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -29,14 +32,13 @@ import android.widget.Toast;
 import com.android.volley.VolleyError;
 import com.facebook.common.executors.UiThreadImmediateExecutorService;
 import com.facebook.common.references.CloseableReference;
-import com.facebook.datasource.BaseDataSubscriber;
 import com.facebook.datasource.DataSource;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.view.DraweeTransition;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.core.ImagePipeline;
-import com.facebook.imagepipeline.image.CloseableBitmap;
+import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
 import com.facebook.imagepipeline.image.CloseableImage;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
@@ -125,7 +127,6 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
     JSONArray tagsArray = null;
     TagsAdapter mTagsAdapter;
     VolleyWrapper mVolleyWrapper;
-    Bitmap mBitmap;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -165,11 +166,11 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
         super.onPause();
         // Unregister GyroscopeObserver.
         gyroscopeObserver.unregister();
-        contentImagePreviewImage.setImageBitmap(null);
+        //contentImagePreviewImage.setImageBitmap(null);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    @OnClick({R.id.activity_image_preview_fab_layout})
+    @OnClick({R.id.activity_image_preview_fab_layout, R.id.activity_image_preview_author_layout})
     public void onViewClicked(View v) {
         switch (v.getId()) {
             case R.id.activity_image_preview_fab_layout:
@@ -180,6 +181,40 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
                     fabDrawableAnimation(1);
                     detailsPageAnimation(1);
                 }
+                break;
+
+            case R.id.activity_image_preview_author_layout:
+
+                Intent intent = new Intent(this, UserProfileActivity.class);
+                intent.putExtra(Const.IMAGE_USER, authorObject.toString());
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    try {
+                        ViewCompat.setTransitionName(activityImagePreviewAuthorFirstName, authorObject.getString(Const.USER_FIRST_NAME));
+                        ViewCompat.setTransitionName(activityImagePreviewAuthorLastName, authorObject.getString(Const.USER_LAST_NAME));
+                        ViewCompat.setTransitionName(activityImagePreviewAuthorImage, authorObject.getString(Const.USERNAME));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    intent.putExtra(Const.TRANS_LATEST_TO_PROFILE, ViewCompat.getTransitionName(activityImagePreviewAuthorImage));
+                    intent.putExtra(Const.TRANS_LATEST_TO_PROFILE_1, ViewCompat.getTransitionName(activityImagePreviewAuthorFirstName));
+                    intent.putExtra(Const.TRANS_LATEST_TO_PROFILE_2, ViewCompat.getTransitionName(activityImagePreviewAuthorLastName));
+
+                    Pair<View, String> pairImage = Pair.create((View) activityImagePreviewAuthorImage,
+                            ViewCompat.getTransitionName(activityImagePreviewAuthorImage));
+                    Pair<View, String> pairFirstName = Pair.create((View) activityImagePreviewAuthorFirstName,
+                            ViewCompat.getTransitionName(activityImagePreviewAuthorFirstName));
+                    Pair<View, String> pairLastName = Pair.create((View) activityImagePreviewAuthorLastName,
+                            ViewCompat.getTransitionName(activityImagePreviewAuthorLastName));
+
+                    ActivityOptionsCompat options = ActivityOptionsCompat.
+                            makeSceneTransitionAnimation(this, pairImage, pairFirstName, pairLastName);
+                    startActivity(intent, options.toBundle());
+                } else {
+                    startActivity(intent);
+                }
+
         }
 
     }
@@ -229,29 +264,34 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
                     .newBuilderWithSource(Uri.parse(imageUrlsObject.getString(Const.IMAGE_REGULAR)))
                     .build();
             ImagePipeline imagePipeline = Fresco.getImagePipeline();
-            DataSource<CloseableReference<CloseableImage>>
+            final DataSource<CloseableReference<CloseableImage>>
                     dataSource = imagePipeline.fetchDecodedImage(request, this);
 
-            dataSource.subscribe(new BaseDataSubscriber<CloseableReference<CloseableImage>>() {
+            dataSource.subscribe(new BaseBitmapDataSubscriber() {
                 @Override
-                protected void onNewResultImpl(DataSource<CloseableReference<CloseableImage>> dataSource) {
-                    if (!dataSource.isFinished()) {
-                        return;
-                    }
+                protected void onNewResultImpl(Bitmap bitmap) {
+                    try {
+                        if (dataSource.isFinished() && bitmap != null) {
+                            Bitmap mBitmap = bitmap.copy(bitmap.getConfig(),true);
+                            if (mBitmap != null)
+                            {
+                                contentImagePreviewImage.setImageBitmap(mBitmap);
+                                supportStartPostponedEnterTransition();
+                                colorApplier(ColorModifier.getNonDarkColor(BitmapModifier.colorSwatch(mBitmap), ImagePreviewActivity.this));
+                            }
+                            dataSource.close();
+                        }
 
-                    CloseableReference<CloseableImage> closeableImageRef = dataSource.getResult();
-                    if (closeableImageRef != null && closeableImageRef.get() instanceof CloseableBitmap) {
-                        mBitmap = ((CloseableBitmap) closeableImageRef.get()).getUnderlyingBitmap();
-                        contentImagePreviewImage.setImageBitmap(((CloseableBitmap) closeableImageRef.get()).getUnderlyingBitmap());
-                        supportStartPostponedEnterTransition();
-
-                        colorApplier(ColorModifier.getNonDarkColor(BitmapModifier.colorSwatch(mBitmap), ImagePreviewActivity.this));
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 }
 
                 @Override
                 protected void onFailureImpl(DataSource<CloseableReference<CloseableImage>> dataSource) {
-
+                    if (dataSource != null) {
+                        dataSource.close();
+                    }
                 }
             }, UiThreadImmediateExecutorService.getInstance());
 
@@ -463,5 +503,10 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
     @Override
     public void onResponse(String response, int callback) {
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        supportFinishAfterTransition();
     }
 }

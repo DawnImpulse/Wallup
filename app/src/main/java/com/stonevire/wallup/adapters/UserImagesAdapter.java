@@ -44,7 +44,6 @@ public class UserImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private int lastVisibleItem, totalItemCount;
 
     RecyclerView mRecyclerView;
-    private String append = "?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=720&fit=max";
 
     /**
      * Constructor
@@ -128,7 +127,7 @@ public class UserImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
                 ((UserImagesHolder) holder).draweeView.setBackgroundColor(
                         Color.parseColor(imageObject.getString(Const.IMAGE_COLOR)));
-                ((UserImagesHolder) holder).draweeView.setImageURI(urls.getString(Const.IMAGE_RAW) + append);
+                ((UserImagesHolder) holder).draweeView.setImageURI(urls.getString(Const.IMAGE_REGULAR));
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     ViewCompat.setTransitionName(((UserImagesHolder) holder).draweeView, imageObject.getString(Const.IMAGE_ID));
