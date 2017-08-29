@@ -293,7 +293,7 @@ public class WallpaperServiceSingleton implements RequestResponse {
         //Initializing File Draw Status - To check whether bitmap is drawn or not
         final boolean[] fileDrawStatus = {false};
         //Bitmap object to store the Scaled Cached Bitmap
-        final Bitmap mBitmap;
+        Bitmap mBitmap;
         //Initialize a new handler for kind of showing animation
         final Handler h = new Handler();
         //Runner to show kind of animation - Call itself again & again until we reach complete visibility
@@ -322,52 +322,59 @@ public class WallpaperServiceSingleton implements RequestResponse {
 
                                 //Get a scaled bitmap of the file in the Cache
                                 mBitmap = scaledBitmap(getFromInternalStorage(files[i].getName()));
-                                //Lock the canvas to be used to display Bitmap
-                                c[0] = mSurfaceHolder.getSurface().lockCanvas(null);
+
+                                //if bitmap return is null
+                                if (mBitmap != null) {
+                                    //Lock the canvas to be used to display Bitmap
+                                    c[0] = mSurfaceHolder.getSurface().lockCanvas(null);
 
                                 /*The runner is setting alpha and calling itself until the image is completely
                                 * Kind of creating an illusion of fade in animation
                                 * Will take a total of 255 milliseconds
                                 */
-                                bitmapRunner = new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        //Proceed if visibility is less than 255 else unlock canvas and return from Runner
-                                        if (visibility[0] < 255) {
-                                            //Add 5 to visibility object
-                                            visibility[0] = visibility[0] + 5;
-                                            //Set the visibility or alpha in paint object
-                                            p.setAlpha(visibility[0]);
-                                            //draw the bitmap on canvas
-                                            c[0].drawBitmap(mBitmap, 0, 0, p);
-                                            //release or unlock the surface
-                                            mSurfaceHolder.getSurface().unlockCanvasAndPost(c[0]);
-                                            //get a new lock on canvas
-                                            c[0] = mSurfaceHolder.getSurface().lockCanvas(null);
-                                            //call this same runner after 5 milliseconds
-                                            h.postDelayed(this, 5);
-                                        } else {
-                                            //release or unlock the canvas
-                                            mSurfaceHolder.getSurface().unlockCanvasAndPost(c[0]);
-                                            //Set visibility to 0 for next item
-                                            visibility[0] = 0;
+                                    final Bitmap finalMBitmap = mBitmap;
+                                    bitmapRunner = new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            //Proceed if visibility is less than 255 else unlock canvas and return from Runner
+                                            if (visibility[0] < 255) {
+                                                //Add 5 to visibility object
+                                                visibility[0] = visibility[0] + 5;
+                                                //Set the visibility or alpha in paint object
+                                                p.setAlpha(visibility[0]);
+                                                //draw the bitmap on canvas
+                                                c[0].drawBitmap(finalMBitmap, 0, 0, p);
+                                                //release or unlock the surface
+                                                mSurfaceHolder.getSurface().unlockCanvasAndPost(c[0]);
+                                                //get a new lock on canvas
+                                                c[0] = mSurfaceHolder.getSurface().lockCanvas(null);
+                                                //call this same runner after 5 milliseconds
+                                                h.postDelayed(this, 5);
+                                            } else {
+                                                //release or unlock the canvas
+                                                mSurfaceHolder.getSurface().unlockCanvasAndPost(c[0]);
+                                                //Set visibility to 0 for next item
+                                                visibility[0] = 0;
+                                            }
                                         }
+                                    };
+
+                                    //Start the bitmap runner
+                                    bitmapRunner.run();
+                                    //Bitmap is drawn hence change the status
+                                    fileDrawStatus[0] = true;
+                                    //If next image to be switched then increment position in Preferences
+                                    if (increment) {
+                                        Prefs.putInt(LIVE_IMAGES_POSITION, position);
+                                        //finally setting increment false since we have incremented it in Prefs
+                                        increment = false;
                                     }
-                                };
-
-                                //Start the bitmap runner
-                                bitmapRunner.run();
-                                //Bitmap is drawn hence change the status
-                                fileDrawStatus[0] = true;
-                                //If next image to be switched then increment position in Preferences
-                                if (increment) {
-                                    Prefs.putInt(LIVE_IMAGES_POSITION, position);
-                                    //finally setting increment false since we have incremented it in Prefs
-                                    increment = false;
-                                }
-                                //break from the for loop...
-                                break;
-
+                                    //break from the for loop...
+                                    break;
+                                } // end of bitmap null check
+                                else {
+                                    deleteFile();
+                                } // end og bitmap null check - else
                             } // end of if loop of file name matching
                         } // end of for loop
 
@@ -731,6 +738,21 @@ public class WallpaperServiceSingleton implements RequestResponse {
 
         return finalBitmap;
     } // end of scaled Bitmap
+
+    /**
+     * Delete file from internal storage
+     */
+    private void deleteFile() {
+        File[] f = directory().listFiles();
+
+        for(int i=0 ; i<f.length; i++)
+        {
+            if (f[i].getName().equals("wall" + position)){
+                f[i].delete();
+                break;
+            }
+        }
+    }
 
     @Override
     public void onErrorResponse(VolleyError volleyError, int callback) {
