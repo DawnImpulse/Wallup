@@ -53,7 +53,11 @@ import com.stonevire.wallup.utils.ColorModifier;
 import com.stonevire.wallup.utils.Const;
 import com.stonevire.wallup.utils.DateModifier;
 import com.stonevire.wallup.utils.DisplayCalculations;
+import com.stonevire.wallup.utils.MessageEvent;
+import com.stonevire.wallup.utils.Permissions;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -154,6 +158,18 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         // Register GyroscopeObserver.
@@ -170,9 +186,13 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    @OnClick({R.id.activity_image_preview_fab_layout, R.id.activity_image_preview_author_layout})
+    @OnClick({R.id.activity_image_preview_fab_layout, R.id.activity_image_preview_author_layout,
+            R.id.activity_image_preview_download})
     public void onViewClicked(View v) {
         switch (v.getId()) {
+
+            //Clicking on FAB button
+
             case R.id.activity_image_preview_fab_layout:
                 if (activityImagePreviewCrossButton.getAlpha() == 0.0) {
                     fabDrawableAnimation(0);
@@ -182,6 +202,8 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
                     detailsPageAnimation(1);
                 }
                 break;
+
+            //Clicking on Author Layout
 
             case R.id.activity_image_preview_author_layout:
 
@@ -214,6 +236,16 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
                 } else {
                     startActivity(intent);
                 }
+
+                break;
+
+            //Clicking on Download button
+
+            case R.id.activity_image_preview_download :
+
+                Intent mIntent = new Intent(ImagePreviewActivity.this,Permissions.class);
+                startActivity(mIntent);
+                break;
 
         }
 
@@ -508,5 +540,11 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
     @Override
     public void onBackPressed() {
         supportFinishAfterTransition();
+    }
+
+
+    @Subscribe
+    public void onMessageEvent(MessageEvent event) {
+        Toast.makeText(this, event.message, Toast.LENGTH_SHORT).show();
     }
 }

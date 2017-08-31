@@ -53,7 +53,11 @@
 
         <activity
             android:name=".activities.LiveImagesActivity"
-            android:label="Live Images"></activity>
+            android:label="Live Images"/>
+
+        <activity android:name=".utils.Permissions"
+            android:theme="@style/AppTheme.Translucent"/>
+
     </application>
 
 </manifest>
