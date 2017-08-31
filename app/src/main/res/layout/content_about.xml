@@ -160,7 +160,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="24dp"
-                    android:text="v1.0.0 (A2)"
+                    android:text="v1.0.0 (A3)"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="16sp" />
 
@@ -184,7 +184,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="24dp"
-                    android:text="2017-08-23"
+                    android:text="2017-08-31"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="16sp" />
 
