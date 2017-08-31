@@ -48,6 +48,7 @@ import com.stonevire.wallup.R;
 import com.stonevire.wallup.adapters.TagsAdapter;
 import com.stonevire.wallup.network.volley.RequestResponse;
 import com.stonevire.wallup.network.volley.VolleyWrapper;
+import com.stonevire.wallup.storage.BitmapStorage;
 import com.stonevire.wallup.utils.BitmapModifier;
 import com.stonevire.wallup.utils.ColorModifier;
 import com.stonevire.wallup.utils.Const;
@@ -131,6 +132,9 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
     JSONArray tagsArray = null;
     TagsAdapter mTagsAdapter;
     VolleyWrapper mVolleyWrapper;
+
+    //The Bitmap of the Image
+    Bitmap mBitmap;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -304,7 +308,7 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
                 protected void onNewResultImpl(Bitmap bitmap) {
                     try {
                         if (dataSource.isFinished() && bitmap != null) {
-                            Bitmap mBitmap = bitmap.copy(bitmap.getConfig(),true);
+                            mBitmap = bitmap.copy(bitmap.getConfig(),true);
                             if (mBitmap != null)
                             {
                                 contentImagePreviewImage.setImageBitmap(mBitmap);
@@ -545,6 +549,10 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
 
     @Subscribe
     public void onMessageEvent(MessageEvent event) {
-        Toast.makeText(this, event.message, Toast.LENGTH_SHORT).show();
+        if (event.message.equals("Storage Permission Available"))
+        {
+            boolean result = BitmapStorage.saveToInternalStorage(mBitmap,"wall-1.jpg");
+            Toast.makeText(this, Boolean.toString(result), Toast.LENGTH_SHORT).show();
+        }
     }
 }

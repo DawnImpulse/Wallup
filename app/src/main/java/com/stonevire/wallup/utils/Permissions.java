@@ -48,16 +48,23 @@ public class Permissions extends AppCompatActivity{
         new AlertDialog.Builder(Permissions.this)
                 .setMessage(message)
                 .setPositiveButton("OK", okListener)
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        EventBus.getDefault().post(new MessageEvent("Permission Denied"));
+                        finish();
+                    }
+                })
                 .create()
                 .show();
-
-        finish();
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        //Storage Permission
+
         if (requestCode == 1) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 EventBus.getDefault().post(new MessageEvent("Storage Permission Available"));
@@ -76,6 +83,7 @@ public class Permissions extends AppCompatActivity{
                                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                                 startActivity(intent);
+                                finish();
                             }
                         });
             } else {

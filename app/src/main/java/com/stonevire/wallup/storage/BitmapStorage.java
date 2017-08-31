@@ -13,7 +13,7 @@ import java.io.IOException;
 
 public class BitmapStorage {
 
-    public boolean saveToInternalStorage(Bitmap mBitmap, String fileName) {
+    public static boolean saveToInternalStorage(Bitmap mBitmap, String fileName) {
         FileOutputStream fos = null;
         try {
             //Get a FOS object with internal path
@@ -43,7 +43,7 @@ public class BitmapStorage {
      *
      * @return - Directory file object
      */
-    private File directoryInternal(String fileName) {
+    private static File directoryInternal(String fileName) {
         String Path = Environment.getExternalStorageDirectory().getPath().toString() + "/Wallup";
         File directory = new File(Path);
         return new File(directory, fileName);
