@@ -45,100 +45,132 @@
             android:orientation="vertical">
 
             <!--Profile-->
-            <RelativeLayout
-                android:layout_marginTop="16dp"
+            <com.balysv.materialripple.MaterialRippleLayout
                 android:id="@+id/nav_drawer_profile"
                 android:layout_width="match_parent"
-                android:layout_height="48dp">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:mrl_rippleColor="@color/black"
+                app:mrl_rippleHover="true">
 
-                <android.support.v7.widget.AppCompatImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="16dp"
-                    app:srcCompat="@drawable/vector_drawable_profile" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:clickable="true">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="72dp"
-                    android:text="Profile"
-                    android:textColor="@color/white"
-                    android:textSize="16sp" />
-            </RelativeLayout>
+                    <android.support.v7.widget.AppCompatImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="16dp"
+                        app:srcCompat="@drawable/vector_drawable_profile" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="72dp"
+                        android:text="Profile"
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
+                </RelativeLayout>
+            </com.balysv.materialripple.MaterialRippleLayout>
 
             <!--Collections-->
-            <RelativeLayout
+            <com.balysv.materialripple.MaterialRippleLayout
                 android:id="@+id/nav_drawer_collections"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginTop="8dp">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:mrl_rippleColor="@color/black"
+                app:mrl_rippleHover="true">
 
-                <android.support.v7.widget.AppCompatImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="16dp"
-                    app:srcCompat="@drawable/vector_drawable_collections" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="72dp"
-                    android:text="Collections"
-                    android:textColor="@color/white"
-                    android:textSize="16sp" />
-            </RelativeLayout>
+                    <android.support.v7.widget.AppCompatImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="16dp"
+                        app:srcCompat="@drawable/vector_drawable_collections" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="72dp"
+                        android:text="Collections"
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
+                </RelativeLayout>
+
+            </com.balysv.materialripple.MaterialRippleLayout>
 
             <!--Live Images-->
-            <RelativeLayout
+            <com.balysv.materialripple.MaterialRippleLayout
                 android:id="@+id/nav_drawer_live_images"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginTop="8dp">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:mrl_rippleColor="@color/black"
+                app:mrl_rippleHover="true">
 
-                <android.support.v7.widget.AppCompatImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="16dp"
-                    app:srcCompat="@drawable/vector_drawable_image" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="8dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="72dp"
-                    android:text="Live Images"
-                    android:textColor="@color/white"
-                    android:textSize="16sp" />
-            </RelativeLayout>
+                    <android.support.v7.widget.AppCompatImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="16dp"
+                        app:srcCompat="@drawable/vector_drawable_image" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="72dp"
+                        android:text="Live Images"
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
+                </RelativeLayout>
+            </com.balysv.materialripple.MaterialRippleLayout>
 
             <!--Settings-->
-            <RelativeLayout
+            <com.balysv.materialripple.MaterialRippleLayout
                 android:id="@+id/nav_drawer_settings"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginTop="8dp">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:mrl_rippleColor="@color/black"
+                app:mrl_rippleHover="true">
 
-                <android.support.v7.widget.AppCompatImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="16dp"
-                    app:srcCompat="@drawable/vector_drawable_settings" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="8dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="72dp"
-                    android:text="Settings"
-                    android:textColor="@color/white"
-                    android:textSize="16sp" />
-            </RelativeLayout>
+                    <android.support.v7.widget.AppCompatImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="16dp"
+                        app:srcCompat="@drawable/vector_drawable_settings" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="72dp"
+                        android:text="Settings"
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
+                </RelativeLayout>
+            </com.balysv.materialripple.MaterialRippleLayout>
 
         </LinearLayout>
 

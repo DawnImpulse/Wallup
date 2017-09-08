@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         }
 
         //Intent to Live Images Activity
-        if (id == R.id.action_live_images){
+        if (id == R.id.action_live_images) {
             Intent intent = new Intent(MainActivity.this, LiveImagesActivity.class);
             startActivity(intent);
         }
@@ -216,7 +216,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     }
 
     /**
-     * On Touch Listener
+     * On Touch Listener - Use to make sure only the visible layout is touchable not the other one
      *
      * @param v,event
      * @return true/false
@@ -370,6 +370,9 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         startActivityForResult(intent, 1);
     }
 
+    /**
+     * Navigation Drawer Initialize
+     */
     public void initNavigationDrawer() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
