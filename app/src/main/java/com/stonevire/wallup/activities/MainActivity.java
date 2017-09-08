@@ -12,6 +12,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.RecyclerView;
@@ -26,8 +28,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
-import com.stonevire.wallup.fragments.CuratedFragment;
 import com.stonevire.wallup.R;
+import com.stonevire.wallup.fragments.CuratedFragment;
 import com.stonevire.wallup.fragments.LatestFragment;
 import com.stonevire.wallup.fragments.TrendingFragment;
 import com.stonevire.wallup.network.volley.VolleyWrapper;
@@ -77,9 +79,9 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fresco.initialize(this);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        Fresco.initialize(this);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -95,6 +97,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
         toolbar.setOnTouchListener(this);
         activityMainSearchOverflow.setOnTouchListener(this);
+
+        initNavigationDrawer();
     }
 
     /**
@@ -364,5 +368,28 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         startActivityForResult(intent, 1);
+    }
+
+    public void initNavigationDrawer() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        final DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.main_content);
+
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close) {
+
+            @Override
+            public void onDrawerClosed(View v) {
+                super.onDrawerClosed(v);
+            }
+
+            @Override
+            public void onDrawerOpened(View v) {
+                super.onDrawerOpened(v);
+            }
+        };
+
+
+        drawerLayout.addDrawerListener(actionBarDrawerToggle);
+        actionBarDrawerToggle.syncState();
     }
 }
