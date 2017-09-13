@@ -26,8 +26,10 @@ import android.view.ViewAnimationUtils;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.stonevire.wallup.R;
 import com.stonevire.wallup.fragments.CuratedFragment;
 import com.stonevire.wallup.fragments.LatestFragment;
@@ -65,6 +67,10 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     AppCompatImageView activityMainVoiceSearch;
     @BindView(R.id.activity_main_search_text)
     EditText activityMainSearchText;
+    @BindView(R.id.nav_drawer_user_image)
+    SimpleDraweeView navDrawerUserImage;
+    @BindView(R.id.nav_drawer_user_full_name)
+    TextView navDrawerUserFullName;
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
     VolleyWrapper mVolleyWrapper;
@@ -184,17 +190,32 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
      *
      * @param view
      */
-    @OnClick({R.id.activity_main_search_close, R.id.activity_main_voice_search})
+    @OnClick({R.id.activity_main_search_close, R.id.activity_main_voice_search, R.id.nav_drawer_profile,
+              R.id.nav_drawer_collections, R.id.nav_drawer_live_images, R.id.nav_drawer_settings})
     public void onViewClicked(View view) {
         switch (view.getId()) {
+
             case R.id.activity_main_search_close:
                 closeSearchBar();
                 break;
+
             case R.id.activity_main_voice_search:
                 if (searchTextBoxEmpty)
                     displaySpeechRecognizer();
                 else
                     activityMainSearchText.setText(null);
+                break;
+
+            case R.id.nav_drawer_profile :
+                break;
+
+            case R.id.nav_drawer_collections :
+                break;
+
+            case R.id.nav_drawer_live_images :
+                break;
+
+            case R.id.nav_drawer_settings :
                 break;
         }
     }
@@ -241,6 +262,33 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     }
 
     /**
+     * Support Navigation Up
+     *
+     * @return
+     */
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return super.onSupportNavigateUp();
+    }
+
+    /**
+     * Back Pressed
+     */
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    @Override
+    public void onBackPressed() {
+        if (activityMainSearchOverflow.getVisibility() == View.VISIBLE) {
+            if (searchTextBoxEmpty)
+                closeSearchBar();
+            else
+                activityMainSearchText.setText(null); //empty text
+        } else {
+            finish();
+        }
+    }
+
+    /**
      * Setting Up ViewPager
      *
      * @param viewPager
@@ -284,34 +332,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         void addFragment(Fragment fragment, String title) {
             mFragmentList.add(fragment);
             mFragmentTitleList.add(title);
-        }
-    }
-
-
-    /**
-     * Support Navigation Up
-     *
-     * @return
-     */
-    @Override
-    public boolean onSupportNavigateUp() {
-        finish();
-        return super.onSupportNavigateUp();
-    }
-
-    /**
-     * Back Pressed
-     */
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    @Override
-    public void onBackPressed() {
-        if (activityMainSearchOverflow.getVisibility() == View.VISIBLE) {
-            if (searchTextBoxEmpty)
-                closeSearchBar();
-            else
-                activityMainSearchText.setText(null); //empty text
-        } else {
-            finish();
         }
     }
 
@@ -395,4 +415,5 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
     }
+
 }

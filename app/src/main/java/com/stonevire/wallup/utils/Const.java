@@ -12,7 +12,7 @@ public class Const {
     public static final String TAGGING_IMAGES = DI_DOMAIN + "v1/taggingList";
 
     public static final String UNSPLASH_ID = "?client_id=a25247a07df2c569f6f3dc129f43b0eb3b0e3ff69b00d5b84dd031255e55b961";
-    public static final String WALLUP_UNSPLASH_CLIENT_ID = "?client_id=320ecd79cf43b87639c8e40af4b04e8d4a5a2b98";
+    public static final String TRENDING_CLIENT_ID = "?client_id=320ecd79cf43b87639c8e40af4b04e8d4a5a2b98";
     //Dawn ID    - a25247a07df2c569f6f3dc129f43b0eb3b0e3ff69b00d5b84dd031255e55b961
     //Saksham ID - e1d86d6d0dcb8ce3eea9d16c712c0feed5f1e9a05e5a5f252cf5ea090a3ebc80
     public static final String UNSPLASH_API = "https://api.unsplash.com/";
@@ -26,7 +26,7 @@ public class Const {
     public static final String UNSPLASH_TRENDING_IMAGES = UNSPLASH_API + "photos" + UNSPLASH_ID + "&order_by=popular&per_page=30";
 
 
-    public static final String TRENDING_API = DI_DOMAIN + "unsplash_trending" + WALLUP_UNSPLASH_CLIENT_ID;
+    public static final String TRENDING_API = DI_DOMAIN + "trending_images" + TRENDING_CLIENT_ID;
     //----------------- Unsplash Image Properties------------------
 
     public static final String IMAGE_ID = "id";
