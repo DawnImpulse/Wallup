@@ -87,6 +87,8 @@ public class TrendingFragment extends Fragment implements RequestResponse, Swipe
 
     @Override
     public void onErrorResponse(VolleyError volleyError, int callback) {
+
+        fragmentTrendingSwipe.setRefreshing(false);
         Log.d("Test", String.valueOf(volleyError));
         Toast.makeText(getActivity(), String.valueOf(volleyError), Toast.LENGTH_SHORT).show();
 

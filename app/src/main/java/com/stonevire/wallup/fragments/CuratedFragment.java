@@ -85,6 +85,8 @@ public class CuratedFragment extends Fragment implements RequestResponse, SwipeR
 
     @Override
     public void onErrorResponse(VolleyError volleyError, int callback) {
+        fragmentCuratedSwipe.setRefreshing(false);
+
         Log.d("Test", String.valueOf(volleyError));
         Toast.makeText(getActivity(), String.valueOf(volleyError), Toast.LENGTH_SHORT).show();
 
