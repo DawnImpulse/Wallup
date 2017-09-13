@@ -56,6 +56,7 @@ import com.stonevire.wallup.utils.DateModifier;
 import com.stonevire.wallup.utils.DisplayCalculations;
 import com.stonevire.wallup.utils.MessageEvent;
 import com.stonevire.wallup.utils.Permissions;
+import com.stonevire.wallup.utils.StringModifier;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -397,8 +398,15 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
             }
 
             activityImagePreviewAuthorImage.setImageURI(authorImages.getString(Const.USER_IMAGE_LARGE));
-            activityImagePreviewAuthorFirstName.setText(authorObject.getString(Const.USER_FIRST_NAME));
-            activityImagePreviewAuthorLastName.setText(" " + authorObject.getString(Const.USER_LAST_NAME));
+            activityImagePreviewAuthorFirstName.setText(StringModifier.camelCase(authorObject.getString(Const.USER_FIRST_NAME)));
+
+            String lastName = authorObject.getString(Const.USER_LAST_NAME);
+            if (lastName.length()==0 || lastName.equals("null") || lastName.equals(null))
+            {
+                activityImagePreviewAuthorLastName.setText(" " );
+            }else
+                activityImagePreviewAuthorLastName.setText(" " + StringModifier.camelCase(lastName));
+
             if (imageObject.has(Const.LOCATION_OBJECT)) {
                 JSONObject locationObject = imageObject.getJSONObject(Const.LOCATION_OBJECT);
                 activityImagePreviewLocation.setText(locationObject.getString(Const.LOCATION_TITLE));

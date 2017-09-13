@@ -27,6 +27,7 @@ import com.stonevire.wallup.interfaces.OnLoadMoreListener;
 import com.stonevire.wallup.network.volley.RequestResponse;
 import com.stonevire.wallup.network.volley.VolleyWrapper;
 import com.stonevire.wallup.utils.Const;
+import com.stonevire.wallup.utils.StringModifier;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -125,20 +126,22 @@ public class UserProfileActivity extends AppCompatActivity implements RequestRes
 
         if (author != null) {
             try {
+                activityUserProfileRandomImage.setImageURI(Const.UNSPLASH_USER_RANDOM +
+                        author.getString(Const.USERNAME) + "/1920x1080");
                 activityUserProfileAuthorImage.setImageURI(
                         author_image.getString(Const.USER_IMAGE_LARGE));
                 activityUserProfileUsername.setText("@" + author.getString(Const.USERNAME));
-                activityUserProfileFirstName.setText(author.getString(Const.USER_FIRST_NAME));
-                activityUserProfileRandomImage.setImageURI(Const.UNSPLASH_USER_RANDOM +
-                        author.getString(Const.USERNAME) + "/1920x1080");
-
+                activityUserProfileFirstName.setText(StringModifier.camelCase(author.getString(Const.USER_FIRST_NAME)));
                 collapsingToolbarLayout.setTitle(author.getString(Const.IMAGE_USER_NAME)); //full name
                 collapsingToolbarLayout.setExpandedTitleColor(ContextCompat.getColor(this, android.R.color.transparent));
                 collapsingToolbarLayout.setCollapsedTitleTextColor(ContextCompat.getColor(this, R.color.white));
 
-                if (!author.getString(Const.USER_LAST_NAME).equals("null")) {
-                    activityUserProfileLastName.setText(author.getString(Const.USER_LAST_NAME));
-                }
+                String lastName = author.getString(Const.USER_LAST_NAME);
+
+                if (lastName.length()==0 || lastName.equals("null") || lastName.equals(null)) {
+                    activityUserProfileLastName.setText(" ");
+                }else
+                    activityUserProfileLastName.setText(" " + StringModifier.camelCase(lastName));
 
             } catch (JSONException e) {
                 e.printStackTrace();
