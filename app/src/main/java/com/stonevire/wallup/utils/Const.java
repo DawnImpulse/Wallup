@@ -24,15 +24,16 @@ public class Const {
     public static final String UNSPLASH_GET_PHOTO = UNSPLASH_API + "photos/";
     public static final String UNSPLASH_RANDOM_CALL = UNSPLASH_API + "photos/random/" + UNSPLASH_ID + "&w=";
     public static final String UNSPLASH_TRENDING_IMAGES = UNSPLASH_API + "photos" + UNSPLASH_ID + "&order_by=popular&per_page=30";
-
+    public static final String UNSPLASH_FEATURED_COLLECTIONS = UNSPLASH_API + "collections/featured" + UNSPLASH_ID + "&per_page=30";
 
     public static final String TRENDING_API = DI_DOMAIN + "trending_images" + TRENDING_CLIENT_ID;
+
     //----------------- Unsplash Image Properties------------------
 
     public static final String IMAGE_ID = "id";
     public static final String IMAGE_URLS = "urls";
     public static final String IMAGE_USER = "user";
-    public static final String IMAGE_USER_IMAGES = "profile_image";
+    public static final String PROFILE_IMAGES = "profile_image";
     public static final String IMAGE_COLOR = "color";
     public static final String IMAGE_RAW = "raw";
     public static final String IMAGE_USER_NAME = "name";
@@ -64,6 +65,11 @@ public class Const {
     public static final String IMAGE_WIDTH = "width";
     public static final String CUSTOM = "custom";
     public static final String USER_HTML = "html";
+    public static final String COVER_PHOTO = "cover_photo";
+    public static final String USER = "user";
+    public static final String COLLECTION_TITLE = "title";
+    public static final String TOTAL_PHOTOS = "total_photos";
+    public static final String FULL_IMAGE = "full";
 
     //------------------ API Variables ----------------------------
 
@@ -86,6 +92,8 @@ public class Const {
     public static final int IMAGE_PREVIEW_DETAIL_CALLBACK = 8;
     public static final int USER_IMAGES_LOADING_CALLBACK = 9;
     public static final int WALLPAPER_SERVICE_CALLBACK = 10;
+    public static final int COLLECTIONS_FEATURED_CALLBACK = 11;
+    public static final int COLLECTIONS_FEATURED_LOADING_CALLBACK = 12;
 
     //------------------ Transition Names -------------------------
     public static final String TRANS_NEW_TO_PROFILE = "trans1";

@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -28,6 +29,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.balysv.materialripple.MaterialRippleLayout;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.stonevire.wallup.R;
@@ -43,10 +45,9 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import butterknife.OnTextChanged;
 
-public class MainActivity extends AppCompatActivity implements View.OnTouchListener {
+public class MainActivity extends AppCompatActivity implements View.OnTouchListener, View.OnClickListener {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.container)
@@ -71,6 +72,16 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     SimpleDraweeView navDrawerUserImage;
     @BindView(R.id.nav_drawer_user_full_name)
     TextView navDrawerUserFullName;
+    @BindView(R.id.appbar)
+    AppBarLayout appbar;
+    @BindView(R.id.nav_drawer_collections)
+    MaterialRippleLayout navDrawerCollections;
+    @BindView(R.id.nav_drawer_profile)
+    MaterialRippleLayout navDrawerProfile;
+    @BindView(R.id.nav_drawer_live_images)
+    MaterialRippleLayout navDrawerLiveImages;
+    @BindView(R.id.nav_drawer_settings)
+    MaterialRippleLayout navDrawerSettings;
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
     VolleyWrapper mVolleyWrapper;
@@ -105,6 +116,20 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         activityMainSearchOverflow.setOnTouchListener(this);
 
         initNavigationDrawer();
+
+        activityMainSearchClose.setOnClickListener(this);
+        activityMainVoiceSearch.setOnClickListener(this);
+        navDrawerProfile.setOnClickListener(this);
+        navDrawerCollections.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this,CollectionsActivity.class);
+                startActivity(intent);
+            }
+        });
+        navDrawerLiveImages.setOnClickListener(this);
+        navDrawerSettings.setOnClickListener(this);
+
     }
 
     /**
@@ -185,40 +210,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    /**
-     * On Click Listener
-     *
-     * @param view
-     */
-    @OnClick({R.id.activity_main_search_close, R.id.activity_main_voice_search, R.id.nav_drawer_profile,
-              R.id.nav_drawer_collections, R.id.nav_drawer_live_images, R.id.nav_drawer_settings})
-    public void onViewClicked(View view) {
-        switch (view.getId()) {
-
-            case R.id.activity_main_search_close:
-                closeSearchBar();
-                break;
-
-            case R.id.activity_main_voice_search:
-                if (searchTextBoxEmpty)
-                    displaySpeechRecognizer();
-                else
-                    activityMainSearchText.setText(null);
-                break;
-
-            case R.id.nav_drawer_profile :
-                break;
-
-            case R.id.nav_drawer_collections :
-                break;
-
-            case R.id.nav_drawer_live_images :
-                break;
-
-            case R.id.nav_drawer_settings :
-                break;
-        }
-    }
 
     /**
      * On Text Change
@@ -300,6 +291,41 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         adapter.addFragment(new CuratedFragment(), "CURATED");
 
         viewPager.setAdapter(adapter);
+    }
+
+    /**
+     * On Click Listener
+     *
+     * @param v
+     */
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.activity_main_search_close:
+                closeSearchBar();
+                break;
+
+            case R.id.activity_main_voice_search:
+                if (searchTextBoxEmpty)
+                    displaySpeechRecognizer();
+                else
+                    activityMainSearchText.setText(null);
+                break;
+
+            case R.id.nav_drawer_profile:
+                break;
+
+            case R.id.nav_drawer_collections:
+                Intent intent = new Intent(MainActivity.this, CollectionsActivity.class);
+                startActivity(intent);
+                break;
+
+            case R.id.nav_drawer_live_images:
+                break;
+
+            case R.id.nav_drawer_settings:
+                break;
+        }
     }
 
     /**

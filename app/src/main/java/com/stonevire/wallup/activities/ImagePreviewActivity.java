@@ -280,7 +280,7 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
             }
             imageUrlsObject = imageObject.getJSONObject(Const.IMAGE_URLS);
             authorObject = imageObject.getJSONObject(Const.IMAGE_USER);
-            authorImages = authorObject.getJSONObject(Const.IMAGE_USER_IMAGES);
+            authorImages = authorObject.getJSONObject(Const.PROFILE_IMAGES);
 
             if (imageObject.has(Const.EXIF))
                 exif = imageObject.getJSONObject(Const.EXIF);

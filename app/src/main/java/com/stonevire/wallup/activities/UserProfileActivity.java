@@ -91,7 +91,7 @@ public class UserProfileActivity extends AppCompatActivity implements RequestRes
 
         try {
             author = new JSONObject(getIntent().getStringExtra(Const.IMAGE_USER));
-            author_image = author.getJSONObject(Const.IMAGE_USER_IMAGES);
+            author_image = author.getJSONObject(Const.PROFILE_IMAGES);
             links = author.getJSONObject(Const.LINKS);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

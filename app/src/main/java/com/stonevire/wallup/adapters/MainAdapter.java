@@ -119,7 +119,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 final JSONObject object = imagesArray.getJSONObject(position);
                 JSONObject user = object.getJSONObject(Const.IMAGE_USER);
                 JSONObject urls = object.getJSONObject(Const.IMAGE_URLS);
-                JSONObject profileImage = user.getJSONObject(Const.IMAGE_USER_IMAGES);
+                JSONObject profileImage = user.getJSONObject(Const.PROFILE_IMAGES);
 
                 // Adding Background Color as View Hierarchy
                 Drawable b = new Drawable() {

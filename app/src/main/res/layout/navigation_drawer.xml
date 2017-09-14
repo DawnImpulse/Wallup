@@ -76,7 +76,7 @@
                 </RelativeLayout>
             </com.balysv.materialripple.MaterialRippleLayout>
 
-            <!--Collections-->
+            <!--CollectionsActivity-->
             <com.balysv.materialripple.MaterialRippleLayout
                 android:id="@+id/nav_drawer_collections"
                 android:layout_width="match_parent"
