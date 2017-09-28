@@ -376,6 +376,20 @@ public class WallpaperServiceSingleton implements RequestResponse {
                                     deleteFile();
                                 } // end og bitmap null check - else
                             } // end of if loop of file name matching
+                            else {
+                                //File name didn't matched - clear all files and re download
+                                if (directory().listFiles().length != 0) {
+                                    File[] file = directory().listFiles();
+                                    for (int j = 0; j < file.length; j++)
+                                        file[j].delete();
+                                }
+
+                                shouldDrawAfterFetch = true;
+                                moreImagesToFetch = 3;
+                                randomImageCall();
+
+                            }
+
                         } // end of for loop
 
                         Log.d("Test", "--" + position);
@@ -745,9 +759,8 @@ public class WallpaperServiceSingleton implements RequestResponse {
     private void deleteFile() {
         File[] f = directory().listFiles();
 
-        for(int i=0 ; i<f.length; i++)
-        {
-            if (f[i].getName().equals("wall" + position)){
+        for (int i = 0; i < f.length; i++) {
+            if (f[i].getName().equals("wall" + position)) {
                 f[i].delete();
                 break;
             }
