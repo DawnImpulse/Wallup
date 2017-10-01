@@ -386,13 +386,22 @@ public class WallpaperServiceSingleton implements RequestResponse {
                         */
                         if (!fileDrawStatus[0]) {
                             Log.d("Test", "Not Drawn " + position);
+                            //File name didn't matched - clear all files and re download
+                            if (directory().listFiles().length != 0) {
+                                File[] file = directory().listFiles();
+                                for (int j = 0; j < file.length; j++)
+                                    file[j].delete();
+                            }
 
+                            shouldDrawAfterFetch = true;
+                            moreImagesToFetch = 3;
+                            randomImageCall();
                             /* If file is not drawn because position is either incorrect
                             *  1. Then in Preferences update position to be latest image in cache
                             */
-                            if (position != Prefs.getInt(Const.LIVE_IMAGES_COUNT, 2) - 1) {
+                        /*    if (position != Prefs.getInt(Const.LIVE_IMAGES_COUNT, 2) - 3) {
                                 Prefs.putInt(LIVE_IMAGES_POSITION, Prefs.getInt(Const.LIVE_IMAGES_COUNT, 1));
-                            }
+                            }*/
                         } else {
                             //Sleep for desired upcoming time and/or update time in Prefs
                             upcomingTimeCheck();
@@ -571,7 +580,7 @@ public class WallpaperServiceSingleton implements RequestResponse {
             count = Prefs.getInt(Const.LIVE_IMAGES_COUNT, 1);
             fos = new FileOutputStream(directoryFile("wall" + count));
             Prefs.putInt(Const.LIVE_IMAGES_COUNT, ++count);
-            bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, fos);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -745,9 +754,8 @@ public class WallpaperServiceSingleton implements RequestResponse {
     private void deleteFile() {
         File[] f = directory().listFiles();
 
-        for(int i=0 ; i<f.length; i++)
-        {
-            if (f[i].getName().equals("wall" + position)){
+        for (int i = 0; i < f.length; i++) {
+            if (f[i].getName().equals("wall" + position)) {
                 f[i].delete();
                 break;
             }

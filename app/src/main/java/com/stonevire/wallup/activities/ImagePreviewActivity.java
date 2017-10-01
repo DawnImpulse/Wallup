@@ -43,7 +43,6 @@ import com.facebook.imagepipeline.image.CloseableImage;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.gjiazhe.panoramaimageview.GyroscopeObserver;
-import com.gjiazhe.panoramaimageview.PanoramaImageView;
 import com.stonevire.wallup.R;
 import com.stonevire.wallup.adapters.TagsAdapter;
 import com.stonevire.wallup.network.volley.RequestResponse;
@@ -71,7 +70,7 @@ import butterknife.OnClick;
 public class ImagePreviewActivity extends AppCompatActivity implements RequestResponse {
 
     @BindView(R.id.content_image_preview_image)
-    PanoramaImageView contentImagePreviewImage;
+    SimpleDraweeView contentImagePreviewImage;
     @BindView(R.id.activity_image_preview_info_button)
     AppCompatImageView activityImagePreviewInfoButton;
     @BindView(R.id.activity_image_preview_cross_button)
@@ -149,8 +148,8 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
 
         gyroscopeObserver = new GyroscopeObserver();
         gyroscopeObserver.setMaxRotateRadian(1.5);
-        contentImagePreviewImage.setGyroscopeObserver(gyroscopeObserver);
-        contentImagePreviewImage.setEnableScrollbar(false);
+        /*contentImagePreviewImage.setGyroscopeObserver(gyroscopeObserver);
+        contentImagePreviewImage.setEnableScrollbar(false);*/
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             contentImagePreviewImage.setTransitionName(mIntent.getStringExtra(Const.TRANS_NEW_TO_PREVIEW_3));
@@ -294,8 +293,12 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
      * Getting Bitmap from Fresco
      */
     private void gettingBitmap() {
+
         ImageRequest request = null;
         try {
+
+            contentImagePreviewImage.setImageURI(Uri.parse(imageUrlsObject.getString(Const.IMAGE_REGULAR)));
+
 
             request = ImageRequestBuilder
                     .newBuilderWithSource(Uri.parse(imageUrlsObject.getString(Const.IMAGE_REGULAR)))
@@ -312,7 +315,7 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
                             mBitmap = bitmap.copy(bitmap.getConfig(),true);
                             if (mBitmap != null)
                             {
-                                contentImagePreviewImage.setImageBitmap(mBitmap);
+                                //contentImagePreviewImage.setImageBitmap(mBitmap);
                                 supportStartPostponedEnterTransition();
                                 colorApplier(ColorModifier.getNonDarkColor(BitmapModifier.colorSwatch(mBitmap), ImagePreviewActivity.this));
                             }
