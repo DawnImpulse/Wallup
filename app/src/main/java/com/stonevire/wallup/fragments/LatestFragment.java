@@ -85,6 +85,8 @@ public class LatestFragment extends Fragment implements RequestResponse, SwipeRe
 
     @Override
     public void onErrorResponse(VolleyError volleyError, int callback) {
+
+        fragmentLatestSwipe.setRefreshing(false);
         Log.d("Test", String.valueOf(volleyError));
         Toast.makeText(getActivity(), String.valueOf(volleyError), Toast.LENGTH_SHORT).show();
 

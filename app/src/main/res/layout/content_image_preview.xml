@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,12 +9,15 @@
     tools:context="com.stonevire.wallup.activities.ImagePreviewActivity"
     tools:showIn="@layout/activity_image_preview">
 
-    <com.gjiazhe.panoramaimageview.PanoramaImageView
+    <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/content_image_preview_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:piv_enablePanoramaMode="true"
+        fresco:actualImageScaleType="centerCrop"
+        android:background="@color/black"
+        app:viewAspectRatio="1.77"
+        android:adjustViewBounds="false"
         app:piv_invertScrollDirection="false" />
-
+    <!--app:piv_enablePanoramaMode="true"-->
 </RelativeLayout>
 

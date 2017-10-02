@@ -6,12 +6,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.RecyclerView;
@@ -24,10 +27,13 @@ import android.view.ViewAnimationUtils;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
+import com.balysv.materialripple.MaterialRippleLayout;
 import com.facebook.drawee.backends.pipeline.Fresco;
-import com.stonevire.wallup.fragments.CuratedFragment;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.stonevire.wallup.R;
+import com.stonevire.wallup.fragments.CuratedFragment;
 import com.stonevire.wallup.fragments.LatestFragment;
 import com.stonevire.wallup.fragments.TrendingFragment;
 import com.stonevire.wallup.network.volley.VolleyWrapper;
@@ -39,10 +45,9 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import butterknife.OnTextChanged;
 
-public class MainActivity extends AppCompatActivity implements View.OnTouchListener {
+public class MainActivity extends AppCompatActivity implements View.OnTouchListener, View.OnClickListener {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.container)
@@ -63,6 +68,20 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     AppCompatImageView activityMainVoiceSearch;
     @BindView(R.id.activity_main_search_text)
     EditText activityMainSearchText;
+    @BindView(R.id.nav_drawer_user_image)
+    SimpleDraweeView navDrawerUserImage;
+    @BindView(R.id.nav_drawer_user_full_name)
+    TextView navDrawerUserFullName;
+    @BindView(R.id.appbar)
+    AppBarLayout appbar;
+    @BindView(R.id.nav_drawer_collections)
+    MaterialRippleLayout navDrawerCollections;
+    @BindView(R.id.nav_drawer_profile)
+    MaterialRippleLayout navDrawerProfile;
+    @BindView(R.id.nav_drawer_live_images)
+    MaterialRippleLayout navDrawerLiveImages;
+    @BindView(R.id.nav_drawer_settings)
+    MaterialRippleLayout navDrawerSettings;
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
     VolleyWrapper mVolleyWrapper;
@@ -77,9 +96,9 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fresco.initialize(this);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        Fresco.initialize(this);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -95,6 +114,22 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
         toolbar.setOnTouchListener(this);
         activityMainSearchOverflow.setOnTouchListener(this);
+
+        initNavigationDrawer();
+
+        activityMainSearchClose.setOnClickListener(this);
+        activityMainVoiceSearch.setOnClickListener(this);
+        navDrawerProfile.setOnClickListener(this);
+        navDrawerCollections.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this,CollectionsActivity.class);
+                startActivity(intent);
+            }
+        });
+        navDrawerLiveImages.setOnClickListener(this);
+        navDrawerSettings.setOnClickListener(this);
+
     }
 
     /**
@@ -148,7 +183,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         }
 
         //Intent to Live Images Activity
-        if (id == R.id.action_live_images){
+        if (id == R.id.action_live_images) {
             Intent intent = new Intent(MainActivity.this, LiveImagesActivity.class);
             startActivity(intent);
         }
@@ -175,25 +210,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    /**
-     * On Click Listener
-     *
-     * @param view
-     */
-    @OnClick({R.id.activity_main_search_close, R.id.activity_main_voice_search})
-    public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.activity_main_search_close:
-                closeSearchBar();
-                break;
-            case R.id.activity_main_voice_search:
-                if (searchTextBoxEmpty)
-                    displaySpeechRecognizer();
-                else
-                    activityMainSearchText.setText(null);
-                break;
-        }
-    }
 
     /**
      * On Text Change
@@ -212,7 +228,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     }
 
     /**
-     * On Touch Listener
+     * On Touch Listener - Use to make sure only the visible layout is touchable not the other one
      *
      * @param v,event
      * @return true/false
@@ -237,6 +253,33 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     }
 
     /**
+     * Support Navigation Up
+     *
+     * @return
+     */
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return super.onSupportNavigateUp();
+    }
+
+    /**
+     * Back Pressed
+     */
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    @Override
+    public void onBackPressed() {
+        if (activityMainSearchOverflow.getVisibility() == View.VISIBLE) {
+            if (searchTextBoxEmpty)
+                closeSearchBar();
+            else
+                activityMainSearchText.setText(null); //empty text
+        } else {
+            finish();
+        }
+    }
+
+    /**
      * Setting Up ViewPager
      *
      * @param viewPager
@@ -248,6 +291,41 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         adapter.addFragment(new CuratedFragment(), "CURATED");
 
         viewPager.setAdapter(adapter);
+    }
+
+    /**
+     * On Click Listener
+     *
+     * @param v
+     */
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.activity_main_search_close:
+                closeSearchBar();
+                break;
+
+            case R.id.activity_main_voice_search:
+                if (searchTextBoxEmpty)
+                    displaySpeechRecognizer();
+                else
+                    activityMainSearchText.setText(null);
+                break;
+
+            case R.id.nav_drawer_profile:
+                break;
+
+            case R.id.nav_drawer_collections:
+                Intent intent = new Intent(MainActivity.this, CollectionsActivity.class);
+                startActivity(intent);
+                break;
+
+            case R.id.nav_drawer_live_images:
+                break;
+
+            case R.id.nav_drawer_settings:
+                break;
+        }
     }
 
     /**
@@ -280,34 +358,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         void addFragment(Fragment fragment, String title) {
             mFragmentList.add(fragment);
             mFragmentTitleList.add(title);
-        }
-    }
-
-
-    /**
-     * Support Navigation Up
-     *
-     * @return
-     */
-    @Override
-    public boolean onSupportNavigateUp() {
-        finish();
-        return super.onSupportNavigateUp();
-    }
-
-    /**
-     * Back Pressed
-     */
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    @Override
-    public void onBackPressed() {
-        if (activityMainSearchOverflow.getVisibility() == View.VISIBLE) {
-            if (searchTextBoxEmpty)
-                closeSearchBar();
-            else
-                activityMainSearchText.setText(null); //empty text
-        } else {
-            finish();
         }
     }
 
@@ -365,4 +415,31 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         startActivityForResult(intent, 1);
     }
+
+    /**
+     * Navigation Drawer Initialize
+     */
+    public void initNavigationDrawer() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        final DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.main_content);
+
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close) {
+
+            @Override
+            public void onDrawerClosed(View v) {
+                super.onDrawerClosed(v);
+            }
+
+            @Override
+            public void onDrawerOpened(View v) {
+                super.onDrawerOpened(v);
+            }
+        };
+
+
+        drawerLayout.addDrawerListener(actionBarDrawerToggle);
+        actionBarDrawerToggle.syncState();
+    }
+
 }

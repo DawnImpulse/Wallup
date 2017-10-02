@@ -12,7 +12,7 @@ public class Const {
     public static final String TAGGING_IMAGES = DI_DOMAIN + "v1/taggingList";
 
     public static final String UNSPLASH_ID = "?client_id=a25247a07df2c569f6f3dc129f43b0eb3b0e3ff69b00d5b84dd031255e55b961";
-    public static final String WALLUP_UNSPLASH_CLIENT_ID = "?client_id=320ecd79cf43b87639c8e40af4b04e8d4a5a2b98";
+    public static final String TRENDING_CLIENT_ID = "?client_id=320ecd79cf43b87639c8e40af4b04e8d4a5a2b98";
     //Dawn ID    - a25247a07df2c569f6f3dc129f43b0eb3b0e3ff69b00d5b84dd031255e55b961
     //Saksham ID - e1d86d6d0dcb8ce3eea9d16c712c0feed5f1e9a05e5a5f252cf5ea090a3ebc80
     public static final String UNSPLASH_API = "https://api.unsplash.com/";
@@ -24,15 +24,16 @@ public class Const {
     public static final String UNSPLASH_GET_PHOTO = UNSPLASH_API + "photos/";
     public static final String UNSPLASH_RANDOM_CALL = UNSPLASH_API + "photos/random/" + UNSPLASH_ID + "&w=";
     public static final String UNSPLASH_TRENDING_IMAGES = UNSPLASH_API + "photos" + UNSPLASH_ID + "&order_by=popular&per_page=30";
+    public static final String UNSPLASH_FEATURED_COLLECTIONS = UNSPLASH_API + "collections/featured" + UNSPLASH_ID + "&per_page=30";
 
+    public static final String TRENDING_API = DI_DOMAIN + "trending_images" + TRENDING_CLIENT_ID;
 
-    public static final String TRENDING_API = DI_DOMAIN + "unsplash_trending" + WALLUP_UNSPLASH_CLIENT_ID;
     //----------------- Unsplash Image Properties------------------
 
     public static final String IMAGE_ID = "id";
     public static final String IMAGE_URLS = "urls";
     public static final String IMAGE_USER = "user";
-    public static final String IMAGE_USER_IMAGES = "profile_image";
+    public static final String PROFILE_IMAGES = "profile_image";
     public static final String IMAGE_COLOR = "color";
     public static final String IMAGE_RAW = "raw";
     public static final String IMAGE_USER_NAME = "name";
@@ -64,6 +65,11 @@ public class Const {
     public static final String IMAGE_WIDTH = "width";
     public static final String CUSTOM = "custom";
     public static final String USER_HTML = "html";
+    public static final String COVER_PHOTO = "cover_photo";
+    public static final String USER = "user";
+    public static final String COLLECTION_TITLE = "title";
+    public static final String TOTAL_PHOTOS = "total_photos";
+    public static final String FULL_IMAGE = "full";
 
     //------------------ API Variables ----------------------------
 
@@ -86,6 +92,8 @@ public class Const {
     public static final int IMAGE_PREVIEW_DETAIL_CALLBACK = 8;
     public static final int USER_IMAGES_LOADING_CALLBACK = 9;
     public static final int WALLPAPER_SERVICE_CALLBACK = 10;
+    public static final int COLLECTIONS_FEATURED_CALLBACK = 11;
+    public static final int COLLECTIONS_FEATURED_LOADING_CALLBACK = 12;
 
     //------------------ Transition Names -------------------------
     public static final String TRANS_NEW_TO_PROFILE = "trans1";

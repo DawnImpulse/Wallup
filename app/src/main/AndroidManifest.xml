@@ -53,11 +53,14 @@
 
         <activity
             android:name=".activities.LiveImagesActivity"
-            android:label="Live Images"/>
-
-        <activity android:name=".utils.Permissions"
-            android:theme="@style/AppTheme.Translucent"/>
-
+            android:label="Live Images" />
+        <activity
+            android:name=".utils.Permissions"
+            android:theme="@style/AppTheme.Translucent" />
+        <activity
+            android:name=".activities.CollectionsActivity"
+            android:label="@string/title_activity_collections"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

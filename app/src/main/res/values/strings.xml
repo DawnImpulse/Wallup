@@ -111,4 +111,7 @@
         \n\nThe images have a <b>CC0 licence</b> that is they are free to use , modify &#38; share although giving credits to <b>Unsplash</b> and <b>Photographer</b> is highly appreciable .\n
         \nWe thank <b>Unsplash</b> for the generous use of their API :) .</string>
     <string name="title_activity_image_preview">ImagePreviewActivity</string>
+    <string name="drawer_open">Open</string>
+    <string name="drawer_close">Close</string>
+    <string name="title_activity_collections">Collections</string>
 </resources>

@@ -47,6 +47,7 @@ import com.stonevire.wallup.activities.UserProfileActivity;
 import com.stonevire.wallup.interfaces.OnLoadMoreListener;
 import com.stonevire.wallup.utils.ColorModifier;
 import com.stonevire.wallup.utils.Const;
+import com.stonevire.wallup.utils.StringModifier;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -118,7 +119,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 final JSONObject object = imagesArray.getJSONObject(position);
                 JSONObject user = object.getJSONObject(Const.IMAGE_USER);
                 JSONObject urls = object.getJSONObject(Const.IMAGE_URLS);
-                JSONObject profileImage = user.getJSONObject(Const.IMAGE_USER_IMAGES);
+                JSONObject profileImage = user.getJSONObject(Const.PROFILE_IMAGES);
 
                 // Adding Background Color as View Hierarchy
                 Drawable b = new Drawable() {
@@ -156,9 +157,15 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                 //((FeedHolder) holder).authorLayout.setBackgroundColor(Color.parseColor(object.getString(Const.IMAGE_COLOR)));
                 ((FeedHolder) holder).image.setHierarchy(hierarchy);
-                ((FeedHolder) holder).firstName.setText(user.getString(Const.USER_FIRST_NAME));
-                ((FeedHolder) holder).lastName.setText(" " + user.getString(Const.USER_LAST_NAME));
+                ((FeedHolder) holder).firstName.setText(StringModifier.camelCase(user.getString(Const.USER_FIRST_NAME)));
                 ((FeedHolder) holder).authorImage.setImageURI(profileImage.getString(Const.USER_IMAGE_LARGE));
+
+                String lastName = user.getString(Const.USER_LAST_NAME);
+                if (lastName.length()==0 || lastName.equals("null") || lastName.equals(null))
+                {
+                    ((FeedHolder) holder).lastName.setText(" ");
+                }else
+                    ((FeedHolder) holder).lastName.setText(" " + StringModifier.camelCase(lastName));
 
                 //Set Image URI & Dynamic Color to Text & Background
                 imageAndPaletteSet((FeedHolder) holder, urls.getString(Const.IMAGE_REGULAR));
