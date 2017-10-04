@@ -65,8 +65,9 @@
 
         </RelativeLayout>
 
-        <com.facebook.drawee.view.SimpleDraweeView
+        <ImageView
             android:id="@+id/inflator_main_drawee"
+            android:scaleType="centerCrop"
             android:layout_width="match_parent"
             android:layout_height="240dp" />
     </LinearLayout>

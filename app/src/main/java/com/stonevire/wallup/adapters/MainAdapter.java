@@ -20,16 +20,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.PixelFormat;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Build;
-import android.support.annotation.IntRange;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.support.v4.view.ViewCompat;
@@ -39,23 +31,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.facebook.common.executors.CallerThreadExecutor;
-import com.facebook.common.references.CloseableReference;
-import com.facebook.datasource.DataSource;
-import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.drawee.generic.GenericDraweeHierarchy;
-import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
-import com.facebook.drawee.interfaces.DraweeController;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.core.ImagePipeline;
-import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
-import com.facebook.imagepipeline.image.CloseableImage;
-import com.facebook.imagepipeline.request.ImageRequest;
-import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.google.android.gms.ads.NativeExpressAdView;
 import com.stonevire.wallup.R;
 import com.stonevire.wallup.activities.ImagePreviewActivity;
@@ -70,7 +54,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Created by Saksham on 7/15/2017.
+ * Created by Saksham on 2017 07 15
+ * Last Branch Update - v4A
+ * Updates :
+ * Using Glide - v4A - DawnImpulse - 2017 10 04
  */
 
 public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -137,50 +124,17 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 JSONObject urls = object.getJSONObject(Const.IMAGE_URLS);
                 JSONObject profileImage = user.getJSONObject(Const.PROFILE_IMAGES);
 
-                // Adding Background Color as View Hierarchy
-                Drawable b = new Drawable() {
-                    @Override
-                    public void draw(@NonNull Canvas canvas) {
-                        try {
-                            canvas.drawColor(Color.parseColor(object.getString(Const.IMAGE_COLOR)));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
 
-                    @Override
-                    public void setAlpha(@IntRange(from = 0, to = 255) int alpha) {
-
-                    }
-
-                    @Override
-                    public void setColorFilter(@Nullable ColorFilter colorFilter) {
-
-                    }
-
-                    @Override
-                    public int getOpacity() {
-                        return PixelFormat.UNKNOWN;
-                    }
-                };
-
-                GenericDraweeHierarchyBuilder builder =
-                        new GenericDraweeHierarchyBuilder(mContext.getResources());
-                GenericDraweeHierarchy hierarchy = builder
-                        .setFadeDuration(300)
-                        .setBackground(b)
-                        .build();
-
+                ((FeedHolder) holder).image.setBackgroundColor(Color.parseColor(object.getString(Const.IMAGE_COLOR)));
                 //((FeedHolder) holder).authorLayout.setBackgroundColor(Color.parseColor(object.getString(Const.IMAGE_COLOR)));
-                ((FeedHolder) holder).image.setHierarchy(hierarchy);
+                //((FeedHolder) holder).image.setHierarchy(hierarchy);
                 ((FeedHolder) holder).firstName.setText(StringModifier.camelCase(user.getString(Const.USER_FIRST_NAME)));
                 ((FeedHolder) holder).authorImage.setImageURI(profileImage.getString(Const.USER_IMAGE_LARGE));
 
                 String lastName = user.getString(Const.USER_LAST_NAME);
-                if (lastName.length()==0 || lastName.equals("null") || lastName.equals(null))
-                {
+                if (lastName.length() == 0 || lastName.equals("null") || lastName.equals(null)) {
                     ((FeedHolder) holder).lastName.setText(" ");
-                }else
+                } else
                     ((FeedHolder) holder).lastName.setText(" " + StringModifier.camelCase(lastName));
 
                 //Set Image URI & Dynamic Color to Text & Background
@@ -244,7 +198,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
      */
     private class FeedHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         SimpleDraweeView authorImage;
-        SimpleDraweeView image;
+        ImageView image;
         TextView firstName;
         TextView lastName;
         RelativeLayout authorLayout;
@@ -252,7 +206,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public FeedHolder(View itemView) {
             super(itemView);
             authorImage = (SimpleDraweeView) itemView.findViewById(R.id.inflator_main_author_image);
-            image = (SimpleDraweeView) itemView.findViewById(R.id.inflator_main_drawee);
+            image = (ImageView) itemView.findViewById(R.id.inflator_main_drawee);
             firstName = (TextView) itemView.findViewById(R.id.inflator_latest_main_first_name);
             lastName = (TextView) itemView.findViewById(R.id.inflator_main_author_last_name);
             authorLayout = (RelativeLayout) itemView.findViewById(R.id.inflator_main_author_layout);
@@ -331,45 +285,31 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
      * @param url    - Direct URL of the Image
      */
     private void imageAndPaletteSet(final FeedHolder holder, String url) {
-        Uri uri = Uri.parse(url);
-        ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(uri).build();
-        DraweeController controller = Fresco.newDraweeControllerBuilder()
-                .setImageRequest(imageRequest)
-                .build();
 
-        final ImagePipeline imagePipeline = Fresco.getImagePipeline();
-
-        DataSource<CloseableReference<CloseableImage>> dataSource =
-                imagePipeline.fetchDecodedImage(imageRequest, holder.image.getContext());
-        dataSource.subscribe(new BaseBitmapDataSubscriber() {
-            @Override
-            protected void onFailureImpl(DataSource<CloseableReference<CloseableImage>> dataSource) {
-
-            }
-
-            @Override
-            protected void onNewResultImpl(@Nullable Bitmap bitmap) {
-                try {
-                    Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
-                        @Override
-                        public void onGenerated(Palette palette) {
-                            if (palette != null)
-                            {
-                                int backgroundColor = ColorModifier.getNonDarkColor(palette, mContext);
-                                holder.authorLayout.setBackgroundColor(backgroundColor);
-                                holder.firstName.setTextColor(
-                                        ColorModifier.getBlackOrWhiteInt(backgroundColor, mContext));
-                                holder.lastName.setTextColor(
-                                        ColorModifier.getBlackOrWhiteInt(backgroundColor, mContext));
+        Glide.with(mContext)
+                .asBitmap()
+                .load(url)
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(final Bitmap mBitmap, Transition<? super Bitmap> transition) {
+                        Palette.from(mBitmap).generate(new Palette.PaletteAsyncListener() {
+                            @Override
+                            public void onGenerated(Palette palette) {
+                                if (palette != null) {
+                                    int backgroundColor = ColorModifier.getNonDarkColor(palette, mContext);
+                                    holder.authorLayout.setBackgroundColor(backgroundColor);
+                                    holder.firstName.setTextColor(
+                                            ColorModifier.getBlackOrWhiteInt(backgroundColor, mContext));
+                                    holder.lastName.setTextColor(
+                                            ColorModifier.getBlackOrWhiteInt(backgroundColor, mContext));
+                                    holder.image.setImageBitmap(mBitmap);
+                                }
                             }
-                        }
-                    });
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }, CallerThreadExecutor.getInstance());
+                        });
+                    }
+                });
+        //holder.image.setController(controller);
 
-        holder.image.setController(controller);
+
     }
 }

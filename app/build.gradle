@@ -22,9 +22,9 @@ android {
     defaultConfig {
         applicationId "com.stonevire.wallup"
         minSdkVersion 19
-        targetSdkVersion 25
-        versionCode 3
-        versionName "1.0.0 (A3)"
+        targetSdkVersion 26
+        versionCode 4
+        versionName "1.0.0_A4"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -76,6 +76,8 @@ dependencies {
     compile 'com.eyalbira.loadingdots:loading-dots:1.0.2'
     compile 'org.greenrobot:eventbus:3.0.0'
     compile 'com.balysv:material-ripple:1.0.2'
+    compile 'com.github.bumptech.glide:glide:4.2.0'
     testCompile 'junit:junit:4.12'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.2.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
 }

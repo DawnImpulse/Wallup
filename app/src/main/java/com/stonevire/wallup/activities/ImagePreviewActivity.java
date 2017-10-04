@@ -23,7 +23,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.GradientDrawable;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -41,23 +40,19 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
-import com.facebook.common.executors.UiThreadImmediateExecutorService;
-import com.facebook.common.references.CloseableReference;
-import com.facebook.datasource.DataSource;
-import com.facebook.drawee.backends.pipeline.Fresco;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.view.DraweeTransition;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.core.ImagePipeline;
-import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
-import com.facebook.imagepipeline.image.CloseableImage;
 import com.facebook.imagepipeline.request.ImageRequest;
-import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.gjiazhe.panoramaimageview.GyroscopeObserver;
 import com.stonevire.wallup.R;
 import com.stonevire.wallup.adapters.TagsAdapter;
@@ -83,10 +78,17 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+/**
+ * Created by Saksham
+ * Last Branch Update - v4A
+ * Updates :
+ * Using Glide - v4A - DawnImpulse - 2017 10 04
+ */
+
 public class ImagePreviewActivity extends AppCompatActivity implements RequestResponse {
 
     @BindView(R.id.content_image_preview_image)
-    SimpleDraweeView contentImagePreviewImage;
+    ImageView contentImagePreviewImage;
     @BindView(R.id.activity_image_preview_info_button)
     AppCompatImageView activityImagePreviewInfoButton;
     @BindView(R.id.activity_image_preview_cross_button)
@@ -261,9 +263,9 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
 
             //Clicking on Download button
 
-            case R.id.activity_image_preview_download :
+            case R.id.activity_image_preview_download:
 
-                Intent mIntent = new Intent(ImagePreviewActivity.this,Permissions.class);
+                Intent mIntent = new Intent(ImagePreviewActivity.this, Permissions.class);
                 startActivity(mIntent);
                 break;
 
@@ -313,43 +315,29 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
         ImageRequest request = null;
         try {
 
-            contentImagePreviewImage.setImageURI(Uri.parse(imageUrlsObject.getString(Const.IMAGE_REGULAR)));
+            //contentImagePreviewImage.setImageURI(Uri.parse(imageUrlsObject.getString(Const.IMAGE_REGULAR)));
 
-
-            request = ImageRequestBuilder
-                    .newBuilderWithSource(Uri.parse(imageUrlsObject.getString(Const.IMAGE_REGULAR)))
-                    .build();
-            ImagePipeline imagePipeline = Fresco.getImagePipeline();
-            final DataSource<CloseableReference<CloseableImage>>
-                    dataSource = imagePipeline.fetchDecodedImage(request, this);
-
-            dataSource.subscribe(new BaseBitmapDataSubscriber() {
-                @Override
-                protected void onNewResultImpl(Bitmap bitmap) {
-                    try {
-                        if (dataSource.isFinished() && bitmap != null) {
-                            mBitmap = bitmap.copy(bitmap.getConfig(),true);
-                            if (mBitmap != null)
-                            {
-                                //contentImagePreviewImage.setImageBitmap(mBitmap);
-                                supportStartPostponedEnterTransition();
-                                colorApplier(ColorModifier.getNonDarkColor(BitmapModifier.colorSwatch(mBitmap), ImagePreviewActivity.this));
-                            }
-                            dataSource.close();
+            Glide.with(this)
+                    .asBitmap()
+                    .load(imageUrlsObject.getString(Const.IMAGE_REGULAR))
+                    .into(new SimpleTarget<Bitmap>() {
+                        @Override
+                        public void onResourceReady(Bitmap mBitmap, Transition<? super Bitmap> transition) {
+                            contentImagePreviewImage.setImageBitmap(mBitmap);
+                            supportStartPostponedEnterTransition();
+                            colorApplier(ColorModifier.getNonDarkColor(BitmapModifier.colorSwatch(mBitmap), ImagePreviewActivity.this));
                         }
+                    });
 
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
 
-                @Override
-                protected void onFailureImpl(DataSource<CloseableReference<CloseableImage>> dataSource) {
-                    if (dataSource != null) {
-                        dataSource.close();
-                    }
-                }
-            }, UiThreadImmediateExecutorService.getInstance());
+            /*mBitmap = bitmap.copy(bitmap.getConfig(),true);
+            if (mBitmap != null)
+            {
+                //contentImagePreviewImage.setImageBitmap(mBitmap);
+                supportStartPostponedEnterTransition();
+                colorApplier(ColorModifier.getNonDarkColor(BitmapModifier.colorSwatch(mBitmap), ImagePreviewActivity.this));
+            }*/
+
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -420,10 +408,9 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
             activityImagePreviewAuthorFirstName.setText(StringModifier.camelCase(authorObject.getString(Const.USER_FIRST_NAME)));
 
             String lastName = authorObject.getString(Const.USER_LAST_NAME);
-            if (lastName.length()==0 || lastName.equals("null") || lastName.equals(null))
-            {
-                activityImagePreviewAuthorLastName.setText(" " );
-            }else
+            if (lastName.length() == 0 || lastName.equals("null") || lastName.equals(null)) {
+                activityImagePreviewAuthorLastName.setText(" ");
+            } else
                 activityImagePreviewAuthorLastName.setText(" " + StringModifier.camelCase(lastName));
 
             if (imageObject.has(Const.LOCATION_OBJECT)) {
@@ -576,9 +563,8 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
 
     @Subscribe
     public void onMessageEvent(MessageEvent event) {
-        if (event.message.equals("Storage Permission Available"))
-        {
-            boolean result = BitmapStorage.saveToInternalStorage(mBitmap,"wall-1.jpg");
+        if (event.message.equals("Storage Permission Available")) {
+            boolean result = BitmapStorage.saveToInternalStorage(mBitmap, "wall-1.jpg");
             Toast.makeText(this, Boolean.toString(result), Toast.LENGTH_SHORT).show();
         }
     }

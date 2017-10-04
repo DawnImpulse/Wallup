@@ -22,15 +22,12 @@
     tools:context="com.stonevire.wallup.activities.ImagePreviewActivity"
     tools:showIn="@layout/activity_image_preview">
 
-    <com.facebook.drawee.view.SimpleDraweeView
+    <ImageView
         android:id="@+id/content_image_preview_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        fresco:actualImageScaleType="centerCrop"
-        android:background="@color/black"
-        app:viewAspectRatio="1.77"
-        android:adjustViewBounds="false"
-        app:piv_invertScrollDirection="false" />
+        android:scaleType="centerCrop"
+        android:background="@color/black" />
     <!--app:piv_enablePanoramaMode="true"-->
 </RelativeLayout>
 
