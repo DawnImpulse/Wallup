@@ -43,6 +43,7 @@ import com.stonevire.wallup.interfaces.OnLoadMoreListener;
 import com.stonevire.wallup.network.volley.RequestResponse;
 import com.stonevire.wallup.network.volley.VolleyWrapper;
 import com.stonevire.wallup.utils.Const;
+import com.stonevire.wallup.utils.GlideApp;
 import com.stonevire.wallup.utils.StringModifier;
 
 import org.json.JSONArray;
@@ -52,6 +53,7 @@ import org.json.JSONObject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class UserProfileActivity extends AppCompatActivity implements RequestResponse {
     VolleyWrapper mVolleyWrapper;
@@ -73,7 +75,7 @@ public class UserProfileActivity extends AppCompatActivity implements RequestRes
     @BindView(R.id.content_user_profile_nested)
     LinearLayout contentUserProfileNested;
     @BindView(R.id.activity_user_profile_author_image)
-    SimpleDraweeView activityUserProfileAuthorImage;
+    CircleImageView activityUserProfileAuthorImage;
     @BindView(R.id.activity_user_profile_unsplash_icon)
     AppCompatImageView activityUserProfileUnsplashIcon;
     @BindView(R.id.activity_user_profile_username)
@@ -144,8 +146,11 @@ public class UserProfileActivity extends AppCompatActivity implements RequestRes
             try {
                 activityUserProfileRandomImage.setImageURI(Const.UNSPLASH_USER_RANDOM +
                         author.getString(Const.USERNAME) + "/1920x1080");
-                activityUserProfileAuthorImage.setImageURI(
-                        author_image.getString(Const.USER_IMAGE_LARGE));
+
+                GlideApp.with(this)
+                        .load(author_image.getString(Const.USER_IMAGE_LARGE))
+                        .into(activityUserProfileAuthorImage);
+
                 activityUserProfileUsername.setText("@" + author.getString(Const.USERNAME));
                 activityUserProfileFirstName.setText(StringModifier.camelCase(author.getString(Const.USER_FIRST_NAME)));
                 collapsingToolbarLayout.setTitle(author.getString(Const.IMAGE_USER_NAME)); //full name
@@ -154,9 +159,9 @@ public class UserProfileActivity extends AppCompatActivity implements RequestRes
 
                 String lastName = author.getString(Const.USER_LAST_NAME);
 
-                if (lastName.length()==0 || lastName.equals("null") || lastName.equals(null)) {
+                if (lastName.length() == 0 || lastName.equals("null") || lastName.equals(null)) {
                     activityUserProfileLastName.setText(" ");
-                }else
+                } else
                     activityUserProfileLastName.setText(" " + StringModifier.camelCase(lastName));
 
             } catch (JSONException e) {

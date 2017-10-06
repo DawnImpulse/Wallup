@@ -21,6 +21,7 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
@@ -285,12 +286,17 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
                 String details1 = details.replace("\\", "");
                 imageObject = new JSONObject(details1);
 
+                contentImagePreviewImage.setBackgroundColor(Color.parseColor(imageObject.getString(Const.IMAGE_COLOR)));
+                supportStartPostponedEnterTransition();
                 if (mainObject.has(Const.TAGS)) {
                     String tag = mainObject.getString(Const.TAGS).replace("\\", "");
                     tagsArray = new JSONArray(tag);
                 }
             } else {
                 imageObject = new JSONObject(mIntent.getStringExtra(Const.IMAGE_OBJECT));
+                contentImagePreviewImage.setBackgroundColor(Color.parseColor(imageObject.getString(Const.IMAGE_COLOR)));
+                supportStartPostponedEnterTransition();
+
                 mVolleyWrapper.getCall(Const.UNSPLASH_GET_PHOTO +
                         imageObject.getString(Const.IMAGE_ID) + Const.UNSPLASH_ID, Const.IMAGE_PREVIEW_DETAIL_CALLBACK);
                 mVolleyWrapper.setListener(this);
@@ -324,11 +330,9 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
                         @Override
                         public void onResourceReady(Bitmap mBitmap, Transition<? super Bitmap> transition) {
                             contentImagePreviewImage.setImageBitmap(mBitmap);
-                            supportStartPostponedEnterTransition();
                             colorApplier(ColorModifier.getNonDarkColor(BitmapModifier.colorSwatch(mBitmap), ImagePreviewActivity.this));
                         }
                     });
-
 
             /*mBitmap = bitmap.copy(bitmap.getConfig(),true);
             if (mBitmap != null)

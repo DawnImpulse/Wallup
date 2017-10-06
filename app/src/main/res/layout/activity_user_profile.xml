@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
  Copyright 2017 Saksham.
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -81,13 +80,14 @@
                     android:layout_alignParentBottom="true"
                     android:layout_marginBottom="16dp">
 
-                    <com.facebook.drawee.view.SimpleDraweeView
+                    <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/activity_user_profile_author_image"
                         android:layout_width="64dp"
                         android:layout_height="64dp"
                         android:layout_gravity="center"
                         android:layout_marginLeft="16dp"
-                        fresco:roundAsCircle="true" />
+                        app:civ_border_color="@android:color/transparent"
+                        app:civ_border_width="0dp" />
 
                     <LinearLayout
                         android:id="@+id/activity_user_profile_unsplash_badge"
