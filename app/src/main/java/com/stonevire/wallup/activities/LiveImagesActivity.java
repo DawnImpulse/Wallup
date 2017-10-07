@@ -31,35 +31,54 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+/**
+ * Created by DawnImpulse
+ * Last Branch Update - v4A
+ * Updates :
+ * DawnImpulse - 2017 10 07 - v4A - Code edit
+ */
+
 public class LiveImagesActivity extends AppCompatActivity {
 
     @BindView(R.id.activity_live_images_chevron_right)
     AppCompatImageView activityLiveImagesChevronRight;
 
+    /**
+     * On create
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_live_images);
         ButterKnife.bind(this);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         activityLiveImagesChevronRight.setColorFilter(ContextCompat.getColor(this, R.color.black));
     }
 
+    /**
+     * View clicked - set live wallpaper
+     */
     @OnClick(R.id.activity_live_images_set_wallpaper)
     public void onViewClicked() {
-        Intent intent = new Intent(
-                WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER);
+        Intent intent = new Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER);
         intent.putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT, new ComponentName(this, LiveImagesService.class));
         startActivity(intent);
     }
 
+    /**
+     * On back press - H/W
+     */
     @Override
     public void onBackPressed() {
         super.onBackPressed();
         finish();
     }
 
+    /**
+     * On back press - S/W
+     */
     @Override
     public boolean onSupportNavigateUp() {
         finish();

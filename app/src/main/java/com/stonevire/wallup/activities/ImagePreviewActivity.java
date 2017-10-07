@@ -32,7 +32,6 @@ import android.support.v4.util.Pair;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatImageView;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -79,9 +78,10 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
- * Created by Saksham
+ * Created by DawnImpulse
  * Last Branch Update - v4A
  * Updates :
+ * DawnImpulse - 2017 10 07 - v4A - Code editing
  * DawnImpulse - 2017 10 07 - v4A - Changing URL
  * DawnImpulse - 2017 10 04 - v4A - Using Glide
  */
@@ -144,16 +144,15 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
     Button activityImagePreviewDownload;
     @BindView(R.id.activity_image_preview_wallpaper)
     Button activityImagePreviewWallpaper;
+    //--------------------------------------------------
 
-    private GyroscopeObserver gyroscopeObserver;
-    Intent mIntent;
-    JSONObject mainObject, imageObject, imageUrlsObject, authorObject, authorImages, exif = null;
-    JSONArray tagsArray = null;
-    TagsAdapter mTagsAdapter;
-    VolleyWrapper mVolleyWrapper;
-
-    //The Bitmap of the Image
-    Bitmap mBitmap;
+    private GyroscopeObserver gyroscopeObserver = null;
+    private Intent mIntent = null;
+    private JSONObject mainObject, imageObject, imageUrlsObject, authorObject, authorImages, exif = null;
+    private JSONArray tagsArray = null;
+    private TagsAdapter mTagsAdapter = null;
+    private VolleyWrapper mVolleyWrapper = null;
+    private Bitmap mBitmap = null;
 
     /**
      * On create
@@ -169,24 +168,26 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
         ButterKnife.bind(this);
         mIntent = getIntent();
         mVolleyWrapper = new VolleyWrapper(this);
-
         gyroscopeObserver = new GyroscopeObserver();
         gyroscopeObserver.setMaxRotateRadian(1.5);
         /*contentImagePreviewImage.setGyroscopeObserver(gyroscopeObserver);
         contentImagePreviewImage.setEnableScrollbar(false);*/
 
+        //setting transitions
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             contentImagePreviewImage.setTransitionName(mIntent.getStringExtra(Const.TRANS_NEW_TO_PREVIEW_3));
 
-            getWindow().setSharedElementEnterTransition(DraweeTransition.createTransitionSet(ScalingUtils.ScaleType.CENTER_CROP, ScalingUtils.ScaleType.FIT_CENTER));
-            getWindow().setSharedElementReturnTransition(DraweeTransition.createTransitionSet(ScalingUtils.ScaleType.FIT_CENTER, ScalingUtils.ScaleType.CENTER_CROP));
+            getWindow().setSharedElementEnterTransition(DraweeTransition
+                    .createTransitionSet(ScalingUtils.ScaleType.CENTER_CROP, ScalingUtils.ScaleType.FIT_CENTER));
+            getWindow().setSharedElementReturnTransition(DraweeTransition
+                    .createTransitionSet(ScalingUtils.ScaleType.FIT_CENTER, ScalingUtils.ScaleType.CENTER_CROP));
         }
         imageObjectParsing();
         imageDetails();
     }
 
     /**
-     * on start
+     * On start - for event bus
      */
     @Override
     public void onStart() {
@@ -195,7 +196,7 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
     }
 
     /**
-     * on stop
+     * On stop - for event bus
      */
     @Override
     public void onStop() {
@@ -204,7 +205,7 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
     }
 
     /**
-     * on resume
+     * On resume - for gyroscope
      */
     @Override
     protected void onResume() {
@@ -215,7 +216,7 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
     }
 
     /**
-     * on pause
+     * On pause - for gyroscope
      */
     @Override
     protected void onPause() {
@@ -226,9 +227,9 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
     }
 
     /**
-     * On click - fab , download , author
+     * On click - fab, download, author
      *
-     * @param v
+     * @param v - view
      */
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @OnClick({R.id.activity_image_preview_fab_layout, R.id.activity_image_preview_author_layout,
@@ -302,33 +303,34 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
      */
     private void imageObjectParsing() {
         try {
+            //Object coming from other activity
             if (!mIntent.hasExtra(Const.IS_DIRECT_OBJECT)) {
+                //getting image details for intent
                 mainObject = new JSONObject(mIntent.getStringExtra(Const.IMAGE_OBJECT));
-                String details = mainObject.getString(Const.DETAILS);
-                String details1 = details.replace("\\", "");
-                imageObject = new JSONObject(details1);
-
+                imageObject = new JSONObject(mainObject.getString(Const.DETAILS).replace("\\", ""));
                 contentImagePreviewImage.setBackgroundColor(Color.parseColor(imageObject.getString(Const.IMAGE_COLOR)));
+                //start of transition
                 supportStartPostponedEnterTransition();
-                if (mainObject.has(Const.TAGS)) {
-                    String tag = mainObject.getString(Const.TAGS).replace("\\", "");
-                    tagsArray = new JSONArray(tag);
-                }
-            } else {
+
+                if (imageObject.has(Const.EXIF))
+                    exif = imageObject.getJSONObject(Const.EXIF);
+
+            } //Object from main activity
+            else {
                 imageObject = new JSONObject(mIntent.getStringExtra(Const.IMAGE_OBJECT));
                 contentImagePreviewImage.setBackgroundColor(Color.parseColor(imageObject.getString(Const.IMAGE_COLOR)));
+                //start of transition
                 supportStartPostponedEnterTransition();
 
+                //get call for recent image details
                 mVolleyWrapper.getCall(Const.UNSPLASH_GET_PHOTO +
                         imageObject.getString(Const.IMAGE_ID) + Const.UNSPLASH_ID, Const.IMAGE_PREVIEW_DETAIL_CALLBACK);
                 mVolleyWrapper.setListener(this);
             }
+
             imageUrlsObject = imageObject.getJSONObject(Const.IMAGE_URLS);
             authorObject = imageObject.getJSONObject(Const.IMAGE_USER);
             authorImages = authorObject.getJSONObject(Const.PROFILE_IMAGES);
-
-            if (imageObject.has(Const.EXIF))
-                exif = imageObject.getJSONObject(Const.EXIF);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -336,7 +338,7 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
     }
 
     /**
-     * Getting Bitmap from Fresco
+     * Getting Bitmap from Glide
      */
     private void gettingBitmap() {
         try {
@@ -347,7 +349,8 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
                         @Override
                         public void onResourceReady(Bitmap mBitmap, Transition<? super Bitmap> transition) {
                             contentImagePreviewImage.setImageBitmap(mBitmap);
-                            colorApplier(ColorModifier.getNonDarkColor(BitmapModifier.colorSwatch(mBitmap), ImagePreviewActivity.this));
+                            colorApplier(ColorModifier.getNonDarkColor(BitmapModifier.colorSwatch(mBitmap),
+                                    ImagePreviewActivity.this));
                         }
                     });
         } catch (JSONException e) {
@@ -390,42 +393,57 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
      */
     private void imageDetails() {
         try {
+            //Exif is present in image details
             if (exif != null) {
+
+                //camera make
                 if (exif.has(Const.CAMERA_MAKE) && !exif.getString(Const.CAMERA_MAKE).equals("null"))
                     activityImagePreviewCameraMake.setText(exif.getString(Const.CAMERA_MAKE));
+
+                //camera model
                 if (exif.has(Const.CAMERA_MODEL) && !exif.getString(Const.CAMERA_MODEL).equals("null"))
                     activityImagePreviewCameraModel.setText(exif.getString(Const.CAMERA_MODEL));
+
+                //camera shutter speed
                 if (exif.has(Const.CAMERA_SHUTTER_SPEED) && !exif.getString(Const.CAMERA_SHUTTER_SPEED).equals("null"))
                     activityImagePreviewShutter.setText(exif.getString(Const.CAMERA_SHUTTER_SPEED));
+
+                //camera focal length
                 if (exif.has(Const.CAMERA_FOCAL_LENGTH) && !exif.getString(Const.CAMERA_FOCAL_LENGTH).equals("null"))
                     activityImagePreviewFocal.setText(exif.getString(Const.CAMERA_FOCAL_LENGTH));
+
+                //camera aperture
                 if (exif.has(Const.CAMERA_APERTURE) && !exif.getString(Const.CAMERA_APERTURE).equals("null"))
                     activityImagePreviewAperture.setText(exif.getString(Const.CAMERA_APERTURE));
+
+                //camera iso
                 if (exif.has(Const.CAMERA_ISO) && !exif.getString(Const.CAMERA_ISO).equals("null"))
                     activityImagePreviewIso.setText(exif.getString(Const.CAMERA_ISO));
             }
 
-            activityImagePreviewPublished.setText(DateModifier.toDateFullMonthYear(imageObject.getString(Const.IMAGE_CREATED)
-                    .substring(0, imageObject.getString(Const.IMAGE_CREATED).indexOf("T"))));
+            //Applying modified date on details page
+            activityImagePreviewPublished.setText(DateModifier.toDateFullMonthYear
+                    (imageObject.getString(Const.IMAGE_CREATED)
+                            .substring(0, imageObject.getString(Const.IMAGE_CREATED).indexOf("T"))));
 
+            //image width x height
             activityImagePreviewDimensions.setText(imageObject.getString(Const.IMAGE_WIDTH)
                     + " x " + imageObject.getString(Const.IMAGE_HEIGHT));
 
-            if (tagsArray != null) {
-                mTagsAdapter = new TagsAdapter(this, tagsArray);
-                activityImagePreviewTagRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-                activityImagePreviewTagRecycler.setAdapter(mTagsAdapter);
-            }
-
+            //user image
             activityImagePreviewAuthorImage.setImageURI(authorImages.getString(Const.USER_IMAGE_LARGE));
+
+            //user name
             activityImagePreviewAuthorFirstName.setText(StringModifier.camelCase(authorObject.getString(Const.USER_FIRST_NAME)));
 
-            String lastName = authorObject.getString(Const.USER_LAST_NAME);
+            //last name
+            String lastName = authorObject.optString(Const.USER_LAST_NAME);
             if (lastName.length() == 0 || lastName.equals("null") || lastName.equals(null)) {
                 activityImagePreviewAuthorLastName.setText(" ");
             } else
                 activityImagePreviewAuthorLastName.setText(" " + StringModifier.camelCase(lastName));
 
+            //location
             if (imageObject.has(Const.LOCATION_OBJECT)) {
                 JSONObject locationObject = imageObject.getJSONObject(Const.LOCATION_OBJECT);
                 activityImagePreviewLocation.setText(locationObject.getString(Const.LOCATION_TITLE));
@@ -443,55 +461,71 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
      * @param i , 0 - fading Info Drawable and visa versa
      */
     private void fabDrawableAnimation(int i) {
-        ObjectAnimator fadeOut = null, fadeIn = null;
-        Animation rotationInfo, rotationCross;
-        if (i == 0) { //Fading Info Drawable
+
+        ObjectAnimator fadeOut = null;
+        ObjectAnimator fadeIn = null;
+        Animation rotationInfo = null;
+        Animation rotationCross = null;
+        AnimatorSet mAnimationSet = null;
+
+        //Fading Info Drawable
+        if (i == 0) {
             fadeOut = ObjectAnimator.ofFloat(activityImagePreviewInfoButton, "alpha", 1f, 0f);
             fadeIn = ObjectAnimator.ofFloat(activityImagePreviewCrossButton, "alpha", 0f, 1f);
             rotationInfo = AnimationUtils.loadAnimation(this, R.anim.rotation_fab_info_away);
             fadeIn.setDuration(500);
-        } else { // Fading Cross Drawable
+
+        } // Fading Cross Drawable
+        else {
             fadeOut = ObjectAnimator.ofFloat(activityImagePreviewCrossButton, "alpha", 1f, 0f);
             fadeIn = ObjectAnimator.ofFloat(activityImagePreviewInfoButton, "alpha", 0f, 1f);
             rotationInfo = AnimationUtils.loadAnimation(this, R.anim.rotation_fab_info_back);
             fadeIn.setDuration(1000);
         }
+
         rotationCross = AnimationUtils.loadAnimation(this, R.anim.rotation_fab_cross);
         fadeOut.setDuration(500);
 
-        AnimatorSet mAnimationSet = new AnimatorSet();
+        mAnimationSet = new AnimatorSet();
         mAnimationSet.play(fadeOut);
         mAnimationSet.play(fadeIn);
-
         mAnimationSet.start();
         activityImagePreviewInfoButton.startAnimation(rotationInfo);
         activityImagePreviewCrossButton.startAnimation(rotationCross);
     }
 
     /**
-     * Show/Hide Details Overlay
+     * Show/Hide details overlay
      *
      * @param i , 0 - show
      */
     private void detailsPageAnimation(int i) {
+        Animator anim = null;
+        float radius = 0;
+        int cx = 0;
+        int cy = 0;
+
+        //showing the details section with animation
         if (i == 0) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                int cx = activityImagePreviewDetailsLayout.getWidth() - DisplayCalculations.dpToPx(44, this);
-                int cy = activityImagePreviewDetailsLayout.getHeight() - DisplayCalculations.dpToPx(44, this);
-                float radius = (float) Math.hypot(cx, cy);
-                Animator anim = ViewAnimationUtils.createCircularReveal(activityImagePreviewDetailsLayout, cx, cy, 0, radius);
+                cx = activityImagePreviewDetailsLayout.getWidth() - DisplayCalculations.dpToPx(44, this);
+                cy = activityImagePreviewDetailsLayout.getHeight() - DisplayCalculations.dpToPx(44, this);
+                radius = (float) Math.hypot(cx, cy);
+                anim = ViewAnimationUtils.createCircularReveal(activityImagePreviewDetailsLayout, cx, cy, 0, radius);
 
                 activityImagePreviewDetailsLayout.setVisibility(View.VISIBLE);
                 anim.start();
             } else {
                 activityImagePreviewDetailsLayout.setVisibility(View.VISIBLE);
             }
-        } else {
+
+        }//disabling the details section with animation
+        else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                int cx = activityImagePreviewDetailsLayout.getWidth() - DisplayCalculations.dpToPx(44, this);
-                int cy = activityImagePreviewDetailsLayout.getHeight() - DisplayCalculations.dpToPx(44, this);
-                float radius = (float) Math.hypot(cx, cy);
-                Animator anim = ViewAnimationUtils.createCircularReveal(activityImagePreviewDetailsLayout, cx, cy, radius, 0);
+                cx = activityImagePreviewDetailsLayout.getWidth() - DisplayCalculations.dpToPx(44, this);
+                cy = activityImagePreviewDetailsLayout.getHeight() - DisplayCalculations.dpToPx(44, this);
+                radius = (float) Math.hypot(cx, cy);
+                anim = ViewAnimationUtils.createCircularReveal(activityImagePreviewDetailsLayout, cx, cy, radius, 0);
                 anim.addListener(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animation) {
@@ -510,19 +544,31 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
                     public void onAnimationRepeat(Animator animation) {
                     }
                 });
+
                 anim.start();
+
             } else {
                 activityImagePreviewDetailsLayout.setVisibility(View.GONE);
             }
         }
     }
 
+    /**
+     * Error response
+     * @param volleyError
+     * @param callback
+     */
     @Override
     public void onErrorResponse(VolleyError volleyError, int callback) {
         Log.d("Test", volleyError.toString());
         Toast.makeText(this, volleyError.toString(), Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Image object response
+     * @param response
+     * @param callback
+     */
     @Override
     public void onResponse(JSONObject response, int callback) {
         if (callback == Const.IMAGE_PREVIEW_DETAIL_CALLBACK) {
@@ -531,16 +577,28 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
                     JSONObject exif = response.getJSONObject(Const.EXIF);
                     {
                         if (exif != null) {
+
+                            //camera make
                             if (exif.has(Const.CAMERA_MAKE) && !exif.getString(Const.CAMERA_MAKE).equals("null"))
                                 activityImagePreviewCameraMake.setText(exif.getString(Const.CAMERA_MAKE));
+
+                            //camera model
                             if (exif.has(Const.CAMERA_MODEL) && !exif.getString(Const.CAMERA_MODEL).equals("null"))
                                 activityImagePreviewCameraModel.setText(exif.getString(Const.CAMERA_MODEL));
+
+                            //camera shutter speed
                             if (exif.has(Const.CAMERA_SHUTTER_SPEED) && !exif.getString(Const.CAMERA_SHUTTER_SPEED).equals("null"))
                                 activityImagePreviewShutter.setText(exif.getString(Const.CAMERA_SHUTTER_SPEED));
+
+                            //camera focal length
                             if (exif.has(Const.CAMERA_FOCAL_LENGTH) && !exif.getString(Const.CAMERA_FOCAL_LENGTH).equals("null"))
                                 activityImagePreviewFocal.setText(exif.getString(Const.CAMERA_FOCAL_LENGTH));
+
+                            //camera aperture
                             if (exif.has(Const.CAMERA_APERTURE) && !exif.getString(Const.CAMERA_APERTURE).equals("null"))
                                 activityImagePreviewAperture.setText(exif.getString(Const.CAMERA_APERTURE));
+
+                            //camera iso
                             if (exif.has(Const.CAMERA_ISO) && !exif.getString(Const.CAMERA_ISO).equals("null"))
                                 activityImagePreviewIso.setText(exif.getString(Const.CAMERA_ISO));
                         }
@@ -558,27 +616,46 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
         }
     }
 
+    /**
+     * Not useful here
+     * @param response
+     * @param callback
+     */
     @Override
     public void onResponse(JSONArray response, int callback) {
 
     }
 
+    /**
+     * Not useful here
+     * @param response
+     * @param callback
+     */
     @Override
     public void onResponse(String response, int callback) {
 
     }
 
+    /**
+     * Back press H/W
+     */
     @Override
     public void onBackPressed() {
         supportFinishAfterTransition();
     }
 
-
+    //Event bus message for saving image after storage permission
     @Subscribe
     public void onMessageEvent(MessageEvent event) {
         if (event.message.equals("Storage Permission Available")) {
-            boolean result = BitmapStorage.saveToInternalStorage(mBitmap, "wall-1.jpg");
-            Toast.makeText(this, Boolean.toString(result), Toast.LENGTH_SHORT).show();
+
+            try {
+                boolean result = false;
+                result = BitmapStorage.saveToInternalStorage(mBitmap, imageObject.getString(Const.IMAGE_ID) + ".jpg");
+                Toast.makeText(this, Boolean.toString(result), Toast.LENGTH_SHORT).show();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

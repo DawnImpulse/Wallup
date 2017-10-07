@@ -46,7 +46,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.balysv.materialripple.MaterialRippleLayout;
-import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.stonevire.wallup.R;
 import com.stonevire.wallup.fragments.CuratedFragment;
@@ -62,6 +61,13 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnTextChanged;
+
+/**
+ * Created by DawnImpulse
+ * Last Branch Update - v4A
+ * Updates :
+ * DawnImpulse - 2017 10 07 - v4A - Code edit
+ */
 
 public class MainActivity extends AppCompatActivity implements View.OnTouchListener, View.OnClickListener {
     @BindView(R.id.toolbar)
@@ -98,11 +104,12 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     MaterialRippleLayout navDrawerLiveImages;
     @BindView(R.id.nav_drawer_settings)
     MaterialRippleLayout navDrawerSettings;
+    //-------------------------------------------------
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
-    VolleyWrapper mVolleyWrapper;
-    Map<String, String> params;
-    boolean searchTextBoxEmpty = true; // to check if edit text is currently empty or not
+    private VolleyWrapper mVolleyWrapper;
+    private Map<String, String> params;
+    private boolean searchTextBoxEmpty = true; // to check if edit text is currently empty or not
 
     /**
      * On Create
@@ -112,7 +119,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Fresco.initialize(this);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
@@ -123,7 +129,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         activityMainVoiceSearch.setColorFilter(ContextCompat.getColor(this, R.color.white));
-
         setupViewPager(viewPager);
         tabLayout.setupWithViewPager(viewPager);
         viewPager.setOffscreenPageLimit(2);
@@ -131,6 +136,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         toolbar.setOnTouchListener(this);
         activityMainSearchOverflow.setOnTouchListener(this);
 
+        //Navigation drawer enabled
         initNavigationDrawer();
 
         activityMainSearchClose.setOnClickListener(this);
@@ -139,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         navDrawerCollections.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this,CollectionsActivity.class);
+                Intent intent = new Intent(MainActivity.this, CollectionsActivity.class);
                 startActivity(intent);
             }
         });
@@ -168,15 +174,18 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
+        Animator anim = null;
+        int cx = 0;
+        int cy = 0;
+        float radius = 0;
 
-        if (id == R.id.search) {
-
+        if (item.getItemId() == R.id.search) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                int cx = activityMainSearchOverflow.getWidth();
-                int cy = activityMainSearchOverflow.getHeight() / 2;
-                float radius = (float) Math.hypot(cx, cy);
-                Animator anim = ViewAnimationUtils.createCircularReveal(activityMainSearchOverflow, cx, cy, 0, radius);
+
+                cx = activityMainSearchOverflow.getWidth();
+                cy = activityMainSearchOverflow.getHeight() / 2;
+                radius = (float) Math.hypot(cx, cy);
+                anim = ViewAnimationUtils.createCircularReveal(activityMainSearchOverflow, cx, cy, 0, radius);
 
                 activityMainSearchOverflow.setVisibility(View.VISIBLE);
                 toolbar.setVisibility(View.GONE);
@@ -193,13 +202,13 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             }
         }
 
-        if (id == R.id.action_about) {
+        if (item.getItemId() == R.id.action_about) {
             Intent intent = new Intent(MainActivity.this, AboutActivity.class);
             startActivity(intent);
         }
 
         //Intent to Live Images Activity
-        if (id == R.id.action_live_images) {
+        if (item.getItemId() == R.id.action_live_images) {
             Intent intent = new Intent(MainActivity.this, LiveImagesActivity.class);
             startActivity(intent);
         }
@@ -207,7 +216,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     }
 
     /**
-     * On Activity Result
+     * On Activity Result - for voice search text
      *
      * @param requestCode,resultCode,data
      */
@@ -228,7 +237,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
 
     /**
-     * On Text Change
+     * On Text Change - listen to text change on search text
      *
      * @param text
      */
@@ -269,7 +278,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     }
 
     /**
-     * Support Navigation Up
+     * Back press - S/W
      *
      * @return
      */
@@ -280,7 +289,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     }
 
     /**
-     * Back Pressed
+     * Back Pressed - H/W also for search bar
      */
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -310,7 +319,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     }
 
     /**
-     * On Click Listener
+     * On Click  - search close, voice search, drawer profile,
+     * drawer collection, drawer live image, drawer settings
      *
      * @param v
      */
@@ -378,16 +388,20 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     }
 
     /**
-     * Closing Search Bar
+     * Closing Search Bar with animation
      */
     private void closeSearchBar() {
 
+        int cx = 0;
+        int cy = 0;
+        float initialRadius = 0;
+        Animator anim = null;
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            int cx = activityMainSearchOverflow.getWidth();
-            int cy = activityMainSearchOverflow.getHeight() / 2;
-            float initialRadius = (float) Math.hypot(cx, cy);
-            Animator anim =
-                    ViewAnimationUtils.createCircularReveal(activityMainSearchOverflow, cx, cy, initialRadius, 0);
+            cx = activityMainSearchOverflow.getWidth();
+            cy = activityMainSearchOverflow.getHeight() / 2;
+            initialRadius = (float) Math.hypot(cx, cy);
+            anim = ViewAnimationUtils.createCircularReveal(activityMainSearchOverflow, cx, cy, initialRadius, 0);
 
             toolbar.setVisibility(View.VISIBLE);
             anim.addListener(new Animator.AnimatorListener() {
@@ -410,6 +424,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
                 }
             });
+
             anim.start();
             tabLayout.setVisibility(View.VISIBLE);
             includeSearchLayoutExternal.setVisibility(View.INVISIBLE);
