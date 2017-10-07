@@ -66,6 +66,14 @@ import static com.stonevire.wallup.utils.Const.LIVE_IMAGES_POSITION;
  * Created by Saksham on 7/19/2017.
  */
 
+/**
+ * Created by DawnImpulse on 2017 07 15
+ * Last Branch Update - v4A
+ * Updates :
+ * DawnImpulse - 2017 10 07 - v4A - Caching also changes + url changes
+ */
+
+
 public class WallpaperServiceSingleton implements RequestResponse {
 
     //Instance of this class
@@ -392,20 +400,6 @@ public class WallpaperServiceSingleton implements RequestResponse {
                                     deleteFile();
                                 } // end og bitmap null check - else
                             } // end of if loop of file name matching
-                            else {
-                                //File name didn't matched - clear all files and re download
-                                if (directory().listFiles().length != 0) {
-                                    File[] file = directory().listFiles();
-                                    for (int j = 0; j < file.length; j++)
-                                        file[j].delete();
-                                }
-
-                                shouldDrawAfterFetch = true;
-                                moreImagesToFetch = 3;
-                                randomImageCall();
-
-                            }
-
                         } // end of for loop
 
                         Log.d("Test", "--" + position);
@@ -419,8 +413,15 @@ public class WallpaperServiceSingleton implements RequestResponse {
                             //File name didn't matched - clear all files and re download
                             if (directory().listFiles().length != 0) {
                                 File[] file = directory().listFiles();
-                                for (int j = 0; j < file.length; j++)
-                                    file[j].delete();
+                                for (int j = 0; j < file.length; j++) {
+                                    if (j == file.length - 1) {
+                                        String filename = file[j].getName().replace("wall", "");
+                                        position = Integer.valueOf(filename);
+                                        Prefs.putInt(Const.LIVE_IMAGES_POSITION, position);
+                                        Prefs.putInt(Const.LIVE_IMAGES_COUNT, position + 1);
+                                    }
+                                }
+
                             }
 
                             shouldDrawAfterFetch = true;
@@ -707,7 +708,7 @@ public class WallpaperServiceSingleton implements RequestResponse {
      * Call to unsplash to get Random Image Object
      */
     private void randomImageCall() {
-        mVolleyWrapper.getCall(Const.UNSPLASH_RANDOM_CALL + "1920&h=1080", Const.WALLPAPER_SERVICE_CALLBACK);
+        mVolleyWrapper.getCall(Const.UNSPLASH_RANDOM_CALL + "&h=1080", Const.WALLPAPER_SERVICE_CALLBACK);
         mVolleyWrapper.setListener(this);
     }
 

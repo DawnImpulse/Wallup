@@ -53,7 +53,6 @@ import com.bumptech.glide.request.transition.Transition;
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.view.DraweeTransition;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.request.ImageRequest;
 import com.gjiazhe.panoramaimageview.GyroscopeObserver;
 import com.stonevire.wallup.R;
 import com.stonevire.wallup.adapters.TagsAdapter;
@@ -83,7 +82,8 @@ import butterknife.OnClick;
  * Created by Saksham
  * Last Branch Update - v4A
  * Updates :
- * Using Glide - v4A - DawnImpulse - 2017 10 04
+ * DawnImpulse - 2017 10 07 - v4A - Changing URL
+ * DawnImpulse - 2017 10 04 - v4A - Using Glide
  */
 
 public class ImagePreviewActivity extends AppCompatActivity implements RequestResponse {
@@ -155,6 +155,11 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
     //The Bitmap of the Image
     Bitmap mBitmap;
 
+    /**
+     * On create
+     *
+     * @param savedInstanceState
+     */
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -180,18 +185,27 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
         imageDetails();
     }
 
+    /**
+     * on start
+     */
     @Override
     public void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
     }
 
+    /**
+     * on stop
+     */
     @Override
     public void onStop() {
         EventBus.getDefault().unregister(this);
         super.onStop();
     }
 
+    /**
+     * on resume
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -200,6 +214,9 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
         gettingBitmap();
     }
 
+    /**
+     * on pause
+     */
     @Override
     protected void onPause() {
         super.onPause();
@@ -208,6 +225,11 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
         //contentImagePreviewImage.setImageBitmap(null);
     }
 
+    /**
+     * On click - fab , download , author
+     *
+     * @param v
+     */
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @OnClick({R.id.activity_image_preview_fab_layout, R.id.activity_image_preview_author_layout,
             R.id.activity_image_preview_download})
@@ -317,15 +339,10 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
      * Getting Bitmap from Fresco
      */
     private void gettingBitmap() {
-
-        ImageRequest request = null;
         try {
-
-            //contentImagePreviewImage.setImageURI(Uri.parse(imageUrlsObject.getString(Const.IMAGE_REGULAR)));
-
             Glide.with(this)
                     .asBitmap()
-                    .load(imageUrlsObject.getString(Const.IMAGE_REGULAR))
+                    .load(imageUrlsObject.getString(Const.IMAGE_RAW) + "?h=720")
                     .into(new SimpleTarget<Bitmap>() {
                         @Override
                         public void onResourceReady(Bitmap mBitmap, Transition<? super Bitmap> transition) {
@@ -333,19 +350,11 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
                             colorApplier(ColorModifier.getNonDarkColor(BitmapModifier.colorSwatch(mBitmap), ImagePreviewActivity.this));
                         }
                     });
-
-            /*mBitmap = bitmap.copy(bitmap.getConfig(),true);
-            if (mBitmap != null)
-            {
-                //contentImagePreviewImage.setImageBitmap(mBitmap);
-                supportStartPostponedEnterTransition();
-                colorApplier(ColorModifier.getNonDarkColor(BitmapModifier.colorSwatch(mBitmap), ImagePreviewActivity.this));
-            }*/
-
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+
     }
 
     /**

@@ -38,7 +38,7 @@ public class Const {
     public static final String UNSPLASH_LATEST_IMAGES = UNSPLASH_API + "photos" + UNSPLASH_ID + "&order_by=latest&per_page=30";
     public static final String UNSPLASH_CURATED_IMAGES = UNSPLASH_API + "photos/curated" + UNSPLASH_ID + "&order_by=latest&per_page=30";
     public static final String UNSPLASH_GET_PHOTO = UNSPLASH_API + "photos/";
-    public static final String UNSPLASH_RANDOM_CALL = UNSPLASH_API + "photos/random/" + UNSPLASH_ID + "&w=";
+    public static final String UNSPLASH_RANDOM_CALL = UNSPLASH_API + "photos/random/" + UNSPLASH_ID;
     public static final String UNSPLASH_TRENDING_IMAGES = UNSPLASH_API + "photos" + UNSPLASH_ID + "&order_by=popular&per_page=30";
     public static final String UNSPLASH_FEATURED_COLLECTIONS = UNSPLASH_API + "collections/featured" + UNSPLASH_ID + "&per_page=30";
 

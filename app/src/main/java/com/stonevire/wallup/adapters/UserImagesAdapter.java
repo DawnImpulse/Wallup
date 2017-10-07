@@ -29,13 +29,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.stonevire.wallup.R;
 import com.stonevire.wallup.activities.ImagePreviewActivity;
 import com.stonevire.wallup.interfaces.OnLoadMoreListener;
 import com.stonevire.wallup.utils.Const;
+import com.stonevire.wallup.utils.GlideApp;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,6 +44,13 @@ import org.json.JSONObject;
 
 /**
  * Created by Saksham on 7/3/2017.
+ */
+
+/**
+ * Created by DawnImpulse on 2017 07 03
+ * Last Branch Update - v4A
+ * Updates :
+ * DawnImpulse - 2017 10 07 - v4A - URL changes + glide
  */
 
 public class UserImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -143,7 +151,9 @@ public class UserImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
                 ((UserImagesHolder) holder).draweeView.setBackgroundColor(
                         Color.parseColor(imageObject.getString(Const.IMAGE_COLOR)));
-                ((UserImagesHolder) holder).draweeView.setImageURI(urls.getString(Const.IMAGE_REGULAR));
+                GlideApp.with(mContext)
+                        .load(urls.getString(Const.IMAGE_RAW) + "?h=720")
+                        .into(((UserImagesHolder) holder).draweeView);
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     ViewCompat.setTransitionName(((UserImagesHolder) holder).draweeView, imageObject.getString(Const.IMAGE_ID));
@@ -203,11 +213,11 @@ public class UserImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
      * User Images View Holder
      */
     private class UserImagesHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        SimpleDraweeView draweeView;
+        ImageView draweeView;
 
         public UserImagesHolder(View itemView) {
             super(itemView);
-            draweeView = (SimpleDraweeView) itemView.findViewById(R.id.inflator_user_images_drawee);
+            draweeView = (ImageView) itemView.findViewById(R.id.inflator_user_images_drawee);
             draweeView.setOnClickListener(this);
         }
 
@@ -218,7 +228,7 @@ public class UserImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     case R.id.inflator_user_images_drawee:
                         Intent intent = new Intent(mContext, ImagePreviewActivity.class);
                         intent.putExtra(Const.IMAGE_OBJECT, mImagesArray.getJSONObject(getAdapterPosition()).toString());
-                        intent.putExtra(Const.IS_DIRECT_OBJECT,"true");
+                        intent.putExtra(Const.IS_DIRECT_OBJECT, "true");
 
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             intent.putExtra(Const.TRANS_USER_TO_PREVIEW, ViewCompat.getTransitionName(draweeView));

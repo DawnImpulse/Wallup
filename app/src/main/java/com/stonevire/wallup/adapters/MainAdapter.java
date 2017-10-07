@@ -54,9 +54,10 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Created by Saksham on 2017 07 15
  * Last Branch Update - v4A
  * Updates :
- * DawnImpulse - 2017 10 06 - v1A - Changing layout for Main images
- * DawnImpulse - 2017 10 05 - v1A - Fixing repeating images in recycler
- * DawnImpulse - 2017 10 04 - v1A - Using Glide
+ * DawnImpulse - 2017 10 07 - v4A - URL changes
+ * DawnImpulse - 2017 10 06 - v4A - Changing layout for Main images
+ * DawnImpulse - 2017 10 05 - v4A - Fixing repeating images in recycler
+ * DawnImpulse - 2017 10 04 - v4A - Using Glide
  */
 
 public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -75,6 +76,13 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     int currentPosition;
 
+    /**
+     * Constructor
+     *
+     * @param context
+     * @param array
+     * @param recyclerView
+     */
     public MainAdapter(Context context, JSONArray array, RecyclerView recyclerView) {
         mContext = context;
         imagesArray = array;
@@ -100,6 +108,13 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         });
     }
 
+    /**
+     * On create view holder
+     *
+     * @param parent
+     * @param viewType
+     * @return
+     */
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v;
@@ -116,6 +131,12 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return null;
     }
 
+    /**
+     * Bind view holder
+     *
+     * @param holder
+     * @param position
+     */
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof FeedHolder) {
@@ -124,7 +145,6 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 JSONObject user = object.getJSONObject(Const.IMAGE_USER);
                 JSONObject urls = object.getJSONObject(Const.IMAGE_URLS);
                 JSONObject profileImage = user.getJSONObject(Const.PROFILE_IMAGES);
-
 
                 ((FeedHolder) holder).image.setBackgroundColor(Color.parseColor(object.getString(Const.IMAGE_COLOR)));
                 ((FeedHolder) holder).firstName.setText(StringModifier.camelCase(user.getString(Const.USER_FIRST_NAME)));
@@ -136,7 +156,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     ((FeedHolder) holder).lastName.setText(" " + StringModifier.camelCase(lastName));
 
                 GlideApp.with(mContext)
-                        .load(urls.getString(Const.IMAGE_REGULAR))
+                        .load(urls.getString(Const.IMAGE_RAW) + "?h=720")
                         .override(com.bumptech.glide.request.target.Target.SIZE_ORIGINAL)
                         .transition(DrawableTransitionOptions.withCrossFade())
                         .into(((FeedHolder) holder).image);
