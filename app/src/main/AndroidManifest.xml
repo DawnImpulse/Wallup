@@ -60,7 +60,19 @@
         <activity
             android:name=".activities.CollectionsActivity"
             android:label="@string/title_activity_collections"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+
+
+        <activity android:name=".Redirect">
+            <intent-filter>
+                <data
+                    android:host="dpulse"
+                    android:scheme="wallup" />
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
