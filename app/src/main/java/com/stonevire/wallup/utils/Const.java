@@ -129,7 +129,7 @@ public class Const {
     //------------------ Live Images ------------------------------
 
     public static final String LIVE_IMAGES_POSITION = "position";
-    public static final String LIVE_IMAGES_CACHE_SIZE = "cache_size";
+    public static final String IMAGES_CACHE_SIZE = "cache_size";
     public static final String LIVE_IMAGES_COUNT = "count";
     public static final String LIVE_IMAGES_UPCOMING_TIME = "upcoming_time";
     public static final String LIVE_IMAGES_ROTATION = "rotation";
@@ -141,4 +141,5 @@ public class Const {
     public static final String IS_DIRECT_OBJECT = "isDirectObject";
 
 
+    public static final String CURRENT_IMAGE_AS_WALLPAPER = "current_image_as_wallpaper";
 }

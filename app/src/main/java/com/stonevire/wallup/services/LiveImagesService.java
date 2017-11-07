@@ -94,7 +94,7 @@ public class LiveImagesService extends WallpaperService {
 
         @Override
         public void onCreate(SurfaceHolder surfaceHolder) {
-            cachedSize = Prefs.getInt(Const.LIVE_IMAGES_CACHE_SIZE, 5);
+            cachedSize = Prefs.getInt(Const.IMAGES_CACHE_SIZE, 5);
             super.onCreate(surfaceHolder);
         }
 
@@ -158,7 +158,7 @@ public class LiveImagesService extends WallpaperService {
 
         @Override
         public void onCreate(SurfaceHolder surfaceHolder) {
-            cachedSize = Prefs.getInt(Const.LIVE_IMAGES_CACHE_SIZE, 5);
+            cachedSize = Prefs.getInt(Const.IMAGES_CACHE_SIZE, 5);
             super.onCreate(surfaceHolder);
         }
 

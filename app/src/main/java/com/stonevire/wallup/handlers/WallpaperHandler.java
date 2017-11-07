@@ -1,4 +1,4 @@
-package com.stonevire.wallup.services;
+package com.stonevire.wallup.handlers;
 
 /**
  * Created by Saksham on 2017 11 04
@@ -120,7 +120,7 @@ public class WallpaperHandler {
      *
      * @param originalBitmap - original bitmap from storage
      */
-    public void setHomescreenWallpaper(Bitmap originalBitmap) throws IOException {
+    public static void setHomescreenWallpaper(Bitmap originalBitmap) throws IOException {
         WallpaperManager wallpaperManager =
                 WallpaperManager.getInstance(mContext);
         wallpaperManager.setBitmap(bitmapCropper(originalBitmap));
