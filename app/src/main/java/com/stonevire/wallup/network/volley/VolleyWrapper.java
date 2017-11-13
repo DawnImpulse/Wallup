@@ -41,65 +41,60 @@ public class VolleyWrapper {
     private RequestResponse listener;
     RequestQueue requestQueue;
 
-    public VolleyWrapper(Context context)
-    {
+    public VolleyWrapper(Context context) {
         this.context = context;
         requestQueue = Volley.newRequestQueue(context);
     }
 
-    public void setListener(RequestResponse listener)
-    {
+    public void setListener(RequestResponse listener) {
         this.listener = listener;
     }
 
-    public void postCall(String URL, Map<String,String> params, final int callbackID)
-    {
+    public void postCall(String URL, Map<String, String> params, final int callbackID) {
         CustomPostRequest customPostRequest = new CustomPostRequest(Request.Method.POST,
                 URL, params, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) { //successful response
-                listener.onResponse(response,callbackID); //callback
+                listener.onResponse(response, callbackID); //onCallback
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) { //error
-                listener.onErrorResponse(error,callbackID); //callback
+                listener.onErrorResponse(error, callbackID); //onCallback
             }
         });
 
         requestQueue.add(customPostRequest);
     }
 
-    public void getCall(String URL, final int callbackID)
-    {
+    public void getCall(String URL, final int callbackID) {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,
                 URL, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) { //successful response
-                listener.onResponse(response,callbackID); //callback
+                listener.onResponse(response, callbackID); //onCallback
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) { //error
-                listener.onErrorResponse(error,callbackID); //callback
+                listener.onErrorResponse(error, callbackID); //onCallback
             }
         });
 
         requestQueue.add(jsonObjectRequest);
     }
 
-    public void getCallArray(String URL, final int callbackID)
-    {
+    public void getCallArray(String URL, final int callbackID) {
         JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Request.Method.GET,
                 URL, null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) { //successful response
-                listener.onResponse(response,callbackID); //callback
+                listener.onResponse(response, callbackID); //onCallback
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) { //error
-                listener.onErrorResponse(error,callbackID); //callback
+                listener.onErrorResponse(error, callbackID); //onCallback
             }
         });
 

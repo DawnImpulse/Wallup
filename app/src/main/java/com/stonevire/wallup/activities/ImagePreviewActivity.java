@@ -63,7 +63,7 @@ import com.stonevire.wallup.utils.ColorModifier;
 import com.stonevire.wallup.utils.Const;
 import com.stonevire.wallup.utils.DateModifier;
 import com.stonevire.wallup.utils.DisplayCalculations;
-import com.stonevire.wallup.utils.MessageEvent;
+import com.stonevire.wallup.callbacks.MessageEvent;
 import com.stonevire.wallup.utils.Permissions;
 import com.stonevire.wallup.utils.StringModifier;
 

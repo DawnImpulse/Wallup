@@ -175,7 +175,7 @@ public class UserProfileActivity extends AppCompatActivity implements RequestRes
     /**
      * On Error Response
      *
-     * @param volleyError,callback
+     * @param volleyError,onCallback
      */
     @Override
     public void onErrorResponse(VolleyError volleyError, int callback) {
@@ -186,7 +186,7 @@ public class UserProfileActivity extends AppCompatActivity implements RequestRes
     /**
      * On Response - JSON Object
      *
-     * @param response,callback
+     * @param response,onCallback
      */
     @Override
     public void onResponse(JSONObject response, int callback) {
@@ -205,7 +205,7 @@ public class UserProfileActivity extends AppCompatActivity implements RequestRes
     /**
      * On Response - JSON Array
      *
-     * @param response,callback
+     * @param response,onCallback
      */
     @Override
     public void onResponse(JSONArray response, int callback) {
@@ -254,7 +254,7 @@ public class UserProfileActivity extends AppCompatActivity implements RequestRes
     /**
      * On Response - String
      *
-     * @param response,callback
+     * @param response,onCallback
      */
     @Override
     public void onResponse(String response, int callback) {

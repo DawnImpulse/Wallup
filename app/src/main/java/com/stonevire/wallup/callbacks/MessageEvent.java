@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.stonevire.wallup.utils;
+package com.stonevire.wallup.callbacks;
 
 /**
  * Created by Saksham on 8/31/2017.

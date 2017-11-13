@@ -110,6 +110,7 @@ public class Const {
     public static final int WALLPAPER_SERVICE_CALLBACK = 10;
     public static final int COLLECTIONS_FEATURED_CALLBACK = 11;
     public static final int COLLECTIONS_FEATURED_LOADING_CALLBACK = 12;
+    public static final int CALLBACK_1 = 1;
 
     //------------------ Transition Names -------------------------
     public static final String TRANS_NEW_TO_PROFILE = "trans1";
@@ -142,4 +143,10 @@ public class Const {
 
 
     public static final String CURRENT_IMAGE_AS_WALLPAPER = "current_image_as_wallpaper";
+    public static final String MESSAGE = "message";
+    public static final String VOLLEY_ERROR = "volley_error";
+    public static final String CAUSE = "cause";
+    public static final String STACK_TRACE = "stack_trace";
+    public static final String WALLPAPER_URL = "wallpaper_url";
+    public static final String PER_PAGE = "&per_page=";
 }

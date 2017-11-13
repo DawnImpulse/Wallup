@@ -4,10 +4,17 @@ import android.content.Context;
 import android.graphics.Bitmap;
 
 import com.pixplicity.easyprefs.library.Prefs;
+import com.stonevire.wallup.interfaces.ImageCallback;
+import com.stonevire.wallup.network.UnsplashFetcher;
 import com.stonevire.wallup.utils.Const;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Comparator;
 
 /**
  * Created by Saksham on 2017 11 07
@@ -21,8 +28,21 @@ public class ImageHandler {
     /**
      * Fetches an image from unsplash and set it as wallpaper
      */
-    public static void fetchAndSetImage() {
+    public static void fetchAndSetImage(Context mContext) {
+        UnsplashFetcher unsplashFetcher;
+        unsplashFetcher = new UnsplashFetcher(mContext);
 
+        unsplashFetcher.fetchImages(Prefs.getString(Const.WALLPAPER_URL, ""), 1, Const.CALLBACK_1);
+        unsplashFetcher.onCallbackListener(new ImageCallback() {
+            @Override
+            public void onCallback(JSONObject error, JSONArray response, int callbackId) {
+                if (error != null){
+
+                }else{
+
+                }
+            }
+        });
     }
 
 
@@ -32,10 +52,21 @@ public class ImageHandler {
      * @param mContext
      */
     public static void setFirstImageInCache(Context mContext) {
-
+        File[] filesList;
         File internalBitmapFiles = StorageHandler.getInternalBitmapsPath(mContext);
+
         if (internalBitmapFiles.listFiles().length > 0) {
-            //sort the files first and pick first image
+            filesList = internalBitmapFiles.listFiles();
+
+            //sorting the files list based on date modified
+            Arrays.sort(filesList, new Comparator<File>() {
+                public int compare(File f1, File f2) {
+                    return Long.compare(f1.lastModified(), f2.lastModified());
+                }
+            });
+
+            Prefs.putString(Const.CURRENT_IMAGE_AS_WALLPAPER, filesList[0].getName());
+            setImage(mContext);
         }
     }
 
@@ -55,7 +86,7 @@ public class ImageHandler {
             if (StorageHandler.getBitmapsInCache(mContext) != 0)
                 setFirstImageInCache(mContext);
             else
-                fetchAndSetImage();
+                fetchAndSetImage(mContext);
         } else
             try {
                 WallpaperHandler.setHomescreenWallpaper(cachedBitmap);
