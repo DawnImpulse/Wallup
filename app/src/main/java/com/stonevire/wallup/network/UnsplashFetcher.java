@@ -3,7 +3,7 @@ package com.stonevire.wallup.network;
 import android.content.Context;
 
 import com.android.volley.VolleyError;
-import com.stonevire.wallup.interfaces.ImageCallback;
+import com.stonevire.wallup.interfaces.OnCallbackListener;
 import com.stonevire.wallup.network.volley.RequestResponse;
 import com.stonevire.wallup.network.volley.VolleyWrapper;
 import com.stonevire.wallup.utils.Const;
@@ -21,8 +21,8 @@ import org.json.JSONObject;
 
 public class UnsplashFetcher implements RequestResponse {
 
-    Context mContext;
-    ImageCallback mImageCallback;
+    private Context mContext;
+    private OnCallbackListener mImageCallback;
 
     public UnsplashFetcher(Context mContext) {
         this.mContext = mContext;
@@ -33,7 +33,7 @@ public class UnsplashFetcher implements RequestResponse {
      *
      * @param mImageCallback
      */
-    public void onCallbackListener(ImageCallback mImageCallback) {
+    public void onCallbackListener(OnCallbackListener mImageCallback) {
         this.mImageCallback = mImageCallback;
     }
 
@@ -72,7 +72,7 @@ public class UnsplashFetcher implements RequestResponse {
 
     @Override
     public void onResponse(JSONArray response, int callback) {
-        mImageCallback.onCallback(null,response,callback);
+        mImageCallback.onCallback(null, response, callback);
     }
 
     @Override

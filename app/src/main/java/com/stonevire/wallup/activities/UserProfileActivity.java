@@ -34,6 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
+import com.bumptech.glide.Glide;
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.view.DraweeTransition;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -43,7 +44,6 @@ import com.stonevire.wallup.interfaces.OnLoadMoreListener;
 import com.stonevire.wallup.network.volley.RequestResponse;
 import com.stonevire.wallup.network.volley.VolleyWrapper;
 import com.stonevire.wallup.utils.Const;
-import com.stonevire.wallup.utils.GlideApp;
 import com.stonevire.wallup.utils.StringModifier;
 
 import org.json.JSONArray;
@@ -147,7 +147,7 @@ public class UserProfileActivity extends AppCompatActivity implements RequestRes
                 activityUserProfileRandomImage.setImageURI(Const.UNSPLASH_USER_RANDOM +
                         author.getString(Const.USERNAME) + "/1920x1080");
 
-                GlideApp.with(this)
+                Glide.with(this)
                         .load(author_image.getString(Const.USER_IMAGE_LARGE))
                         .into(activityUserProfileAuthorImage);
 

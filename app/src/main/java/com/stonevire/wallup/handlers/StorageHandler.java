@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
@@ -84,5 +85,52 @@ public class StorageHandler {
      */
     public static boolean deleteFileInternally(Context mContext, String fileName) {
         return getInternalPathForBitmap(mContext, fileName).delete();
+    }
+
+
+    /**
+     * Storing/caching bitmap internally
+     *
+     * @param bitmap
+     * @param name
+     */
+    public static boolean storeBitmapInternally(Context context, Bitmap bitmap, String name) {
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(getInternalPathForBitmap(context, name));
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            return true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+
+        } finally {
+            try {
+                assert fos != null;
+                fos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Verify bitmap exist or not , if yes then is it !=null
+     *
+     * @param mContext
+     * @param mName
+     * @return
+     */
+    public static boolean verifyBitmapInternally(Context mContext, String mName) {
+        File bitmapsPath = getInternalBitmapsPath(mContext);
+        File[] filesList = bitmapsPath.listFiles();
+
+        for (File bitmapFile : filesList) {
+            if (bitmapFile.getName().equals(mName)) {
+                return bitmapFile.length() > 0;
+            }
+        }
+        return false;
     }
 }

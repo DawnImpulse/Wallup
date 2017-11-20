@@ -32,11 +32,11 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import com.bumptech.glide.Glide;
 import com.stonevire.wallup.R;
 import com.stonevire.wallup.activities.ImagePreviewActivity;
 import com.stonevire.wallup.interfaces.OnLoadMoreListener;
 import com.stonevire.wallup.utils.Const;
-import com.stonevire.wallup.utils.GlideApp;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -151,7 +151,7 @@ public class UserImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
                 ((UserImagesHolder) holder).draweeView.setBackgroundColor(
                         Color.parseColor(imageObject.getString(Const.IMAGE_COLOR)));
-                GlideApp.with(mContext)
+                Glide.with(mContext)
                         .load(urls.getString(Const.IMAGE_RAW) + "?h=720")
                         .into(((UserImagesHolder) holder).draweeView);
 

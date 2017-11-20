@@ -34,14 +34,13 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.Glide;
 import com.google.android.gms.ads.NativeExpressAdView;
 import com.stonevire.wallup.R;
 import com.stonevire.wallup.activities.ImagePreviewActivity;
 import com.stonevire.wallup.activities.UserProfileActivity;
 import com.stonevire.wallup.interfaces.OnLoadMoreListener;
 import com.stonevire.wallup.utils.Const;
-import com.stonevire.wallup.utils.GlideApp;
 import com.stonevire.wallup.utils.StringModifier;
 
 import org.json.JSONArray;
@@ -155,13 +154,11 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 } else
                     ((FeedHolder) holder).lastName.setText(" " + StringModifier.camelCase(lastName));
 
-                GlideApp.with(mContext)
+                Glide.with(mContext)
                         .load(urls.getString(Const.IMAGE_RAW) + "?h=720")
-                        .override(com.bumptech.glide.request.target.Target.SIZE_ORIGINAL)
-                        .transition(DrawableTransitionOptions.withCrossFade())
                         .into(((FeedHolder) holder).image);
 
-                GlideApp.with(mContext)
+                Glide.with(mContext)
                         .load(profileImage.getString(Const.USER_IMAGE_LARGE))
                         .into(((FeedHolder) holder).authorImage);
 

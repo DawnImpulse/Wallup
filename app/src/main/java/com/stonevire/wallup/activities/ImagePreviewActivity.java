@@ -47,14 +47,15 @@ import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.transition.Transition;
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.view.DraweeTransition;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.gjiazhe.panoramaimageview.GyroscopeObserver;
 import com.stonevire.wallup.R;
 import com.stonevire.wallup.adapters.TagsAdapter;
+import com.stonevire.wallup.callbacks.MessageEvent;
 import com.stonevire.wallup.network.volley.RequestResponse;
 import com.stonevire.wallup.network.volley.VolleyWrapper;
 import com.stonevire.wallup.storage.BitmapStorage;
@@ -63,7 +64,6 @@ import com.stonevire.wallup.utils.ColorModifier;
 import com.stonevire.wallup.utils.Const;
 import com.stonevire.wallup.utils.DateModifier;
 import com.stonevire.wallup.utils.DisplayCalculations;
-import com.stonevire.wallup.callbacks.MessageEvent;
 import com.stonevire.wallup.utils.Permissions;
 import com.stonevire.wallup.utils.StringModifier;
 
@@ -343,15 +343,16 @@ public class ImagePreviewActivity extends AppCompatActivity implements RequestRe
     private void gettingBitmap() {
         try {
             Glide.with(this)
-                    .asBitmap()
                     .load(imageUrlsObject.getString(Const.IMAGE_RAW) + "?h=720")
+                    .asBitmap()
                     .into(new SimpleTarget<Bitmap>() {
                         @Override
-                        public void onResourceReady(Bitmap mBitmap, Transition<? super Bitmap> transition) {
+                        public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                             contentImagePreviewImage.setImageBitmap(mBitmap);
                             colorApplier(ColorModifier.getNonDarkColor(BitmapModifier.colorSwatch(mBitmap),
                                     ImagePreviewActivity.this));
                         }
+
                     });
         } catch (JSONException e) {
             e.printStackTrace();

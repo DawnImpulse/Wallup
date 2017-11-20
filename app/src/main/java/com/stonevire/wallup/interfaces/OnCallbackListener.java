@@ -1,6 +1,5 @@
 package com.stonevire.wallup.interfaces;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -10,6 +9,6 @@ import org.json.JSONObject;
  * Saksham - 2017 11 13 - v - Initial
  */
 
-public interface ImageCallback {
-    void onCallback(JSONObject error, JSONArray response, int callbackId);
+public interface OnCallbackListener {
+    <E> void onCallback(JSONObject error, E response, int callbackId);
 }

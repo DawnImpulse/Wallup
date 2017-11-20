@@ -111,6 +111,7 @@ public class Const {
     public static final int COLLECTIONS_FEATURED_CALLBACK = 11;
     public static final int COLLECTIONS_FEATURED_LOADING_CALLBACK = 12;
     public static final int CALLBACK_1 = 1;
+    public static final int CALLBACK_2 = 2;
 
     //------------------ Transition Names -------------------------
     public static final String TRANS_NEW_TO_PROFILE = "trans1";
@@ -149,4 +150,5 @@ public class Const {
     public static final String STACK_TRACE = "stack_trace";
     public static final String WALLPAPER_URL = "wallpaper_url";
     public static final String PER_PAGE = "&per_page=";
+    public static final String NULL_BITMAP = "null_bitmap";
 }

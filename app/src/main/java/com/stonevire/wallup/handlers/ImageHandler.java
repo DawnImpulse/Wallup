@@ -4,11 +4,10 @@ import android.content.Context;
 import android.graphics.Bitmap;
 
 import com.pixplicity.easyprefs.library.Prefs;
-import com.stonevire.wallup.interfaces.ImageCallback;
+import com.stonevire.wallup.interfaces.OnCallbackListener;
 import com.stonevire.wallup.network.UnsplashFetcher;
 import com.stonevire.wallup.utils.Const;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -28,18 +27,19 @@ public class ImageHandler {
     /**
      * Fetches an image from unsplash and set it as wallpaper
      */
-    public static void fetchAndSetImage(Context mContext) {
+    public static void fetchAndSetImage(final Context mContext) {
         UnsplashFetcher unsplashFetcher;
         unsplashFetcher = new UnsplashFetcher(mContext);
 
         unsplashFetcher.fetchImages(Prefs.getString(Const.WALLPAPER_URL, ""), 1, Const.CALLBACK_1);
-        unsplashFetcher.onCallbackListener(new ImageCallback() {
+        unsplashFetcher.onCallbackListener(new OnCallbackListener() {
             @Override
-            public void onCallback(JSONObject error, JSONArray response, int callbackId) {
-                if (error != null){
-
-                }else{
-
+            public <E> void onCallback(JSONObject error, E response, int callbackId) {
+                if (error != null) {
+                    fetchAndSetImage(mContext);
+                    //log error
+                } else {
+                    CacheHandler.cacheBitmapAndVerify(UrlHandler.UnsplashUrlModify("url"), "name", mContext);
                 }
             }
         });
@@ -94,6 +94,5 @@ public class ImageHandler {
                 e.printStackTrace();
             }
     }
-
 
 }
